@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.swyp.com.backend.login.dto.LoginRequest;
+import org.swyp.com.backend.login.dto.TokenResponse;
 
 public interface LoginApiSpec {
 
@@ -23,7 +24,8 @@ public interface LoginApiSpec {
                             examples = @ExampleObject(
                                     value = """
                                             {
-                                              "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+                                              "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6...",
+                                              "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
                                             }
                                             """
                             )
@@ -46,6 +48,6 @@ public interface LoginApiSpec {
                     )
             )
     })
-    ResponseEntity<Void> login(LoginRequest request);
+    ResponseEntity<TokenResponse> login(LoginRequest request);
 
 }
