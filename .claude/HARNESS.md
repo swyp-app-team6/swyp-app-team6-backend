@@ -6,6 +6,7 @@
 .claude/
 ├── HARNESS.md                              ← 이 파일 (하네스 전체 구조 설명)
 ├── HARNESS_EVAL.md                         ← 하네스 정적 평가 프레임워크 (점수 집계 공식)
+├── HARNESS_DESIGN.md                       ← 설계 해설서 (설계 결정 근거·트레이드오프·확장 포인트)
 ├── settings.json                           ← 훅 설정 (PostToolUse + Stop)
 ├── commands/
 │   └── review.md                          ← /review 슬래시 커맨드
