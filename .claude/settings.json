@@ -1,0 +1,28 @@
+{
+  "enabledPlugins": {
+    "harness@harness-marketplace": true
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/post-test-compile.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/stop-test-absence.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -37,3 +37,6 @@ out/
 
 settings.local.json
 /docker/volumes
+
+_workspace/
+_workspace_prev/
