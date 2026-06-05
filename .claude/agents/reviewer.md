@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: Pickeat 코드 컨벤션 및 품질 기준으로 구현된 코드를 검토하는 리뷰 에이전트
+description: 코드 컨벤션 및 품질 기준으로 구현된 코드를 검토하는 리뷰 에이전트
 model: opus
 color: purple
 ---
@@ -44,7 +44,7 @@ implementer와 tester가 생성/수정한 모든 파일을 읽고, 컨벤션과 
 
 - [ ] `{Domain}ApiSpec` 인터페이스 구현 여부
 - [ ] `@RequestMapping` URL 패턴 일관성
-- [ ] 인증 어노테이션 (`@LoginUserId`, `@ParticipantInPickeat`) 올바른 사용
+- [ ] 인증 어노테이션 (`@LoginUserId` 등 프로젝트 인증 어노테이션) 올바른 사용
 
 ### DTO
 

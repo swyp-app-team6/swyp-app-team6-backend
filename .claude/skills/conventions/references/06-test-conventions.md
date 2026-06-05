@@ -20,37 +20,54 @@ src/test/java/org/swyp/com/backend/
 `@Nested` 클래스로 시나리오 그룹화, `assertAll()`로 복합 검증, 예외는 `assertThatThrownBy()`:
 
 ```java
-class PickeatTest {
+class {Domain}
+
+Test {
 
     @Nested
-    class 픽잇_생성 {
+    class {
+        domain
+    } _생성 {
 
         @Test
-        void 유효한_정보로_픽잇을_생성() {
+        void 유효한_정보로_ {
+            domain
+        } _생성() {
             // given
-            String name = "맛집 찾기";
+            String name = "테스트 이름";
 
             // when
-            Pickeat pickeat = Pickeat.createWithoutRoom(name);
+            {
+                Domain
+            } {
+                domain
+            } ={
+                Domain
+            }.create(name);
 
             // then
             assertAll(
-                    () -> assertThat(pickeat.getName()).isEqualTo(name),
-                    () -> assertThat(pickeat.getIsActive()).isTrue(),
-                    () -> assertThat(pickeat.getCode()).isNotNull()
+                    () -> assertThat({domain}.getName()).isEqualTo(name),
+                    () -> assertThat({domain}.getIsActive()).isTrue()
             );
         }
     }
 
     @Nested
-    class 픽잇_비활성화 {
+    class {
+        domain
+    } _비활성화 {
 
         @Test
-        void 권한_없는_참가자는_비활성화_실패() {
+        void 권한_없는_사용자는_비활성화_실패 () {
             assertThatThrownBy(
-                    () -> pickeat.deactivate(unauthorizedParticipantId))
+                    () -> {
+                        domain
+                    }.deactivate(unauthorizedUserId))
                     .isInstanceOf(BusinessException.class)
-                    .hasMessage(ErrorCode.PICKEAT_ACCESS_DENIED.getMessage());
+                    .hasMessage(ErrorCode. {
+                DOMAIN
+            } _ACCESS_DENIED.getMessage());
         }
     }
 }
@@ -66,35 +83,35 @@ class PickeatTest {
 ```java
 
 @DataJpaTest
-@Import({PickeatService.class})
-class PickeatServiceTest {
+@Import({{Domain}Service.class})
+class {Domain}ServiceTest {
 
     @Autowired
     private TestEntityManager testEntityManager;
 
     @Autowired
-    private PickeatService pickeatService;
+    private {Domain}Service {domain}Service;
 
     @Test
-    void 픽잇_조회_성공() {
+    void {domain}_조회_성공() {
         // given
-        Pickeat pickeat = testEntityManager.persist(PickeatFixture.createWithoutRoom());
+        {Domain} {domain} = testEntityManager.persist({Domain}Fixture.create());
         testEntityManager.flush();
         testEntityManager.clear();   // ← 필수: 영속성 컨텍스트 초기화 후 재조회
 
         // when
-        PickeatResponse response = pickeatService.getPickeat(pickeat.getId());
+        {Domain}Response response = {domain}Service.get{Domain}({domain}.getId());
 
         // then
-        assertThat(response.id()).isEqualTo(pickeat.getId());
+        assertThat(response.id()).isEqualTo({domain}.getId());
     }
 
     // 반복 생성 패턴은 헬퍼 메서드로 추출
-    private Pickeat 픽잇_저장() {
-        Pickeat pickeat = testEntityManager.persist(PickeatFixture.createWithoutRoom());
+    private {Domain} {domain}_저장() {
+        {Domain} {domain} = testEntityManager.persist({Domain}Fixture.createWithoutRoom());
         testEntityManager.flush();
         testEntityManager.clear();
-        return pickeat;
+        return {domain};
     }
 }
 ```
@@ -104,14 +121,14 @@ class PickeatServiceTest {
 ## Fixture 클래스 패턴
 
 ```java
-public class PickeatFixture {
+public class {Domain}Fixture {
 
-    public static Pickeat createWithoutRoom() {
-        return Pickeat.createWithoutRoom("테스트픽잇");
+    public static {Domain} createWithoutRoom() {
+        return {Domain}.createWithoutRoom("테스트{domain}");
     }
 
-    public static Pickeat createWithRoom(Long roomId) {
-        return Pickeat.createWithRoom("테스트픽잇", roomId);
+    public static {Domain} createWithRoom(Long roomId) {
+        return {Domain}.createWithRoom("테스트{domain}", roomId);
     }
 }
 
@@ -157,7 +174,7 @@ public class TestKakaoLoginConfig {
 
 @Sql("/init/template_data_v2.sql")  // 대용량 초기 데이터가 필요한 경우에만
 @DataJpaTest
-class PickeatByTemplateServiceTest { ...
+class {Domain}ServiceTest { ...
 }
 ```
 
@@ -169,34 +186,74 @@ class PickeatByTemplateServiceTest { ...
 
 ```java
 // 단순 동일성
-assertThat(response.id()).isEqualTo(expected.getId());
+assertThat(response.id()).
+
+isEqualTo(expected.getId());
 
 // 컬렉션 필터링 + 필드 추출 검증
 assertThat(restaurants)
-        .filteredOn(r -> r.isExcluded())
-        .extracting(RestaurantResponse::id)
-        .containsAnyElementsOf(excludedIds);
+        .
+
+filteredOn(r ->r.
+
+isExcluded())
+        .
+
+extracting(RestaurantResponse::id)
+        .
+
+containsAnyElementsOf(excludedIds);
 
 // 순서 무관 컬렉션 비교
 assertThat(responses)
-        .extracting(PickeatResponse::id)
-        .containsExactlyInAnyOrderElementsOf(expectedIds);
+        .
+
+extracting( {
+    Domain
+}
+
+Response::id)
+        .
+
+containsExactlyInAnyOrderElementsOf(expectedIds);
 
 // 복합 검증
 assertAll(
-        () -> assertThat(state.totalParticipants()).isEqualTo(3),
-        () -> assertThat(state.participants())
-                .filteredOn(p -> p.isCompleted())
-                .hasSize(2)
+        () ->
+
+assertThat(state.totalParticipants()).
+
+isEqualTo(3),
+        ()->
+
+assertThat(state.participants())
+        .
+
+filteredOn(p ->p.
+
+isCompleted())
+        .
+
+hasSize(2)
 );
 
 // 예외 검증
-assertThatThrownBy(() -> service.method(invalidInput))
-        .isInstanceOf(BusinessException.class)
-        .hasMessage(ErrorCode.SOME_ERROR.getMessage());
+assertThatThrownBy(() ->service.
+
+method(invalidInput))
+        .
+
+isInstanceOf(BusinessException .class)
+        .
+
+hasMessage(ErrorCode.SOME_ERROR.getMessage());
 
 // 예외 없음 검증
-assertThatCode(() -> new Entity(validInput)).doesNotThrowAnyException();
+assertThatCode(() ->new
+
+Entity(validInput)).
+
+doesNotThrowAnyException();
 ```
 
 ---

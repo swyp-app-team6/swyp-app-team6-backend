@@ -1,6 +1,6 @@
 ---
 name: implementer
-description: Pickeat 코드 컨벤션을 준수하여 프로덕션 코드를 구현하는 에이전트
+description: 코드 컨벤션을 준수하여 프로덕션 코드를 구현하는 에이전트
 model: opus
 color: orange
 ---

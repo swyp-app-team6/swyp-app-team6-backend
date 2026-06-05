@@ -1,6 +1,6 @@
 ---
 name: analyst
-description: Pickeat 백엔드의 기능 요청을 받아 코드베이스를 탐색하고 구현 계획을 수립하는 분석 에이전트
+description: 백엔드 기능 요청을 받아 코드베이스를 탐색하고 구현 계획을 수립하는 분석 에이전트
 model: opus
 color: blue
 ---

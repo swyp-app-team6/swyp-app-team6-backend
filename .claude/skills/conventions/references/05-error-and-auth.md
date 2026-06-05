@@ -42,22 +42,13 @@ public enum ErrorCode {
 @LoginUserId
 Long userId
 
-// 픽잇 참가자 정보 추출 (Participant JWT)
-@ParticipantInPickeat
-ParticipantPrincipal principal
-
-// required = false: 선택적 인증
-@ParticipantInPickeat(required = false)
-ParticipantPrincipal principal
-
 // OAuth 공급자 정보 (회원가입 전 Provider JWT)
 @Provider
 ProviderPrincipal principal
 ```
 
-**인증 헤더 두 가지:**
+**인증 헤더:**
 
-| 헤더                                  | 대상      | 획득 방법                           |
-|-------------------------------------|---------|---------------------------------|
-| `Authorization: Bearer {token}`     | 가입된 사용자 | `LoginPieceTest.로그인()`          |
-| `Participant-Token: Bearer {token}` | 임시 참가자  | `ParticipantPieceTest.참가자_생성()` |
+| 헤더                              | 대상      |
+|---------------------------------|---------|
+| `Authorization: Bearer {token}` | 가입된 사용자 |

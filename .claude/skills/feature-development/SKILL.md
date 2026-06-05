@@ -1,6 +1,6 @@
 ---
 name: feature-development
-description: Pickeat 백엔드에 새 기능 추가, API 엔드포인트 구현, 버그 수정, 도메인 확장 요청 시 반드시 이 스킬을 사용할 것. analyst→implementer+tester(병렬)→reviewer 에이전트 팀을 조율하여 컨벤션을 준수한 코드를 생성한다. "새 기능 만들어줘", "API 추가해줘", "도메인 추가", "엔드포인트 구현", "기능 개발", "버그 수정", "다시 실행", "재실행", "업데이트", "수정해줘" 등 구현 요청에 트리거된다.
+description: 백엔드에 새 기능 추가, API 엔드포인트 구현, 버그 수정, 도메인 확장 요청 시 반드시 이 스킬을 사용할 것. analyst→implementer+tester(병렬)→reviewer 에이전트 팀을 조율하여 컨벤션을 준수한 코드를 생성한다. "새 기능 만들어줘", "API 추가해줘", "도메인 추가", "엔드포인트 구현", "기능 개발", "버그 수정", "다시 실행", "재실행", "업데이트", "수정해줘" 등 구현 요청에 트리거된다.
 ---
 
 ## 실행 모드
@@ -60,15 +60,16 @@ Agent(
   subagent_type: "general-purpose",
   model: "opus",
   prompt: """
-  당신은 Pickeat 백엔드 analyst 에이전트입니다.
+  당신은 백엔드 analyst 에이전트입니다.
   에이전트 정의를 읽으세요: .claude/agents/analyst.md
   
   기능 요청: {사용자 요청 내용}
   
-  1. .claude/skills/conventions/references/01-structure-and-naming.md 읽기 (패키지 구조, 명명 규칙)
-  2. .claude/skills/conventions/references/05-error-and-auth.md 읽기 (ErrorCode, 인증)
-  3. 기존 유사 도메인 코드 탐색 (src/main/java/com/pickeat/backend/)
-  4. 분석 결과를 _workspace/01_analyst_output.md에 저장
+  1. .claude/skills/conventions/references/00-domain-knowledge.md 읽기 (기존 도메인 구조 파악)
+  2. .claude/skills/conventions/references/01-structure-and-naming.md 읽기 (패키지 구조, 명명 규칙)
+  3. .claude/skills/conventions/references/05-error-and-auth.md 읽기 (ErrorCode, 인증)
+  4. 기존 유사 도메인 코드 탐색 (src/main/java/)
+  5. 분석 결과를 _workspace/01_analyst_output.md에 저장
   
   저장 완료 후 "analyst 완료"를 출력하라.
   """
@@ -89,7 +90,7 @@ Agent(
   model: "opus",
   run_in_background: true,
   prompt: """
-  당신은 Pickeat 백엔드 implementer 에이전트입니다.
+  당신은 백엔드 implementer 에이전트입니다.
   에이전트 정의를 읽으세요: .claude/agents/implementer.md
   
   다음 파일들을 반드시 먼저 읽으세요:
@@ -118,10 +119,10 @@ Agent(
 ```
 Agent(
   subagent_type: "general-purpose",
-  model: "opus",
+  model: "sonnet",
   run_in_background: true,
   prompt: """
-  당신은 Pickeat 백엔드 tester 에이전트입니다.
+  당신은 백엔드 tester 에이전트입니다.
   에이전트 정의를 읽으세요: .claude/agents/tester.md
   
   다음 파일들을 반드시 먼저 읽으세요:
@@ -147,9 +148,9 @@ implementer와 tester 모두 완료 후 reviewer를 실행한다.
 ```
 Agent(
   subagent_type: "general-purpose",
-  model: "opus",
+  model: "sonnet",
   prompt: """
-  당신은 Pickeat 백엔드 reviewer 에이전트입니다. 
+  당신은 백엔드 reviewer 에이전트입니다.
   에이전트 정의를 읽으세요: .claude/agents/reviewer.md
   
   다음 파일들을 반드시 먼저 읽으세요:
@@ -210,7 +211,7 @@ Agent(
 ### 다음 단계
 - CRITICAL/MAJOR 이슈가 있으면: 이슈 수정 후 재실행 권장
 - 이슈 없으면: 빌드 후 테스트 실행 권장
-  ./gradlew test --tests "*.acceptance_test.*"
+  ./gradlew test
 ```
 
 ---

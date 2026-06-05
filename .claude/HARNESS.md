@@ -1,10 +1,11 @@
-# Pickeat 백엔드 하네스 구조 문서
+# 백엔드 하네스 구조 문서
 
 ## 디렉토리 구조
 
 ```
 .claude/
 ├── HARNESS.md                              ← 이 파일 (하네스 전체 구조 설명)
+├── HARNESS_EVAL.md                         ← 하네스 정적 평가 프레임워크 (점수 집계 공식)
 ├── settings.json                           ← 훅 설정 (PostToolUse + Stop)
 ├── commands/
 │   └── review.md                          ← /review 슬래시 커맨드
@@ -24,7 +25,7 @@
     ├── conventions/
     │   ├── SKILL.md                        ← 컨벤션 빠른 참조
     │   └── references/
-    │       ├── code-conventions.md         ← Pickeat 코드 패턴 상세 + 테스트 가이드
+    │       ├── code-conventions.md         ← 코드 패턴 상세 + 테스트 가이드
     │       └── team-conventions.md         ← 팀 철학·아키텍처 원칙
     └── design-consultant/
         └── SKILL.md                        ← OOP/설계 상담
@@ -139,7 +140,10 @@ git status --short 분석
 [Phase 4] 결과 종합 및 사용자 보고
 ```
 
-**실행 모드**: 하이브리드 서브 에이전트 (모든 에이전트 `model: "opus"`)
+**실행 모드**: 하이브리드 서브 에이전트
+
+- Opus: analyst (feature-development), implementer
+- Sonnet: tester, reviewer (feature-development), analyst (git-review), reviewer (git-review)
 
 ---
 
@@ -163,6 +167,10 @@ git status --short 분석
     ▼
 [Phase 3] 오케스트레이터 — 커밋 메시지·구성 점검 (직접)
     └── _workspace/review_03_git.md
+    │
+    ▼
+[Phase 3.5] 하네스 일관성 점검 (.claude/ 변경 시에만)
+    └── HARNESS_EVAL.md C카테고리 기준 grep 점검 → _workspace/review_03_5_harness.md
     │
     ▼
 [Phase 4] 종합 보고 (✅ PR 준비 완료 / ⚠️ 수정 권장 / 🚫 수정 필요)
@@ -230,13 +238,17 @@ _workspace/
 
 ## 변경 이력
 
-| 날짜         | 변경 내용                                          | 대상                                  |
-|------------|------------------------------------------------|-------------------------------------|
-| 2026-05-27 | 초기 하네스 구축                                      | 전체                                  |
-| 2026-05-27 | git-review 스킬 + /review 커맨드 추가                 | skills/git-review, commands/review  |
-| 2026-05-27 | team-conventions.md 한국어 전환                     | references/team-conventions.md      |
-| 2026-05-27 | code-conventions.md 테스트 섹션 대폭 보강 (실제 코드 패턴 기반) | references/code-conventions.md      |
-| 2026-05-27 | tester 에이전트에 테스트 실행 검증 3단계 추가                  | agents/tester.md                    |
-| 2026-05-27 | PostToolUse 훅 추가 (컴파일 + ScenarioTest 자동 실행)    | hooks/post-test-compile.sh          |
-| 2026-05-27 | Stop 훅 추가 (테스트 누락 감지)                          | hooks/stop-test-absence.sh          |
-| 2026-05-27 | feature-development Phase 0에 git 브랜치 분리 로직 추가  | skills/feature-development/SKILL.md |
+| 날짜         | 변경 내용                                           | 대상                                                   |
+|------------|-------------------------------------------------|------------------------------------------------------|
+| 2026-05-27 | 초기 하네스 구축                                       | 전체                                                   |
+| 2026-05-27 | git-review 스킬 + /review 커맨드 추가                  | skills/git-review, commands/review                   |
+| 2026-05-27 | team-conventions.md 한국어 전환                      | references/team-conventions.md                       |
+| 2026-05-27 | code-conventions.md 테스트 섹션 대폭 보강 (실제 코드 패턴 기반)  | references/code-conventions.md                       |
+| 2026-05-27 | tester 에이전트에 테스트 실행 검증 3단계 추가                   | agents/tester.md                                     |
+| 2026-05-27 | PostToolUse 훅 추가 (컴파일 + ScenarioTest 자동 실행)     | hooks/post-test-compile.sh                           |
+| 2026-05-27 | Stop 훅 추가 (테스트 누락 감지)                           | hooks/stop-test-absence.sh                           |
+| 2026-05-27 | feature-development Phase 0에 git 브랜치 분리 로직 추가   | skills/feature-development/SKILL.md                  |
+| 2026-06-05 | Piece/Scenario 테스트 제거 → Domain/Service Test로 전환 | agents/tester.md, references/06-test-conventions.md  |
+| 2026-06-05 | 도메인 지식 파일 추가 + analyst 탐색 1순위 등록                | references/00-domain-knowledge.md, agents/analyst.md |
+| 2026-06-05 | feature-development Phase 3.5 도메인 지식 자동 업데이트 추가 | skills/feature-development/SKILL.md                  |
+| 2026-06-05 | 정적 평가 프레임워크 추가 (5카테고리, 100점 집계 공식)              | HARNESS_EVAL.md                                      |

@@ -48,6 +48,7 @@ git diff HEAD --name-only
 - 미커밋 변경: [있음/없음]
 - 미push 커밋: [N개]
 - 총 변경 파일: [N개]
+- .claude/ 변경: [있음/없음]  ← Phase 3.5 실행 여부 결정
 ```
 
 변경 파일이 없으면: 사용자에게 "검토할 변경사항이 없습니다"를 전달하고 종료.
@@ -59,9 +60,9 @@ git diff HEAD --name-only
 ```
 Agent(
   subagent_type: "general-purpose",
-  model: "opus",
+  model: "sonnet",
   prompt: """
-  당신은 Pickeat 백엔드 analyst 에이전트입니다.
+  당신은 백엔드 analyst 에이전트입니다.
   에이전트 정의를 읽으세요: .claude/agents/analyst.md
 
   이번 역할은 git 변경사항의 컨텍스트를 분석하는 것입니다.
@@ -124,7 +125,7 @@ Agent(
   subagent_type: "general-purpose",
   model: "opus",
   prompt: """
-  당신은 Pickeat 백엔드 reviewer 에이전트입니다.
+  당신은 백엔드 reviewer 에이전트입니다.
   에이전트 정의를 읽으세요: .claude/agents/reviewer.md
 
   이번 역할은 git 변경 파일들의 코드 컨벤션을 검토하는 것입니다.
@@ -190,6 +191,94 @@ Agent(
 
 ---
 
+## Phase 3.5: 하네스 일관성 점검 (조건부)
+
+**실행 조건**: Phase 0에서 `.claude/` 경로 변경이 감지된 경우에만 실행.
+
+`HARNESS_EVAL.md`의 C 카테고리(일관성) 기준으로 아래 4개 항목을 오케스트레이터가 직접 점검한다.
+
+### C-2: _workspace 파일명 일관성
+
+변경된 `.claude/` 파일들에서 `_workspace/` 참조를 추출해 파일명 불일치 여부 확인:
+
+```bash
+grep -r "_workspace/" .claude/agents/ .claude/skills/ --include="*.md" -h \
+  | grep -oE "_workspace/[a-z0-9_]+\.md" | sort | uniq
+```
+
+추출된 파일명 목록에서 동일 역할을 가리키는 파일명이 다르게 쓰인 경우를 불일치로 분류.
+
+### C-3: 모델 설정 일관성
+
+SKILL.md 내 에이전트 호출부의 `model:` 값이 모두 `opus`인지 확인:
+
+```bash
+grep -n 'model:' .claude/skills/feature-development/SKILL.md \
+                 .claude/skills/git-review/SKILL.md
+```
+
+`opus` 이외의 값이 있으면 불일치로 분류.
+
+### C-4: 컨벤션 참조 대칭성
+
+implementer 프롬프트와 reviewer 프롬프트가 참조하는 컨벤션 파일 목록을 비교:
+
+```bash
+# implementer가 읽는 컨벤션 파일
+grep -A 20 "implementer 에이전트" .claude/skills/feature-development/SKILL.md \
+  | grep -oE "[0-9]+-[a-z-]+\.md"
+
+# reviewer가 읽는 컨벤션 파일
+grep -A 20 "reviewer 에이전트" .claude/skills/feature-development/SKILL.md \
+  | grep -oE "[0-9]+-[a-z-]+\.md"
+```
+
+implementer에는 있으나 reviewer에는 없는 파일, 또는 그 반대를 비대칭으로 분류.
+
+### C-1: 에이전트 정의 ↔ 스킬 프롬프트 일관성
+
+변경된 agent.md 파일이 있는 경우에만 실행. 해당 에이전트 파일을 읽고 SKILL.md 프롬프트 지시와 충돌하는 항목 확인:
+
+- 출력 파일 경로 일치 여부
+- 작업 순서 충돌 여부
+
+점검 결과를 `_workspace/review_03_5_harness.md`에 저장:
+
+```
+## 하네스 일관성 점검 결과
+
+### C-1. 에이전트 정의 ↔ 스킬 프롬프트
+| 비교 쌍 | 결과 | 불일치 내용 |
+|--------|------|----------|
+| ... | ✅ 일치 / ⚠️ 불일치 | ... |
+
+### C-2. _workspace 파일명
+| 파일명 | 참조 위치 수 | 결과 |
+|-------|-----------|-----|
+| ... | N곳 | ✅ 일치 / ⚠️ 불일치 |
+
+### C-3. 모델 설정
+| 호출 위치 | 선언값 | 결과 |
+|---------|------|-----|
+| ... | opus | ✅ / ⚠️ |
+
+### C-4. 컨벤션 참조 대칭
+| 파일 | implementer | reviewer | 결과 |
+|-----|-----------|---------|-----|
+| ... | ✅ | ✅ | ✅ 대칭 |
+
+### 하네스 일관성 점수 (C 카테고리, 25점 만점)
+- C-1: N / 10점
+- C-2: N / 5점
+- C-3: N / 5점
+- C-4: N / 5점
+- **소계: N / 25점**
+```
+
+`.claude/` 변경이 없으면 이 Phase를 건너뛰고 `review_03_5_harness.md` 생성 없이 Phase 4로 이동.
+
+---
+
 ## Phase 4: 종합 리뷰 보고서
 
 `_workspace/review_01_context.md`, `review_02_conventions.md`, `review_03_git.md`를 읽고 사용자에게 아래 형식으로 보고한다.
@@ -215,6 +304,14 @@ Agent(
 ### 커밋 메시지
 [양호/주의 사항 있음 + 개선 필요 커밋 목록]
 
+### 하네스 일관성 (.claude/ 변경 시에만 표시)
+- C-1 에이전트↔스킬: N / 10점
+- C-2 파일명 일치: N / 5점
+- C-3 모델 설정: N / 5점
+- C-4 컨벤션 대칭: N / 5점
+- **소계: N / 25점**
+[불일치 항목이 있으면 상세 목록 표시]
+
 ### 최종 판정
 - ✅ PR 준비 완료: 이슈 없음
 - ⚠️ 수정 권장: MAJOR 이슈 해결 후 PR 권장
@@ -229,6 +326,7 @@ Agent(
 - **변경사항 없음**: "검토할 변경사항이 없습니다. git status를 확인하세요." 출력 후 종료
 - **analyst 실패**: context 없이 reviewer만 실행, 누락 파일 점검 생략
 - **reviewer 실패**: context 결과만 보고, 컨벤션 점검 미완료로 명시
+- **Phase 3.5 grep 실패**: 하네스 점검 생략하고 "자동 점검 불가 — HARNESS_EVAL.md 수동 확인 권장" 표시
 
 ---
 

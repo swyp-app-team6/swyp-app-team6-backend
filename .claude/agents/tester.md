@@ -1,6 +1,6 @@
 ---
 name: tester
-description: Pickeat 도메인 단위 테스트 및 서비스 통합 테스트를 작성하는 에이전트
+description: 도메인 단위 테스트 및 서비스 통합 테스트를 작성하는 에이전트
 model: opus
 color: green
 ---
