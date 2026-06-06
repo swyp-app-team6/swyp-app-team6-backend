@@ -1,7 +1,7 @@
 package org.swyp.com.backend.login.service;
 
 
-import java.time.Instant;
+import java.util.Date;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,7 +44,7 @@ public class LoginServiceImpl implements LoginService {
      *   <li>Refresh Token은 RTR(Refresh Token Rotation) 정책에 따라 관리</li>
      * </ul>
      *
-     * @param email 사용자 이메일 (로그인 ID)
+     * @param email    사용자 이메일 (로그인 ID)
      * @param password 사용자 비밀번호 (평문 입력)
      * @return Access Token과 Refresh Token이 포함된 TokenResponse
      * @throws LoginException 회원이 존재하지 않거나 비밀번호가 일치하지 않을 경우
@@ -86,7 +86,7 @@ public class LoginServiceImpl implements LoginService {
     private void persistRefreshToken(CustomClaims generatedRefreshToken) {
         String accountId = generatedRefreshToken.getAccountId();
         String token = generatedRefreshToken.getToken();
-        Instant expiresAt = generatedRefreshToken.getExpiresAt();
+        Date expiresAt = generatedRefreshToken.getExpiresAt();
 
         Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository
                 .findByAccountId(accountId);

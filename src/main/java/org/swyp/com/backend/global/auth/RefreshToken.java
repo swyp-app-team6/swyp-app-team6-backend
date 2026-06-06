@@ -2,7 +2,7 @@ package org.swyp.com.backend.global.auth;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import java.time.Instant;
+import java.util.Date;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -17,5 +17,5 @@ public class RefreshToken {
     @Setter(AccessLevel.NONE)
     private String accountId;
     private String token;
-    private Instant expiresAt;
+    private Date expiresAt;
 }
