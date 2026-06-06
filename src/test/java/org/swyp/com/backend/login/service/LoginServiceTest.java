@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import io.jsonwebtoken.Jwts;
 import java.security.Key;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -29,6 +30,7 @@ class LoginServiceTest {
     Key testKey;
     long accessExp;
     long refreshExp;
+    LocalDateTime currentTime;
 
     @BeforeEach
     void set() {
@@ -40,6 +42,7 @@ class LoginServiceTest {
         this.testKey = Jwts.SIG.HS256.key().build();
         this.accessExp = 1000L * 60 * 30;
         this.refreshExp = 1000L * 60 * 60 * 24 * 14;
+        this.currentTime = LocalDateTime.now();
     }
 
     @Test
@@ -50,7 +53,7 @@ class LoginServiceTest {
         RefreshTokenRepository refreshTokenRepository = mock(RefreshTokenRepository.class);
         TokenProvider tokenProvider = new JwtTokenProvider(encoded, accessExp, refreshExp);
 
-        User testUser = new User(1L, testEmail, testEncodedPassword, roles);
+        User testUser = new User(1L, testEmail, testEncodedPassword, roles, currentTime, null);
 
         when(userRepository.findByEmail(testEmail))
                 .thenReturn(Optional.of(testUser));
@@ -89,7 +92,7 @@ class LoginServiceTest {
         RefreshTokenRepository refreshTokenRepository = mock(RefreshTokenRepository.class);
         TokenProvider tokenProvider = new JwtTokenProvider(encoded, accessExp, refreshExp);
 
-        User testUser = new User(1L, testEmail, "notValidPassword", roles);
+        User testUser = new User(1L, testEmail, "notValidPassword", roles, currentTime, null);
 
         when(userRepository.findByEmail(testEmail))
                 .thenReturn(Optional.of(testUser));
