@@ -7,7 +7,7 @@ import org.swyp.com.backend.user.domain.User;
 
 @Repository
 @RequiredArgsConstructor
-public class JpaUserRepository implements UserRepository {
+public class UserRepositoryImpl implements UserRepository {
     private final UserJpaRepository userJpaRepository;
 
     @Override
