@@ -13,4 +13,9 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository{
     public Optional<RefreshToken> findByAccountId(String accountId) {
         return refreshTokenJpaRepository.findById(accountId);
     }
+
+    @Override
+    public RefreshToken save(RefreshToken refreshToken) {
+        return refreshTokenJpaRepository.save(refreshToken);
+    }
 }
