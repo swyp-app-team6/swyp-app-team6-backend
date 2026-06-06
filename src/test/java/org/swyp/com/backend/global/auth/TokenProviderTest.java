@@ -21,7 +21,7 @@ class TokenProviderTest {
     @BeforeEach
     void set() {
         this.testEmail = "user@example.com";
-        this.roles = new String[] {"USER"};
+        this.roles = new String[]{"USER"};
         this.testKey = Jwts.SIG.HS256.key().build();
         this.accessExp = 1000L * 60 * 30;
         this.refreshExp = 1000L * 60 * 60 * 24 * 14;

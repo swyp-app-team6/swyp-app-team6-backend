@@ -1,5 +1,8 @@
 package org.swyp.com.backend.login.service;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import io.jsonwebtoken.Jwts;
 import java.security.Key;
 import java.util.Base64;
@@ -7,9 +10,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.swyp.com.backend.global.auth.JwtTokenProvider;
@@ -36,7 +36,7 @@ class LoginServiceTest {
         this.testEmail = "user@example.com";
         this.testPassword = "password";
         this.testEncodedPassword = passwordEncoder.encode(testPassword);
-        this.roles = new String[] {"USER"};
+        this.roles = new String[]{"USER"};
         this.testKey = Jwts.SIG.HS256.key().build();
         this.accessExp = 1000L * 60 * 30;
         this.refreshExp = 1000L * 60 * 60 * 24 * 14;
@@ -55,7 +55,8 @@ class LoginServiceTest {
         when(userRepository.findByEmail(testEmail))
                 .thenReturn(Optional.of(testUser));
 
-        LoginService loginService = new LoginServiceImpl(userRepository, passwordEncoder, refreshTokenRepository, tokenProvider);
+        LoginService loginService = new LoginServiceImpl(userRepository, passwordEncoder, refreshTokenRepository,
+                tokenProvider);
 
         TokenResponse token = loginService.login(testEmail, testPassword);
 
@@ -72,7 +73,8 @@ class LoginServiceTest {
         RefreshTokenRepository refreshTokenRepository = mock(RefreshTokenRepository.class);
         TokenProvider tokenProvider = new JwtTokenProvider(encoded, accessExp, refreshExp);
 
-        LoginService loginService = new LoginServiceImpl(userRepository, passwordEncoder, refreshTokenRepository, tokenProvider);
+        LoginService loginService = new LoginServiceImpl(userRepository, passwordEncoder, refreshTokenRepository,
+                tokenProvider);
 
         Assertions.assertThrows(LoginException.class, () -> {
             loginService.login(testEmail, testPassword);
@@ -92,7 +94,8 @@ class LoginServiceTest {
         when(userRepository.findByEmail(testEmail))
                 .thenReturn(Optional.of(testUser));
 
-        LoginService loginService = new LoginServiceImpl(userRepository, passwordEncoder, refreshTokenRepository, tokenProvider);
+        LoginService loginService = new LoginServiceImpl(userRepository, passwordEncoder, refreshTokenRepository,
+                tokenProvider);
 
         Assertions.assertThrows(LoginException.class, () -> {
             loginService.login(testEmail, testPassword);
