@@ -65,6 +65,16 @@ public class LoginServiceImpl implements LoginService {
         return new TokenResponse(accessToken.getToken(), refreshToken.getToken());
     }
 
+    @Override
+    public TokenResponse refreshTokens(String accountId, String[] roles) { // 유효성은 필터에서 확인하였다고 가정
+        CustomClaims accessToken = jwtTokenProvider.generateToken("ACCESS", accountId, roles);
+        CustomClaims refreshToken = jwtTokenProvider.generateToken("REFRESH", accountId, roles);
+
+        persistRefreshToken(refreshToken);
+
+        return new TokenResponse(accessToken.getToken(), refreshToken.getToken());
+    }
+
     /**
      * Refresh Token을 RTR(Refresh Token Rotation) 정책에 따라 저장하거나 갱신한다.
      *
