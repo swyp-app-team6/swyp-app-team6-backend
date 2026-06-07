@@ -10,6 +10,8 @@ import java.security.Key;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +22,7 @@ import org.swyp.com.backend.global.auth.JwtTokenProvider;
 import org.swyp.com.backend.global.auth.RefreshToken;
 import org.swyp.com.backend.global.auth.RefreshTokenRepository;
 import org.swyp.com.backend.global.auth.TokenProvider;
+import org.swyp.com.backend.global.enumeration.UserRole;
 import org.swyp.com.backend.global.exception.LoginException;
 import org.swyp.com.backend.login.dto.TokenResponse;
 import org.swyp.com.backend.user.domain.User;
@@ -30,7 +33,7 @@ class LoginServiceTest {
     String testEmail;
     String testPassword;
     String testEncodedPassword;
-    String[] roles;
+    List<UserRole> roles;
     Key testKey;
     long accessExp;
     long refreshExp;
@@ -50,7 +53,7 @@ class LoginServiceTest {
         this.testEmail = "user@example.com";
         this.testPassword = "password";
         this.testEncodedPassword = passwordEncoder.encode(testPassword);
-        this.roles = new String[]{"USER"};
+        this.roles = List.of(UserRole.USER);
         this.testKey = Jwts.SIG.HS256.key().build();
         this.accessExp = 1000L * 60 * 30;
         this.refreshExp = 1000L * 60 * 60 * 24 * 14;
@@ -59,7 +62,7 @@ class LoginServiceTest {
         this.userRepository = mock(UserRepository.class);
         this.refreshTokenRepository = mock(RefreshTokenRepository.class);
         this.tokenProvider = new JwtTokenProvider(encoded, accessExp, refreshExp);
-        this.testUser = new User(1L, testEmail, testEncodedPassword, roles, currentTime, null);
+        this.testUser = new User(1L, testEmail, testEncodedPassword, new HashSet<>(roles), currentTime, null);
         this.loginService = new LoginServiceImpl(userRepository, passwordEncoder, refreshTokenRepository,
                 tokenProvider);
     }

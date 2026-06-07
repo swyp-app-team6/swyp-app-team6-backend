@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.swyp.com.backend.global.enumeration.UserRole;
 
 @Component
 public class JwtTokenProvider implements TokenProvider {
@@ -46,7 +47,7 @@ public class JwtTokenProvider implements TokenProvider {
      * @throws io.jsonwebtoken.security.SecurityException JWT 서명 과정에서 보안 오류가 발생한 경우
      * @throws io.jsonwebtoken.JwtException               JWT 생성 과정에서 오류가 발생한 경우
      */
-    public CustomClaims generateToken(String type, String accountId, String[] roles) {
+    public CustomClaims generateToken(String type, String accountId, List<UserRole> roles) {
         Date now = new Date();
         Date expiry =
                 type.equals("ACCESS") ? new Date(now.getTime() + ACCESS_EXP) : new Date(now.getTime() + REFRESH_EXP);
@@ -87,9 +88,12 @@ public class JwtTokenProvider implements TokenProvider {
                 .parseSignedClaims(token)
                 .getPayload();
 
-        List<String> roles = (List) claims.get("roles", List.class);
+        List<?> jwtRoles = claims.get("roles", List.class);
+        List<UserRole> roles = jwtRoles.stream()
+                .map(r -> UserRole.valueOf(r.toString()))
+                .toList();
 
-        return new CustomClaims(claims.getSubject(), token, roles.toArray(new String[0]), claims.getIssuedAt(),
+        return new CustomClaims(claims.getSubject(), token, roles, claims.getIssuedAt(),
                 claims.getExpiration());
 
     }
@@ -99,7 +103,7 @@ public class JwtTokenProvider implements TokenProvider {
     public static class CustomClaims {
         private String accountId;
         private String token;
-        private String[] roles;
+        private List<UserRole> roles;
         private Date issuedAt;
         private Date expiresAt;
     }

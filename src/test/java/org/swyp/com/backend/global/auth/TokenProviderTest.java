@@ -6,14 +6,16 @@ import io.jsonwebtoken.security.SignatureException;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.swyp.com.backend.global.auth.JwtTokenProvider.CustomClaims;
+import org.swyp.com.backend.global.enumeration.UserRole;
 
 class TokenProviderTest {
     String testEmail;
-    String[] roles;
+    List<UserRole> roles;
     Key testKey;
     long accessExp;
     long refreshExp;
@@ -21,7 +23,7 @@ class TokenProviderTest {
     @BeforeEach
     void set() {
         this.testEmail = "user@example.com";
-        this.roles = new String[]{"USER"};
+        this.roles = List.of(UserRole.USER);
         this.testKey = Jwts.SIG.HS256.key().build();
         this.accessExp = 1000L * 60 * 30;
         this.refreshExp = 1000L * 60 * 60 * 24 * 14;

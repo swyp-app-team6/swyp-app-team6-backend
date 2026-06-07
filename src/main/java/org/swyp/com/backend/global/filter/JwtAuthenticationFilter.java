@@ -18,7 +18,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -65,7 +65,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private Authentication getAuthentication(CustomClaims claims) {
-        Collection<? extends GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(claims.getRoles());
+        Collection<? extends GrantedAuthority> authorities = claims.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.name()))
+                .toList();
         UserDetails userDetails = new User(claims.getAccountId(), "", authorities);
         return new UsernamePasswordAuthenticationToken(userDetails, "",
                 authorities);

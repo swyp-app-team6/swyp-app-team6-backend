@@ -1,7 +1,9 @@
 package org.swyp.com.backend.login.service;
 
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +13,7 @@ import org.swyp.com.backend.global.auth.JwtTokenProvider.CustomClaims;
 import org.swyp.com.backend.global.auth.RefreshToken;
 import org.swyp.com.backend.global.auth.RefreshTokenRepository;
 import org.swyp.com.backend.global.auth.TokenProvider;
+import org.swyp.com.backend.global.enumeration.UserRole;
 import org.swyp.com.backend.global.exception.LoginException;
 import org.swyp.com.backend.login.dto.TokenResponse;
 import org.swyp.com.backend.user.domain.User;
@@ -57,8 +60,9 @@ public class LoginServiceImpl implements LoginService {
             throw new LoginException("비밀번호 불일치");
         }
 
-        CustomClaims accessToken = jwtTokenProvider.generateToken("ACCESS", email, user.getRole());
-        CustomClaims refreshToken = jwtTokenProvider.generateToken("REFRESH", email, user.getRole());
+        List<UserRole> roles = new ArrayList<>(user.getRoles());
+        CustomClaims accessToken = jwtTokenProvider.generateToken("ACCESS", email, roles);
+        CustomClaims refreshToken = jwtTokenProvider.generateToken("REFRESH", email, roles);
 
         persistRefreshToken(refreshToken);
 
@@ -66,7 +70,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public TokenResponse refreshTokens(String accountId, String[] roles) { // 유효성은 필터에서 확인하였다고 가정
+    public TokenResponse refreshTokens(String accountId, List<UserRole> roles) { // 유효성은 필터에서 확인하였다고 가정
         CustomClaims accessToken = jwtTokenProvider.generateToken("ACCESS", accountId, roles);
         CustomClaims refreshToken = jwtTokenProvider.generateToken("REFRESH", accountId, roles);
 
