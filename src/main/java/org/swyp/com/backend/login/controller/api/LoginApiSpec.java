@@ -5,11 +5,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.swyp.com.backend.login.dto.LoginRequest;
+import org.swyp.com.backend.login.dto.RefreshTokenRequest;
 import org.swyp.com.backend.login.dto.TokenResponse;
 
 public interface LoginApiSpec {
@@ -55,8 +53,7 @@ public interface LoginApiSpec {
 
     @Operation(
             summary = "토큰 재발급 처리",
-            operationId = "Refresh",
-            security = @SecurityRequirement(name = "bearerAuth")
+            operationId = "Refresh"
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -91,6 +88,6 @@ public interface LoginApiSpec {
                     )
             )
     })
-    ResponseEntity<TokenResponse> refresh(@AuthenticationPrincipal UserDetails userDetails);
+    ResponseEntity<TokenResponse> refresh(RefreshTokenRequest refreshToken);
 
 }

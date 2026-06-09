@@ -1,20 +1,16 @@
 package org.swyp.com.backend.login.controller;
 
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.swyp.com.backend.global.enumeration.UserRole;
 import org.swyp.com.backend.login.controller.api.LoginApiSpec;
 import org.swyp.com.backend.login.dto.LoginRequest;
+import org.swyp.com.backend.login.dto.RefreshTokenRequest;
 import org.swyp.com.backend.login.dto.TokenResponse;
 import org.swyp.com.backend.login.service.LoginService;
 
@@ -35,14 +31,8 @@ public class LoginController implements LoginApiSpec {
 
     @Override
     @PostMapping("/refresh")
-    public ResponseEntity<TokenResponse> refresh(@AuthenticationPrincipal UserDetails userDetails) {
-        String accountId = userDetails.getUsername();
-        List<UserRole> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .map(UserRole::valueOf)
-                .toList();
-
-        TokenResponse token = loginService.refreshTokens(accountId, roles);
+    public ResponseEntity<TokenResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        TokenResponse token = loginService.refreshTokens(request.refreshToken());
         return ResponseEntity.ok(token);
     }
 }

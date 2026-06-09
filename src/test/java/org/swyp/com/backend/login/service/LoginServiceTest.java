@@ -6,6 +6,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import java.security.Key;
 import java.time.LocalDateTime;
 import java.util.Base64;
@@ -13,6 +15,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +26,7 @@ import org.swyp.com.backend.global.auth.RefreshToken;
 import org.swyp.com.backend.global.auth.RefreshTokenRepository;
 import org.swyp.com.backend.global.auth.TokenProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
+import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.global.exception.LoginException;
 import org.swyp.com.backend.login.dto.TokenResponse;
 import org.swyp.com.backend.user.domain.User;
@@ -44,8 +48,6 @@ class LoginServiceTest {
     TokenProvider tokenProvider;
     User testUser;
     LoginService loginService;
-    Date issuedDate;
-    Date expiresDate;
 
     @BeforeEach
     void set() {
@@ -105,25 +107,71 @@ class LoginServiceTest {
     @Test
     void refreshSuccessTest() {
         // given
-        issuedDate = new Date();
-        expiresDate = new Date(issuedDate.getTime() + refreshExp);
-        String storedToken = setToken(new Date(0), expiresDate);
-        when(userRepository.findByEmail(testEmail))
-                .thenReturn(Optional.of(testUser));
+        Date issuedDate = new Date();
+        Date expiresDate = new Date(issuedDate.getTime() + refreshExp);
+        String jti = UUID.randomUUID().toString();
+        String storedToken = setToken(jti, new Date(0), expiresDate);
+
         when(refreshTokenRepository.findByAccountId(testEmail))
-                .thenReturn(Optional.of(new RefreshToken(testEmail, storedToken, expiresDate)));
+                .thenReturn(Optional.of(new RefreshToken(testEmail, jti, expiresDate)));
 
         // when
-        TokenResponse rftokenResponse = loginService.refreshTokens(testEmail, roles);
+        TokenResponse rftokenResponse = loginService.refreshTokens(storedToken);
 
         // then
         Assertions.assertNotEquals(storedToken, rftokenResponse.refreshToken());
     }
 
-    private String setToken(Date issuedDate, Date expiresDate) {
+    @Test
+    void refreshFailTest_notValidRequestData() {
+
+        Assertions.assertThrows(MalformedJwtException.class, () -> {
+            loginService.refreshTokens("notValidToken");
+        });
+
+    }
+
+    @Test
+    void refreshFailTest_notValidRefreshToken() {
+        Key invalidKey = Jwts.SIG.HS256.key().build();
+        Date issuedDate = new Date();
+        Date expiresDate = new Date(issuedDate.getTime() + refreshExp);
+
+        String generatedToken = Jwts.builder()
+                .subject(testEmail)
+                .claim("roles", roles)
+                .id(UUID.randomUUID().toString())
+                .issuedAt(issuedDate)
+                .expiration(expiresDate)
+                .signWith(invalidKey)
+                .compact();
+
+        Assertions.assertThrows(SignatureException.class, () -> {
+            loginService.refreshTokens(generatedToken);
+        });
+    }
+
+    @Test
+    void refreshFailTest_tokenUUIDNotMatch() {
+        Date issuedDate = new Date();
+        Date expiresDate = new Date(issuedDate.getTime() + refreshExp);
+        String jti = UUID.randomUUID().toString();
+        String storedToken = setToken(jti, new Date(0), expiresDate);
+
+        when(refreshTokenRepository.findByAccountId(testEmail))
+                .thenReturn(Optional.of(new RefreshToken(testEmail, "not_match_uuid", expiresDate)));
+
+        Assertions.assertThrows(BusinessException.class, () -> {
+            loginService.refreshTokens(storedToken);
+        });
+
+    }
+
+    private String setToken(String jti, Date issuedDate, Date expiresDate) {
         return Jwts.builder()
                 .subject(testEmail)
                 .claim("roles", roles)
+                .id(jti)
                 .issuedAt(issuedDate)
                 .expiration(expiresDate)
                 .signWith(testKey)
