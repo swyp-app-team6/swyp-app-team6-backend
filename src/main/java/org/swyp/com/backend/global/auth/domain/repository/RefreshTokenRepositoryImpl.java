@@ -1,12 +1,14 @@
-package org.swyp.com.backend.global.auth;
+package org.swyp.com.backend.global.auth.domain.repository;
 
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.swyp.com.backend.global.auth.domain.RefreshToken;
 
 @Repository
 @RequiredArgsConstructor
 public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
+
     private final RefreshTokenJpaRepository refreshTokenJpaRepository;
 
     @Override

@@ -9,10 +9,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.swyp.com.backend.global.auth.JwtTokenProvider.CustomClaims;
-import org.swyp.com.backend.global.auth.RefreshToken;
-import org.swyp.com.backend.global.auth.RefreshTokenRepository;
-import org.swyp.com.backend.global.auth.TokenProvider;
+import org.swyp.com.backend.global.auth.domain.RefreshToken;
+import org.swyp.com.backend.global.auth.domain.repository.RefreshTokenRepository;
+import org.swyp.com.backend.global.auth.jwt.CustomClaims;
+import org.swyp.com.backend.global.auth.jwt.TokenProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.global.exception.LoginException;
@@ -24,6 +24,7 @@ import org.swyp.com.backend.user.domain.repository.UserRepository;
 @RequiredArgsConstructor
 @Transactional
 public class LoginServiceImpl implements LoginService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
