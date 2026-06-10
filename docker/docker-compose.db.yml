@@ -4,6 +4,7 @@ services:
   db:
     image: mysql:latest
     container_name: mysql
+    command: --event-scheduler=ON
     ports:
       - "3306:3306"
     environment:
@@ -11,6 +12,7 @@ services:
       MYSQL_DATABASE: "root"
     volumes:
       - ./volumes/mysql_data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d
     restart: always
     networks:
       - app-tier
