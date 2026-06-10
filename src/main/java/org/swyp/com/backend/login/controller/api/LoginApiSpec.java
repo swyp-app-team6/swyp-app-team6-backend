@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.swyp.com.backend.login.dto.LoginRequest;
+import org.swyp.com.backend.login.dto.RefreshTokenRequest;
+import org.swyp.com.backend.login.dto.TokenResponse;
 
 public interface LoginApiSpec {
 
@@ -23,7 +25,8 @@ public interface LoginApiSpec {
                             examples = @ExampleObject(
                                     value = """
                                             {
-                                              "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+                                              "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6...",
+                                              "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
                                             }
                                             """
                             )
@@ -46,6 +49,45 @@ public interface LoginApiSpec {
                     )
             )
     })
-    ResponseEntity<Void> login(LoginRequest request);
+    ResponseEntity<TokenResponse> login(LoginRequest request);
+
+    @Operation(
+            summary = "토큰 재발급 처리",
+            operationId = "Refresh"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "JWT 토큰 재발급 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6...",
+                                              "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "토큰 유효하지 않음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "title": "UNAUTHORIZED",
+                                              "status": 401,
+                                              "detail": "인증 정보가 유효하지 않습니다."
+                                            }
+                                            """
+                            )
+                    )
+            )
+    })
+    ResponseEntity<TokenResponse> refresh(RefreshTokenRequest refreshToken);
 
 }
