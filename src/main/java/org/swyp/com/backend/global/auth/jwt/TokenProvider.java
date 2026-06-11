@@ -12,12 +12,12 @@ public interface TokenProvider {
      * 토큰 타입, 사용자 식별자 및 권한 정보를 사용하여 새로운 토큰을 생성합니다.
      *
      * @param type  생성할 토큰의 타입 (예: "ACCESS", "REFRESH")
-     * @param sub   토큰의 주체 (사용자 계정 ID 또는 이메일)
-     * @param roles 사용자에게 부여된 권한 목록
+     * @param userId 토큰의 주체 (사용자 PK)
+     * @param roles  사용자에게 부여된 권한 목록
      * @return 생성된 토큰 문자열과 관련 클레임 정보를 포함하는 {@link CustomClaims} 객체
      * @throws io.jsonwebtoken.JwtException 토큰 생성 과정에서 오류가 발생한 경우
      */
-    CustomClaims generateToken(String type, String sub, List<UserRole> roles);
+    CustomClaims generateToken(String type, Long userId, List<UserRole> roles);
 
     /**
      * 전달받은 토큰의 유효성을 검증하고 토큰에 포함된 클레임 정보를 추출합니다.

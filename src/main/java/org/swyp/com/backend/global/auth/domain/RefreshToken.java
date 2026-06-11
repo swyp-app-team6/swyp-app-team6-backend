@@ -19,7 +19,7 @@ public class RefreshToken {
 
     @Id
     @Setter(AccessLevel.NONE)
-    private String accountId;
+    private Long userId;
     @Column(nullable = false, unique = true)
     private String jti;
     @Column(nullable = false)

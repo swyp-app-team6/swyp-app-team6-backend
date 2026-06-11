@@ -11,7 +11,7 @@ import org.swyp.com.backend.global.enumeration.UserRole;
 
 public final class JwtTestFixture {
 
-    public static final String TEST_EMAIL = "user@example.com";
+    public static final Long TEST_USER_ID = 1L;
     public static final List<UserRole> ROLES = List.of(UserRole.USER);
     public static final long ACCESS_EXP = 1_800_000L;
     public static final long REFRESH_EXP = 1_209_600_000L;
@@ -30,7 +30,7 @@ public final class JwtTestFixture {
 
     public static String buildToken(Key key, String jti, Date issuedAt, Date expiresAt) {
         return Jwts.builder()
-                .subject(TEST_EMAIL)
+                .subject(TEST_USER_ID.toString())
                 .claim("roles", ROLES)
                 .id(jti)
                 .issuedAt(issuedAt)

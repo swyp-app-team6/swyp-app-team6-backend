@@ -54,18 +54,18 @@ class LoginServiceTest {
         testKey = JwtTestFixture.buildKey();
         tokenProvider = JwtTestFixture.buildTokenProvider(testKey);
         loginService = new LoginServiceImpl(userRepository, passwordEncoder, refreshTokenRepository, tokenProvider);
-        testUser = new User(1L, JwtTestFixture.TEST_EMAIL, passwordEncoder.encode(TEST_PASSWORD),
+        testUser = new User(JwtTestFixture.TEST_USER_ID, "user@example.com", passwordEncoder.encode(TEST_PASSWORD),
                 new HashSet<>(JwtTestFixture.ROLES), LocalDateTime.now(), null);
     }
 
     @Test
     void loginSuccessTest() {
         // given
-        when(userRepository.findByEmail(JwtTestFixture.TEST_EMAIL))
+        when(userRepository.findByEmail("user@example.com"))
                 .thenReturn(Optional.of(testUser));
 
         // when
-        TokenResponse token = loginService.login(JwtTestFixture.TEST_EMAIL, TEST_PASSWORD);
+        TokenResponse token = loginService.login("user@example.com", TEST_PASSWORD);
 
         // then
         Assertions.assertInstanceOf(TokenResponse.class, token);
@@ -77,13 +77,13 @@ class LoginServiceTest {
     @Test
     void loginSuccessTest_whenRefreshTokenExists_shouldUpdate() {
         // given
-        RefreshToken existingToken = new RefreshToken(JwtTestFixture.TEST_EMAIL, "old-jti", new Date());
+        RefreshToken existingToken = new RefreshToken(JwtTestFixture.TEST_USER_ID, "old-jti", new Date());
 
-        when(userRepository.findByEmail(JwtTestFixture.TEST_EMAIL)).thenReturn(Optional.of(testUser));
-        when(refreshTokenRepository.findByAccountId(JwtTestFixture.TEST_EMAIL)).thenReturn(Optional.of(existingToken));
+        when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(testUser));
+        when(refreshTokenRepository.findByUserId(JwtTestFixture.TEST_USER_ID)).thenReturn(Optional.of(existingToken));
 
         // when
-        loginService.login(JwtTestFixture.TEST_EMAIL, TEST_PASSWORD);
+        loginService.login("user@example.com", TEST_PASSWORD);
 
         // then
         verify(refreshTokenRepository, never()).save(any());
@@ -94,19 +94,19 @@ class LoginServiceTest {
     void loginFailTest_accountNotExist() {
         // given & when & then
         Assertions.assertThrows(LoginException.class, () -> {
-            loginService.login(JwtTestFixture.TEST_EMAIL, TEST_PASSWORD);
+            loginService.login("user@example.com", TEST_PASSWORD);
         });
     }
 
     @Test
     void loginFailTest_passwordNotMatch() {
         // given
-        when(userRepository.findByEmail(JwtTestFixture.TEST_EMAIL))
+        when(userRepository.findByEmail("user@example.com"))
                 .thenReturn(Optional.of(testUser));
 
         // when & then
         Assertions.assertThrows(LoginException.class, () -> {
-            loginService.login(JwtTestFixture.TEST_EMAIL, "notValidPassword");
+            loginService.login("user@example.com", "notValidPassword");
         });
     }
 
@@ -118,8 +118,8 @@ class LoginServiceTest {
         String jti = UUID.randomUUID().toString();
         String storedToken = JwtTestFixture.buildToken(testKey, jti, new Date(0), expiresDate);
 
-        when(refreshTokenRepository.findByAccountId(JwtTestFixture.TEST_EMAIL))
-                .thenReturn(Optional.of(new RefreshToken(JwtTestFixture.TEST_EMAIL, jti, expiresDate)));
+        when(refreshTokenRepository.findByUserId(JwtTestFixture.TEST_USER_ID))
+                .thenReturn(Optional.of(new RefreshToken(JwtTestFixture.TEST_USER_ID, jti, expiresDate)));
 
         // when
         TokenResponse rftokenResponse = loginService.refreshTokens(storedToken);
@@ -159,8 +159,8 @@ class LoginServiceTest {
         String jti = UUID.randomUUID().toString();
         String storedToken = JwtTestFixture.buildToken(testKey, jti, new Date(0), expiresDate);
 
-        when(refreshTokenRepository.findByAccountId(JwtTestFixture.TEST_EMAIL))
-                .thenReturn(Optional.of(new RefreshToken(JwtTestFixture.TEST_EMAIL, "not_match_uuid", expiresDate)));
+        when(refreshTokenRepository.findByUserId(JwtTestFixture.TEST_USER_ID))
+                .thenReturn(Optional.of(new RefreshToken(JwtTestFixture.TEST_USER_ID, "not_match_uuid", expiresDate)));
 
         // when & then
         Assertions.assertThrows(BusinessException.class, () -> {

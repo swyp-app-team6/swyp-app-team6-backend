@@ -28,14 +28,14 @@ public class JwtTokenProvider implements TokenProvider {
         this.REFRESH_EXP = refreshExp;
     }
 
-    public CustomClaims generateToken(String type, String accountId, List<UserRole> roles) {
+    public CustomClaims generateToken(String type, Long userId, List<UserRole> roles) {
         Date now = new Date();
         Date expiry =
                 type.equals("ACCESS") ? new Date(now.getTime() + ACCESS_EXP) : new Date(now.getTime() + REFRESH_EXP);
         String jti = UUID.randomUUID().toString();
 
         String generatedToken = Jwts.builder()
-                .subject(accountId)
+                .subject(userId.toString())
                 .claim("roles", roles)
                 .id(jti)
                 .issuedAt(now)
@@ -43,7 +43,7 @@ public class JwtTokenProvider implements TokenProvider {
                 .signWith(key)
                 .compact();
 
-        return new CustomClaims(accountId, generatedToken, roles, jti, now, expiry);
+        return new CustomClaims(userId, generatedToken, roles, jti, now, expiry);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class JwtTokenProvider implements TokenProvider {
                 .map(r -> UserRole.valueOf(r.toString()))
                 .toList();
 
-        return new CustomClaims(claims.getSubject(), token, roles, claims.getId(), claims.getIssuedAt(),
+        return new CustomClaims(Long.parseLong(claims.getSubject()), token, roles, claims.getId(), claims.getIssuedAt(),
                 claims.getExpiration());
 
     }

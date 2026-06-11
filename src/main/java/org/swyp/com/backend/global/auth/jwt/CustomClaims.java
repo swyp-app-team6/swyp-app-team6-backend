@@ -10,7 +10,7 @@ import org.swyp.com.backend.global.enumeration.UserRole;
 @AllArgsConstructor
 public class CustomClaims {
 
-    private String accountId;
+    private Long userId;
     private String token;
     private List<UserRole> roles;
     private String jti;

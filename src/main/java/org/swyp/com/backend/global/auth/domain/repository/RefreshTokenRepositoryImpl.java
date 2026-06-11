@@ -12,8 +12,8 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
     private final RefreshTokenJpaRepository refreshTokenJpaRepository;
 
     @Override
-    public Optional<RefreshToken> findByAccountId(String accountId) {
-        return refreshTokenJpaRepository.findById(accountId);
+    public Optional<RefreshToken> findByUserId(Long userId) {
+        return refreshTokenJpaRepository.findById(userId);
     }
 
     @Override

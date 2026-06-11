@@ -69,7 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Collection<? extends GrantedAuthority> authorities = claims.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.name()))
                 .toList();
-        UserDetails userDetails = new User(claims.getAccountId(), "", authorities);
+        UserDetails userDetails = new User(claims.getUserId().toString(), "", authorities);
         return new UsernamePasswordAuthenticationToken(userDetails, "",
                 authorities);
 

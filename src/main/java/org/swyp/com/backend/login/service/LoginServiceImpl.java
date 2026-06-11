@@ -39,8 +39,8 @@ public class LoginServiceImpl implements LoginService {
         }
 
         List<UserRole> roles = new ArrayList<>(user.getRoles());
-        CustomClaims accessToken = jwtTokenProvider.generateToken("ACCESS", email, roles);
-        CustomClaims refreshToken = jwtTokenProvider.generateToken("REFRESH", email, roles);
+        CustomClaims accessToken = jwtTokenProvider.generateToken("ACCESS", user.getId(), roles);
+        CustomClaims refreshToken = jwtTokenProvider.generateToken("REFRESH", user.getId(), roles);
 
         persistRefreshToken(refreshToken);
 
@@ -51,14 +51,14 @@ public class LoginServiceImpl implements LoginService {
     public TokenResponse refreshTokens(String token) {
         CustomClaims claims = jwtTokenProvider.validateToken(token);
 
-        String accountId = claims.getAccountId();
+        Long userId = claims.getUserId();
         String jti = claims.getJti();
         List<UserRole> roles = claims.getRoles();
 
-        validateTokenUUID(accountId, jti);
+        validateTokenUUID(userId, jti);
 
-        CustomClaims accessToken = jwtTokenProvider.generateToken("ACCESS", accountId, roles);
-        CustomClaims refreshToken = jwtTokenProvider.generateToken("REFRESH", accountId, roles);
+        CustomClaims accessToken = jwtTokenProvider.generateToken("ACCESS", userId, roles);
+        CustomClaims refreshToken = jwtTokenProvider.generateToken("REFRESH", userId, roles);
 
         persistRefreshToken(refreshToken);
 
@@ -66,26 +66,26 @@ public class LoginServiceImpl implements LoginService {
     }
 
     private void persistRefreshToken(CustomClaims generatedRefreshToken) {
-        String accountId = generatedRefreshToken.getAccountId();
+        Long userId = generatedRefreshToken.getUserId();
         String jti = generatedRefreshToken.getJti();
         Date expiresAt = generatedRefreshToken.getExpiresAt();
 
         Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository
-                .findByAccountId(accountId);
+                .findByUserId(userId);
 
         if (optionalRefreshToken.isPresent()) {
             RefreshToken refreshToken = optionalRefreshToken.get();
             refreshToken.setJti(jti);
             refreshToken.setExpiresAt(expiresAt);
         } else {
-            RefreshToken refreshToken = new RefreshToken(accountId, jti, expiresAt);
+            RefreshToken refreshToken = new RefreshToken(userId, jti, expiresAt);
             refreshTokenRepository.save(refreshToken);
         }
     }
 
-    private void validateTokenUUID(String accountId, String jti) {
+    private void validateTokenUUID(Long userId, String jti) {
         Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository
-                .findByAccountId(accountId);
+                .findByUserId(userId);
 
         if (optionalRefreshToken.isPresent()) {
             RefreshToken refreshToken = optionalRefreshToken.get();
