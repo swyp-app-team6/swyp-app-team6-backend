@@ -1,4 +1,4 @@
-package org.swyp.com.backend.global.auth;
+package org.swyp.com.backend.global.auth.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,9 +16,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RefreshToken {
+
     @Id
     @Setter(AccessLevel.NONE)
-    private String accountId;
+    private Long userId;
     @Column(nullable = false, unique = true)
     private String jti;
     @Column(nullable = false)

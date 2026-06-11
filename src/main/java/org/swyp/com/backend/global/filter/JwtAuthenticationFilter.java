@@ -23,10 +23,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.swyp.com.backend.global.auth.JwtTokenProvider.CustomClaims;
-import org.swyp.com.backend.global.auth.TokenProvider;
+import org.swyp.com.backend.global.auth.jwt.CustomClaims;
+import org.swyp.com.backend.global.auth.jwt.TokenProvider;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     private final TokenProvider tokenProvider;
     private final ObjectMapper objectMapper;
 
@@ -68,7 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Collection<? extends GrantedAuthority> authorities = claims.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.name()))
                 .toList();
-        UserDetails userDetails = new User(claims.getAccountId(), "", authorities);
+        UserDetails userDetails = new User(claims.getUserId().toString(), "", authorities);
         return new UsernamePasswordAuthenticationToken(userDetails, "",
                 authorities);
 
