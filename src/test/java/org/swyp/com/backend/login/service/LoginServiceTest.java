@@ -25,7 +25,6 @@ import org.swyp.com.backend.global.auth.domain.RefreshToken;
 import org.swyp.com.backend.global.auth.domain.repository.RefreshTokenRepository;
 import org.swyp.com.backend.global.auth.jwt.TokenProvider;
 import org.swyp.com.backend.global.exception.BusinessException;
-import org.swyp.com.backend.global.exception.LoginException;
 import org.swyp.com.backend.login.dto.TokenResponse;
 import org.swyp.com.backend.support.JwtTestFixture;
 import org.swyp.com.backend.user.domain.User;
@@ -92,7 +91,7 @@ class LoginServiceTest {
     @Test
     void loginFailTest_accountNotExist() {
         // given & when & then
-        Assertions.assertThrows(LoginException.class, () -> {
+        Assertions.assertThrows(BusinessException.class, () -> {
             loginService.login("user@example.com", TEST_PASSWORD);
         });
     }
@@ -104,7 +103,7 @@ class LoginServiceTest {
                 .thenReturn(Optional.of(testUser));
 
         // when & then
-        Assertions.assertThrows(LoginException.class, () -> {
+        Assertions.assertThrows(BusinessException.class, () -> {
             loginService.login("user@example.com", "notValidPassword");
         });
     }

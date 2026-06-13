@@ -53,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
-            setErrorResponse(response, "토큰 만료됨");
+            setErrorResponse(response, "만료된 토큰입니다.");
         } catch (SignatureException e) {
             setErrorResponse(response, "서명 검증 실패");
         } catch (MalformedJwtException e) {
@@ -84,10 +84,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
 
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.UNAUTHORIZED, errorMessage
-        );
-
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, errorMessage);
         objectMapper.writeValue(response.getWriter(), problemDetail);
     }
 

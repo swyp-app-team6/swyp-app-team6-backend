@@ -13,7 +13,7 @@ public interface LoginService {
      * @param email 사용자 이메일
      * @param password 사용자 비밀번호
      * @return 생성된 액세스 토큰과 리프레시 토큰 정보를 담은 {@link TokenResponse}
-     * @throws org.swyp.com.backend.global.exception.LoginException 사용자를 찾을 수 없거나 비밀번호가 일치하지 않는 경우 발생
+     * @throws org.swyp.com.backend.global.exception.BusinessException 사용자를 찾을 수 없거나 비밀번호가 일치하지 않는 경우 발생
      */
     public TokenResponse login(String email, String password);
 

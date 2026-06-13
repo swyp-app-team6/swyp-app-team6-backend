@@ -57,6 +57,5 @@ public class JwtTokenProvider implements TokenProvider {
 
         return new CustomClaims(Long.parseLong(claims.getSubject()), token, role, claims.getId(), claims.getIssuedAt(),
                 claims.getExpiration());
-
     }
 }
