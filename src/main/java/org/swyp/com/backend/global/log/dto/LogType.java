@@ -1,0 +1,11 @@
+package org.swyp.com.backend.global.log.dto;
+
+public enum LogType {
+    SERVER_ERROR,
+    EXTERNAL_ERROR,
+    CLIENT_ERROR,
+    INFO,
+    BUSINESS,
+    REQUEST,
+    RESPONSE
+}
