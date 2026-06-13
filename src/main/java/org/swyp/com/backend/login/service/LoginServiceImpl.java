@@ -1,9 +1,7 @@
 package org.swyp.com.backend.login.service;
 
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,9 +36,8 @@ public class LoginServiceImpl implements LoginService {
             throw new LoginException("비밀번호 불일치");
         }
 
-        List<UserRole> roles = new ArrayList<>(user.getRoles());
-        CustomClaims accessToken = jwtTokenProvider.generateToken("ACCESS", user.getId(), roles);
-        CustomClaims refreshToken = jwtTokenProvider.generateToken("REFRESH", user.getId(), roles);
+        CustomClaims accessToken = jwtTokenProvider.generateToken("ACCESS", user.getId(), user.getRole());
+        CustomClaims refreshToken = jwtTokenProvider.generateToken("REFRESH", user.getId(), user.getRole());
 
         persistRefreshToken(refreshToken);
 
@@ -53,12 +50,12 @@ public class LoginServiceImpl implements LoginService {
 
         Long userId = claims.getUserId();
         String jti = claims.getJti();
-        List<UserRole> roles = claims.getRoles();
+        UserRole role = claims.getRole();
 
         validateTokenUUID(userId, jti);
 
-        CustomClaims accessToken = jwtTokenProvider.generateToken("ACCESS", userId, roles);
-        CustomClaims refreshToken = jwtTokenProvider.generateToken("REFRESH", userId, roles);
+        CustomClaims accessToken = jwtTokenProvider.generateToken("ACCESS", userId, role);
+        CustomClaims refreshToken = jwtTokenProvider.generateToken("REFRESH", userId, role);
 
         persistRefreshToken(refreshToken);
 

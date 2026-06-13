@@ -6,7 +6,6 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +27,7 @@ public class JwtTokenProvider implements TokenProvider {
         this.REFRESH_EXP = refreshExp;
     }
 
-    public CustomClaims generateToken(String type, Long userId, List<UserRole> roles) {
+    public CustomClaims generateToken(String type, Long userId, UserRole role) {
         Date now = new Date();
         Date expiry =
                 type.equals("ACCESS") ? new Date(now.getTime() + ACCESS_EXP) : new Date(now.getTime() + REFRESH_EXP);
@@ -36,14 +35,14 @@ public class JwtTokenProvider implements TokenProvider {
 
         String generatedToken = Jwts.builder()
                 .subject(userId.toString())
-                .claim("roles", roles)
+                .claim("role", role.name())
                 .id(jti)
                 .issuedAt(now)
                 .expiration(expiry)
                 .signWith(key)
                 .compact();
 
-        return new CustomClaims(userId, generatedToken, roles, jti, now, expiry);
+        return new CustomClaims(userId, generatedToken, role, jti, now, expiry);
     }
 
     @Override
@@ -54,12 +53,9 @@ public class JwtTokenProvider implements TokenProvider {
                 .parseSignedClaims(token)
                 .getPayload();
 
-        List<?> jwtRoles = claims.get("roles", List.class);
-        List<UserRole> roles = jwtRoles.stream()
-                .map(r -> UserRole.valueOf(r.toString()))
-                .toList();
+        UserRole role = UserRole.valueOf(claims.get("role", String.class));
 
-        return new CustomClaims(Long.parseLong(claims.getSubject()), token, roles, claims.getId(), claims.getIssuedAt(),
+        return new CustomClaims(Long.parseLong(claims.getSubject()), token, role, claims.getId(), claims.getIssuedAt(),
                 claims.getExpiration());
 
     }

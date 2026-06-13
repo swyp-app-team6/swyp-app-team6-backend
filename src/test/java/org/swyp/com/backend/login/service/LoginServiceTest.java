@@ -11,7 +11,6 @@ import io.jsonwebtoken.security.SignatureException;
 import java.security.Key;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
@@ -55,7 +54,7 @@ class LoginServiceTest {
         tokenProvider = JwtTestFixture.buildTokenProvider(testKey);
         loginService = new LoginServiceImpl(userRepository, passwordEncoder, refreshTokenRepository, tokenProvider);
         testUser = new User(JwtTestFixture.TEST_USER_ID, "user@example.com", passwordEncoder.encode(TEST_PASSWORD),
-                new HashSet<>(JwtTestFixture.ROLES), LocalDateTime.now(), null);
+                JwtTestFixture.ROLE, LocalDateTime.now(), null);
     }
 
     @Test

@@ -11,7 +11,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
@@ -66,13 +66,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private Authentication getAuthentication(CustomClaims claims) {
-        Collection<? extends GrantedAuthority> authorities = claims.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.name()))
-                .toList();
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(claims.getRole().name()));
         UserDetails userDetails = new User(claims.getUserId().toString(), "", authorities);
-        return new UsernamePasswordAuthenticationToken(userDetails, "",
-                authorities);
-
+        return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
     }
 
     private String resolveToken(String authorization) {
