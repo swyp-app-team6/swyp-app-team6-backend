@@ -4,7 +4,6 @@ import io.jsonwebtoken.Jwts;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 import org.swyp.com.backend.global.auth.jwt.JwtTokenProvider;
 import org.swyp.com.backend.global.auth.jwt.TokenProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
@@ -12,7 +11,7 @@ import org.swyp.com.backend.global.enumeration.UserRole;
 public final class JwtTestFixture {
 
     public static final Long TEST_USER_ID = 1L;
-    public static final List<UserRole> ROLES = List.of(UserRole.USER);
+    public static final UserRole ROLE = UserRole.USER;
     public static final long ACCESS_EXP = 1_800_000L;
     public static final long REFRESH_EXP = 1_209_600_000L;
 
@@ -31,7 +30,7 @@ public final class JwtTestFixture {
     public static String buildToken(Key key, String jti, Date issuedAt, Date expiresAt) {
         return Jwts.builder()
                 .subject(TEST_USER_ID.toString())
-                .claim("roles", ROLES)
+                .claim("role", ROLE.name())
                 .id(jti)
                 .issuedAt(issuedAt)
                 .expiration(expiresAt)

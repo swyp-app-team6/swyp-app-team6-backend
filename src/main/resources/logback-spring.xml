@@ -1,0 +1,43 @@
+<configuration>
+
+    <!--  로컬/개발 환경: 읽기 쉬운 텍스트  -->
+    <springProfile name="local,test">
+
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) %cyan([%X{request_id:-}]) %magenta(%logger{36}) -
+                    %msg%n
+                </pattern>
+                <charset>UTF-8</charset>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+
+        <logger name="org.hibernate.SQL" level="DEBUG"/>
+        <logger name="org.hibernate.orm.jdbc.bind" level="TRACE"/>
+
+    </springProfile>
+
+
+    <!--  운영 환경: JSON (ELK 연동)     -->
+    <springProfile name="prod">
+
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <includeCallerData>false</includeCallerData>
+                <includeMdcKeyName>request_id</includeMdcKeyName>
+                <includeMdcKeyName>request_uri</includeMdcKeyName>
+                <includeMdcKeyName>client_ip</includeMdcKeyName>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+
+    </springProfile>
+
+</configuration>

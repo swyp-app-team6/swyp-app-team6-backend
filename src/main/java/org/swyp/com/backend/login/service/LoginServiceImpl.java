@@ -1,11 +1,10 @@
 package org.swyp.com.backend.login.service;
 
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +14,6 @@ import org.swyp.com.backend.global.auth.jwt.CustomClaims;
 import org.swyp.com.backend.global.auth.jwt.TokenProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
 import org.swyp.com.backend.global.exception.BusinessException;
-import org.swyp.com.backend.global.exception.LoginException;
 import org.swyp.com.backend.login.dto.TokenResponse;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.repository.UserRepository;
@@ -33,14 +31,13 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public TokenResponse login(String email, String password) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new LoginException("회원가입 필요"));
+                .orElseThrow(() -> new BusinessException(HttpStatus.UNAUTHORIZED, "회원가입 필요"));
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new LoginException("비밀번호 불일치");
+            throw new BusinessException(HttpStatus.UNAUTHORIZED, "비밀번호 불일치");
         }
 
-        List<UserRole> roles = new ArrayList<>(user.getRoles());
-        CustomClaims accessToken = jwtTokenProvider.generateToken("ACCESS", user.getId(), roles);
-        CustomClaims refreshToken = jwtTokenProvider.generateToken("REFRESH", user.getId(), roles);
+        CustomClaims accessToken = jwtTokenProvider.generateToken("ACCESS", user.getId(), user.getRole());
+        CustomClaims refreshToken = jwtTokenProvider.generateToken("REFRESH", user.getId(), user.getRole());
 
         persistRefreshToken(refreshToken);
 
@@ -53,12 +50,12 @@ public class LoginServiceImpl implements LoginService {
 
         Long userId = claims.getUserId();
         String jti = claims.getJti();
-        List<UserRole> roles = claims.getRoles();
+        UserRole role = claims.getRole();
 
         validateTokenUUID(userId, jti);
 
-        CustomClaims accessToken = jwtTokenProvider.generateToken("ACCESS", userId, roles);
-        CustomClaims refreshToken = jwtTokenProvider.generateToken("REFRESH", userId, roles);
+        CustomClaims accessToken = jwtTokenProvider.generateToken("ACCESS", userId, role);
+        CustomClaims refreshToken = jwtTokenProvider.generateToken("REFRESH", userId, role);
 
         persistRefreshToken(refreshToken);
 
@@ -90,7 +87,7 @@ public class LoginServiceImpl implements LoginService {
         if (optionalRefreshToken.isPresent()) {
             RefreshToken refreshToken = optionalRefreshToken.get();
             if (!refreshToken.getJti().equals(jti)) {
-                throw new BusinessException("refresh Token 값 불일치");
+                throw new BusinessException(HttpStatus.UNAUTHORIZED, "refresh Token 값 불일치");
             }
         }
     }

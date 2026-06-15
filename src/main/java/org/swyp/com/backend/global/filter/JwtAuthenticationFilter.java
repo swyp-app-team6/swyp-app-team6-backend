@@ -11,7 +11,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
@@ -53,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
-            setErrorResponse(response, "토큰 만료됨");
+            setErrorResponse(response, "만료된 토큰입니다.");
         } catch (SignatureException e) {
             setErrorResponse(response, "서명 검증 실패");
         } catch (MalformedJwtException e) {
@@ -66,13 +66,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private Authentication getAuthentication(CustomClaims claims) {
-        Collection<? extends GrantedAuthority> authorities = claims.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.name()))
-                .toList();
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(claims.getRole().name()));
         UserDetails userDetails = new User(claims.getUserId().toString(), "", authorities);
-        return new UsernamePasswordAuthenticationToken(userDetails, "",
-                authorities);
-
+        return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
     }
 
     private String resolveToken(String authorization) {
@@ -88,10 +84,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
 
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.UNAUTHORIZED, errorMessage
-        );
-
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, errorMessage);
         objectMapper.writeValue(response.getWriter(), problemDetail);
     }
 
