@@ -43,11 +43,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = resolveToken(request.getHeader("Authorization"));
 
             if (token != null) {
-                // token validate
                 CustomClaims claims = tokenProvider.validateToken(token);
-                // claims 기반으로 Authentication 생성
                 Authentication authentication = getAuthentication(claims);
-                // SecurityContext Set
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
 
