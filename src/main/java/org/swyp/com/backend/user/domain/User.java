@@ -26,6 +26,7 @@ import org.swyp.com.backend.global.enumeration.UserRole;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
