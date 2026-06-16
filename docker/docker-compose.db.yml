@@ -27,6 +27,8 @@ services:
     depends_on:
       - db
     restart: always
+    networks:
+      - app-tier
 
 networks:
   app-tier:
