@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.swyp.com.backend.global.auth.jwt.CustomClaims;
 import org.swyp.com.backend.global.auth.jwt.TokenProvider;
+import org.swyp.com.backend.global.enumeration.TokenType;
 import org.swyp.com.backend.support.JwtTestFixture;
 
 class TokenProviderTest {
@@ -27,7 +28,8 @@ class TokenProviderTest {
     @Test
     void tokenGenerationSuccessTest() {
         // when
-        CustomClaims claims = tokenProvider.generateToken("ACCESS", JwtTestFixture.TEST_USER_ID, JwtTestFixture.ROLE);
+        CustomClaims claims = tokenProvider.generateToken(TokenType.ACCESS, JwtTestFixture.TEST_USER_ID,
+                JwtTestFixture.ROLE);
 
         // then
         Assertions.assertInstanceOf(CustomClaims.class, claims);
@@ -37,7 +39,7 @@ class TokenProviderTest {
     @Test
     void tokenValidationSuccessTest() {
         // given
-        CustomClaims generated = tokenProvider.generateToken("ACCESS", JwtTestFixture.TEST_USER_ID,
+        CustomClaims generated = tokenProvider.generateToken(TokenType.ACCESS, JwtTestFixture.TEST_USER_ID,
                 JwtTestFixture.ROLE);
 
         // when
