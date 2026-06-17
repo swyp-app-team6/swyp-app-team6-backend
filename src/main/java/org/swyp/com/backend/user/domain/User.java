@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.swyp.com.backend.global.enumeration.OAuthProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
 
 @Entity
@@ -25,19 +26,42 @@ import org.swyp.com.backend.global.enumeration.UserRole;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, unique = true)
     private String email;
-    @Column(nullable = false)
+    @Column
     private String password;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
+    @Enumerated(EnumType.STRING)
+    @Column
+    private OAuthProvider provider;
+    @Column
+    private String providerUserId;
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public static User createEmailUser(String email, String password, UserRole role) {
+        User user = new User();
+        user.email = email;
+        user.password = password;
+        user.role = role;
+        return user;
+    }
+
+    public static User createOAuthUser(String email, OAuthProvider provider, String providerUserId, UserRole role) {
+        User user = new User();
+        user.email = email;
+        user.provider = provider;
+        user.providerUserId = providerUserId;
+        user.role = role;
+        return user;
+    }
 }

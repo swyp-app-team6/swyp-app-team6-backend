@@ -9,9 +9,8 @@ services:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: "root"
-      MYSQL_DATABASE: "root"
+      MYSQL_DATABASE: "swyp"
     volumes:
-      - ./volumes/mysql_data:/var/lib/mysql
       - ./db/init:/docker-entrypoint-initdb.d
     restart: always
     networks:
@@ -22,8 +21,6 @@ services:
     container_name: dbeaver
     ports:
       - "8978:8978"
-    volumes:
-      - ./volumes/dbeaver_data:/opt/cloudbeaver/workspace
     depends_on:
       - db
     restart: always

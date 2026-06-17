@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.swyp.com.backend.global.auth.domain.RefreshToken;
 import org.swyp.com.backend.global.auth.domain.repository.RefreshTokenRepository;
 import org.swyp.com.backend.global.auth.jwt.TokenProvider;
+import org.swyp.com.backend.global.auth.service.TokenService;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.login.dto.TokenResponse;
 import org.swyp.com.backend.support.JwtTestFixture;
@@ -42,6 +43,7 @@ class LoginServiceTest {
 
     PasswordEncoder passwordEncoder;
     TokenProvider tokenProvider;
+    TokenService tokenService;
     LoginService loginService;
     User testUser;
     Key testKey;
@@ -51,9 +53,10 @@ class LoginServiceTest {
         passwordEncoder = new BCryptPasswordEncoder();
         testKey = JwtTestFixture.buildKey();
         tokenProvider = JwtTestFixture.buildTokenProvider(testKey);
-        loginService = new LoginServiceImpl(userRepository, passwordEncoder, refreshTokenRepository, tokenProvider);
+        tokenService = new TokenService(tokenProvider, refreshTokenRepository);
+        loginService = new LoginServiceImpl(userRepository, passwordEncoder, tokenService);
         testUser = new User(JwtTestFixture.TEST_USER_ID, "user@example.com", passwordEncoder.encode(TEST_PASSWORD),
-                JwtTestFixture.ROLE, LocalDateTime.now(), null);
+                JwtTestFixture.ROLE, null, null, LocalDateTime.now(), null);
     }
 
     @Test

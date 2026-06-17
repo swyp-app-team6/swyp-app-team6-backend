@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.swyp.com.backend.global.enumeration.TokenType;
 import org.swyp.com.backend.global.enumeration.UserRole;
 
 @Component
@@ -27,10 +28,10 @@ public class JwtTokenProvider implements TokenProvider {
         this.REFRESH_EXP = refreshExp;
     }
 
-    public CustomClaims generateToken(String type, Long userId, UserRole role) {
+    public CustomClaims generateToken(TokenType type, Long userId, UserRole role) {
         Date now = new Date();
         Date expiry =
-                type.equals("ACCESS") ? new Date(now.getTime() + ACCESS_EXP) : new Date(now.getTime() + REFRESH_EXP);
+                type == TokenType.ACCESS ? new Date(now.getTime() + ACCESS_EXP) : new Date(now.getTime() + REFRESH_EXP);
         String jti = UUID.randomUUID().toString();
 
         String generatedToken = Jwts.builder()
