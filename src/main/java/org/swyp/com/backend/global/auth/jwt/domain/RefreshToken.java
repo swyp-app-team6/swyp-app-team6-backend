@@ -1,4 +1,4 @@
-package org.swyp.com.backend.global.auth.domain;
+package org.swyp.com.backend.global.auth.jwt.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

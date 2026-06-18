@@ -1,7 +1,7 @@
-package org.swyp.com.backend.global.auth.domain.repository;
+package org.swyp.com.backend.global.auth.jwt.domain.repository;
 
 import java.util.Optional;
-import org.swyp.com.backend.global.auth.domain.RefreshToken;
+import org.swyp.com.backend.global.auth.jwt.domain.RefreshToken;
 
 public interface RefreshTokenRepository {
 

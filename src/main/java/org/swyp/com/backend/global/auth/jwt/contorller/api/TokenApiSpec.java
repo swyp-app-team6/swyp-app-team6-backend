@@ -1,4 +1,4 @@
-package org.swyp.com.backend.global.auth.login.controller.api;
+package org.swyp.com.backend.global.auth.jwt.contorller.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -6,10 +6,10 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
-import org.swyp.com.backend.global.auth.dto.RefreshTokenRequest;
-import org.swyp.com.backend.global.auth.dto.TokenResponse;
+import org.swyp.com.backend.global.auth.jwt.dto.RefreshTokenRequest;
+import org.swyp.com.backend.global.auth.jwt.dto.TokenResponse;
 
-public interface LoginApiSpec {
+public interface TokenApiSpec {
 
     @Operation(
             summary = "토큰 재발급 처리",

@@ -1,4 +1,4 @@
-package org.swyp.com.backend.global.filter;
+package org.swyp.com.backend.global.auth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;

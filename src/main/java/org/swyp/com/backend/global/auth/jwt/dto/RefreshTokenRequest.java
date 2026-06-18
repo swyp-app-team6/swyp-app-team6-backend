@@ -1,4 +1,4 @@
-package org.swyp.com.backend.global.auth.dto;
+package org.swyp.com.backend.global.auth.jwt.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;

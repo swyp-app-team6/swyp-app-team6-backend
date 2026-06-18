@@ -1,4 +1,4 @@
-package org.swyp.com.backend.global.oauth.service;
+package org.swyp.com.backend.global.auth.oauth.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
@@ -7,9 +7,9 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.swyp.com.backend.global.auth.oauth.CustomOidcUser;
 import org.swyp.com.backend.global.enumeration.OAuthProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
-import org.swyp.com.backend.global.oauth.CustomOidcUser;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.repository.UserRepository;
 
@@ -23,10 +23,12 @@ public class CustomOidcUserService extends OidcUserService {
     @Transactional
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
         OidcUser oidcUser = super.loadUser(userRequest);
+        return processOidcUser(userRequest, oidcUser); // 분리된 메서드
+    }
 
+    protected OidcUser processOidcUser(OidcUserRequest userRequest, OidcUser oidcUser) {
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         OAuthProvider provider = OAuthProvider.valueOf(registrationId.toUpperCase());
-
         String sub = oidcUser.getSubject();
         String email = oidcUser.getEmail();
 

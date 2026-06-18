@@ -12,11 +12,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.swyp.com.backend.global.auth.filter.JwtAuthenticationFilter;
 import org.swyp.com.backend.global.auth.handler.SecurityExceptionHandler;
 import org.swyp.com.backend.global.auth.jwt.TokenProvider;
-import org.swyp.com.backend.global.filter.JwtAuthenticationFilter;
-import org.swyp.com.backend.global.oauth.handler.OAuth2AuthenticationSuccessHandler;
-import org.swyp.com.backend.global.oauth.service.CustomOidcUserService;
+import org.swyp.com.backend.global.auth.oauth.handler.OAuth2AuthenticationSuccessHandler;
+import org.swyp.com.backend.global.auth.oauth.service.CustomOidcUserService;
 
 @Configuration
 @EnableWebSecurity
