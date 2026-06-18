@@ -1,9 +1,6 @@
-package org.swyp.com.backend.login.service;
+package org.swyp.com.backend.global.auth.login.service;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.jsonwebtoken.MalformedJwtException;
@@ -23,21 +20,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.swyp.com.backend.global.auth.domain.RefreshToken;
 import org.swyp.com.backend.global.auth.domain.repository.RefreshTokenRepository;
+import org.swyp.com.backend.global.auth.dto.TokenResponse;
 import org.swyp.com.backend.global.auth.jwt.TokenProvider;
-import org.swyp.com.backend.global.auth.service.TokenService;
+import org.swyp.com.backend.global.auth.jwt.service.TokenService;
+import org.swyp.com.backend.global.auth.jwt.service.TokenServiceImpl;
 import org.swyp.com.backend.global.exception.BusinessException;
-import org.swyp.com.backend.login.dto.TokenResponse;
 import org.swyp.com.backend.support.JwtTestFixture;
 import org.swyp.com.backend.user.domain.User;
-import org.swyp.com.backend.user.domain.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class LoginServiceTest {
 
-    static final String TEST_PASSWORD = "password";
-
-    @Mock
-    UserRepository userRepository;
     @Mock
     RefreshTokenRepository refreshTokenRepository;
 
@@ -53,62 +46,10 @@ class LoginServiceTest {
         passwordEncoder = new BCryptPasswordEncoder();
         testKey = JwtTestFixture.buildKey();
         tokenProvider = JwtTestFixture.buildTokenProvider(testKey);
-        tokenService = new TokenService(tokenProvider, refreshTokenRepository);
-        loginService = new LoginServiceImpl(userRepository, passwordEncoder, tokenService);
-        testUser = new User(JwtTestFixture.TEST_USER_ID, "user@example.com", passwordEncoder.encode(TEST_PASSWORD),
+        tokenService = new TokenServiceImpl(tokenProvider, refreshTokenRepository);
+        loginService = new LoginServiceImpl(tokenService);
+        testUser = new User(JwtTestFixture.TEST_USER_ID, "user@example.com",
                 JwtTestFixture.ROLE, null, null, LocalDateTime.now(), null);
-    }
-
-    @Test
-    void loginSuccessTest() {
-        // given
-        when(userRepository.findByEmail("user@example.com"))
-                .thenReturn(Optional.of(testUser));
-
-        // when
-        TokenResponse token = loginService.login("user@example.com", TEST_PASSWORD);
-
-        // then
-        Assertions.assertInstanceOf(TokenResponse.class, token);
-        verify(refreshTokenRepository).save(any(RefreshToken.class));
-        Assertions.assertNotNull(token.accessToken());
-        Assertions.assertNotNull(token.refreshToken());
-    }
-
-    @Test
-    void loginSuccessTest_whenRefreshTokenExists_shouldUpdate() {
-        // given
-        RefreshToken existingToken = new RefreshToken(JwtTestFixture.TEST_USER_ID, "old-jti", new Date());
-
-        when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(testUser));
-        when(refreshTokenRepository.findByUserId(JwtTestFixture.TEST_USER_ID)).thenReturn(Optional.of(existingToken));
-
-        // when
-        loginService.login("user@example.com", TEST_PASSWORD);
-
-        // then
-        verify(refreshTokenRepository, never()).save(any());
-        assertNotEquals("old-jti", existingToken.getJti());
-    }
-
-    @Test
-    void loginFailTest_accountNotExist() {
-        // given & when & then
-        Assertions.assertThrows(BusinessException.class, () -> {
-            loginService.login("user@example.com", TEST_PASSWORD);
-        });
-    }
-
-    @Test
-    void loginFailTest_passwordNotMatch() {
-        // given
-        when(userRepository.findByEmail("user@example.com"))
-                .thenReturn(Optional.of(testUser));
-
-        // when & then
-        Assertions.assertThrows(BusinessException.class, () -> {
-            loginService.login("user@example.com", "notValidPassword");
-        });
     }
 
     @Test

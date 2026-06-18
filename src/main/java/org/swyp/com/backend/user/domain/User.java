@@ -32,8 +32,6 @@ public class User {
     private Long id;
     @Column(nullable = false, unique = true)
     private String email;
-    @Column
-    private String password;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
@@ -47,14 +45,6 @@ public class User {
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime updatedAt;
-
-    public static User createEmailUser(String email, String password, UserRole role) {
-        User user = new User();
-        user.email = email;
-        user.password = password;
-        user.role = role;
-        return user;
-    }
 
     public static User createOAuthUser(String email, OAuthProvider provider, String providerUserId, UserRole role) {
         User user = new User();

@@ -8,9 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.swyp.com.backend.global.auth.service.TokenService;
+import org.swyp.com.backend.global.auth.dto.TokenResponse;
+import org.swyp.com.backend.global.auth.jwt.service.TokenService;
 import org.swyp.com.backend.global.oauth.CustomOidcUser;
-import org.swyp.com.backend.login.dto.TokenResponse;
 
 @Component
 @RequiredArgsConstructor
