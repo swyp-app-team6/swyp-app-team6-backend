@@ -37,4 +37,9 @@ public final class JwtTestFixture {
                 .signWith(key)
                 .compact();
     }
+
+    public static Date getExpiresDate() {
+        Date issuedDate = new Date();
+        return new Date(issuedDate.getTime() + JwtTestFixture.REFRESH_EXP);
+    }
 }

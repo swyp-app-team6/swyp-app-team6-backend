@@ -1,4 +1,4 @@
-package org.swyp.com.backend.global.oauth.handler;
+package org.swyp.com.backend.global.auth.oauth.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,9 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.swyp.com.backend.global.auth.service.TokenService;
-import org.swyp.com.backend.global.oauth.CustomOidcUser;
-import org.swyp.com.backend.login.dto.TokenResponse;
+import org.swyp.com.backend.global.auth.jwt.dto.TokenResponse;
+import org.swyp.com.backend.global.auth.jwt.service.TokenService;
+import org.swyp.com.backend.global.auth.oauth.CustomOidcUser;
 
 @Component
 @RequiredArgsConstructor

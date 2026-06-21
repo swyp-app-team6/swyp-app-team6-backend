@@ -1,9 +1,9 @@
-package org.swyp.com.backend.global.auth.domain.repository;
+package org.swyp.com.backend.global.auth.jwt.domain.repository;
 
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.swyp.com.backend.global.auth.domain.RefreshToken;
+import org.swyp.com.backend.global.auth.jwt.domain.RefreshToken;
 
 @Repository
 @RequiredArgsConstructor
