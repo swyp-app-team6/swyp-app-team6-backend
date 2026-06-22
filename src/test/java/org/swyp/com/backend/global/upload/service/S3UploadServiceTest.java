@@ -51,7 +51,7 @@ class S3UploadServiceTest {
 
         // then
         assertThat(response.uploadUrl()).isEqualTo(fakeUrl.toString());
-        assertThat(response.key()).startsWith("profile/" + filename + "-");
+        assertThat(response.imageKey()).startsWith("profile/" + filename + "-");
     }
 
     @Test
@@ -70,6 +70,6 @@ class S3UploadServiceTest {
         PresignedUploadResponse second = s3UploadService.createPresignedUploadUrl(filename, contentType);
 
         // then
-        assertThat(first.key()).isNotEqualTo(second.key());
+        assertThat(first.imageKey()).isNotEqualTo(second.imageKey());
     }
 }
