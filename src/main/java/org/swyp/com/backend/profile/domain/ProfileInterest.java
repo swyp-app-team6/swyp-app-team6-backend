@@ -16,4 +16,11 @@ public class ProfileInterest {
     private Profile profile;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Interest interest;
+
+    public static ProfileInterest createProfileInterest(Profile profile, Interest interest) {
+        ProfileInterest profileInterest = new ProfileInterest();
+        profileInterest.profile = profile;
+        profileInterest.interest = interest;
+        return profileInterest;
+    }
 }

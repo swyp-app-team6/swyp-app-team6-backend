@@ -7,9 +7,15 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.swyp.com.backend.global.enumeration.InterestType;
 
 @Entity
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Interest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,5 +24,5 @@ public class Interest {
     @Column(nullable = false)
     private InterestType type;
     @Column(nullable = false)
-    private Boolean isActive = false;
+    private Boolean deleted = false;
 }
