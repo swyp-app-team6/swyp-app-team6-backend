@@ -13,7 +13,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 
 @Service
 @RequiredArgsConstructor
-public class S3UploadService {
+public class S3UploadService implements UploadService {
 
     private final S3Presigner s3Presigner;
 

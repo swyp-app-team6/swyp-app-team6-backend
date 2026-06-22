@@ -8,21 +8,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.swyp.com.backend.global.upload.controller.api.UploadControllerApiSpec;
 import org.swyp.com.backend.global.upload.dto.PresignedUploadResponse;
-import org.swyp.com.backend.global.upload.service.S3UploadService;
+import org.swyp.com.backend.global.upload.service.UploadService;
 
 @RestController
 @RequestMapping("/api/uploads")
 @RequiredArgsConstructor
-public class UploadController {
+public class UploadController implements UploadControllerApiSpec {
 
-    private final S3UploadService s3UploadService;
+    private final UploadService uploadService;
 
     @PostMapping("/presign")
     public ResponseEntity<PresignedUploadResponse> presign(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam String contentType
+            @RequestParam(defaultValue = "image/jpeg") String contentType
     ) {
-        return ResponseEntity.ok(s3UploadService.createPresignedUploadUrl(userDetails.getUsername(), contentType));
+        return ResponseEntity.ok(uploadService.createPresignedUploadUrl(userDetails.getUsername(), contentType));
     }
 }
