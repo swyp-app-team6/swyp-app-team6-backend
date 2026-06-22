@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.swyp.com.backend.user.controller.api.UserControllerApiSpec;
 import org.swyp.com.backend.user.dto.UserMeResponse;
 import org.swyp.com.backend.user.service.UserService;
 
@@ -15,7 +16,7 @@ import org.swyp.com.backend.user.service.UserService;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 @SecurityRequirement(name = "bearerAuth")
-public class UserController {
+public class UserController implements UserControllerApiSpec {
 
     private final UserService userService;
 

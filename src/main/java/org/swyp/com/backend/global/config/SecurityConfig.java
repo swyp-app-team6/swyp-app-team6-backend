@@ -55,6 +55,7 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/auth/login",
                                 "/auth/refresh",
+                                "/auth/google/app",
                                 "/oauth2/**",
                                 "/login/oauth2/**",
                                 "/actuator/health"

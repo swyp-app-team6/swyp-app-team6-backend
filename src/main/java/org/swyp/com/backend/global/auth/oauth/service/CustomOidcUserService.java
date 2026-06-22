@@ -23,7 +23,7 @@ public class CustomOidcUserService extends OidcUserService {
     @Transactional
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
         OidcUser oidcUser = super.loadUser(userRequest);
-        return processOidcUser(userRequest, oidcUser); // 분리된 메서드
+        return processOidcUser(userRequest, oidcUser);
     }
 
     protected OidcUser processOidcUser(OidcUserRequest userRequest, OidcUser oidcUser) {
