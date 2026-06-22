@@ -23,6 +23,8 @@ public class Profile {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+    @Column(name = "image_url")
+    private String imageUrl;
     @Column(nullable = false, length = 10)
     private String nickname;
     @Enumerated(EnumType.STRING)
@@ -38,8 +40,6 @@ public class Profile {
     private UUID qr;
     @Column(name = "qr_expires_at")
     private Date qrExpiresAt;
-    // 이미지
-    // 관심사
     // 질문템플릿
     // 연애유형
 }
