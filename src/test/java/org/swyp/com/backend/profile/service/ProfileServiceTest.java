@@ -15,6 +15,7 @@ import org.swyp.com.backend.global.enumeration.Gender;
 import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.enumeration.OAuthProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
+import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.profile.domain.Interest;
 import org.swyp.com.backend.profile.domain.repository.InterestRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
@@ -58,6 +59,18 @@ class ProfileServiceTest {
 
         // then
         Assertions.assertEquals(response.nickname(), request.nickname());
+    }
+
+    @Test
+    void createProfileFailTest_NotValidUser() {
+        // given
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        ProfileRegisterRequest request = createRegisterForm();
+
+        // then
+        Assertions.assertThrows(BusinessException.class, () -> {
+            profileService.createProfile(1L, request);
+        });
     }
 
     private List<Interest> createInterestList() {
