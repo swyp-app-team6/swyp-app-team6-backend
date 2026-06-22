@@ -73,7 +73,7 @@ public class ProfileService {
         }
 
         return new MyProfileResponse(profile.getId(), profile.getNickname(),
-                profile.getImageUrl(), profile.getGender(), profile.getBio(), profile.getKeyword(), profile.getTopic(),
+                profile.getImageKey(), profile.getGender(), profile.getBio(), profile.getKeyword(), profile.getTopic(),
                 interestTypeList);
     }
 }

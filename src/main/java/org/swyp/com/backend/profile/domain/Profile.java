@@ -28,8 +28,8 @@ public class Profile {
     private User user;
     @Column(nullable = false, length = 10)
     private String nickname;
-    @Column(name = "image_url")
-    private String imageUrl;
+    @Column(name = "image_key")
+    private String imageKey;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Gender gender;
@@ -50,7 +50,7 @@ public class Profile {
         Profile profile = new Profile();
         profile.user = user;
         profile.nickname = request.nickname();
-        profile.imageUrl = request.imageUrl();
+        profile.imageKey = request.imageUrl();
         profile.gender = request.gender();
         profile.bio = request.bio();
         profile.keyword = request.keyword();

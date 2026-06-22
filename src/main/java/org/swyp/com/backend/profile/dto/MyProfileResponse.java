@@ -8,8 +8,8 @@ import org.swyp.com.backend.global.enumeration.InterestType;
 public record MyProfileResponse(
         Long id,
         String nickname,
-        @JsonProperty("image_url")
-        String imageUrl,
+        @JsonProperty("image_key")
+        String imageKey,
         Gender gender,
         String bio,
         String keyword,
