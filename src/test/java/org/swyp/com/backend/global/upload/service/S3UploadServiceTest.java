@@ -36,7 +36,7 @@ class S3UploadServiceTest {
     }
 
     @Test
-    void createPresignedUploadUrl_반환값에_uploadUrl과_key가_포함된다() throws MalformedURLException {
+    void createPresignedUploadUrl_success() throws MalformedURLException {
         // given
         String filename = "testuser";
         String contentType = "image/png";
@@ -55,7 +55,7 @@ class S3UploadServiceTest {
     }
 
     @Test
-    void createPresignedUploadUrl_key는_UUID가_포함된_고유값이다() throws MalformedURLException {
+    void createPresignedUploadUrl_keyUniqueness() throws MalformedURLException {
         // given
         String filename = "testuser";
         String contentType = "image/jpeg";
