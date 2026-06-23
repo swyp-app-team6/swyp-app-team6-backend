@@ -49,7 +49,7 @@ public interface UploadControllerApiSpec {
                                             {
                                               "title": "UNAUTHORIZED",
                                               "status": 401,
-                                              "detail": "인증 정보가 유효하지 않습니다."
+                                              "detail": "인증이 필요합니다."
                                             }
                                             """
                             )

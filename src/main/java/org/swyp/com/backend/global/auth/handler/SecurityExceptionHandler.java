@@ -31,7 +31,7 @@ public class SecurityExceptionHandler implements AuthenticationEntryPoint, Acces
                 HttpStatus.UNAUTHORIZED.name());
         log.warn(Markers.appendEntries(errorLog.fields()), errorLog.summary());
 
-        writeError(response, HttpStatus.UNAUTHORIZED, "인증이 필요합니다");
+        writeError(response, HttpStatus.UNAUTHORIZED, "인증이 필요합니다.");
     }
 
     @Override
@@ -41,7 +41,7 @@ public class SecurityExceptionHandler implements AuthenticationEntryPoint, Acces
                 HttpStatus.FORBIDDEN.name());
         log.warn(Markers.appendEntries(errorLog.fields()), errorLog.summary());
 
-        writeError(response, HttpStatus.FORBIDDEN, "접근 권한이 없습니다");
+        writeError(response, HttpStatus.FORBIDDEN, "접근 권한이 없습니다.");
     }
 
     private void writeError(HttpServletResponse response, HttpStatus status, String detail) throws IOException {

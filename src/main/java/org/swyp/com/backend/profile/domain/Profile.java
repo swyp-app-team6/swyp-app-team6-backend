@@ -9,12 +9,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import java.util.Date;
 import java.util.UUID;
 import lombok.Getter;
 import org.swyp.com.backend.global.enumeration.Gender;
-import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
 import org.swyp.com.backend.user.domain.User;
 
 @Entity
@@ -23,13 +22,13 @@ public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     @Column(nullable = false, length = 10)
     private String nickname;
-    @Column(name = "image_url")
-    private String imageUrl;
+    @Column(name = "image_key")
+    private String imageKey;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Gender gender;
@@ -46,15 +45,25 @@ public class Profile {
     // 질문템플릿
     // 연애유형
 
-    public static Profile createProfile(User user, ProfileRegisterRequest request) {
+    public static Profile createProfile(User user, String nickname, String imageKey, Gender gender, String bio,
+                                        String keyword, String topic) {
         Profile profile = new Profile();
         profile.user = user;
-        profile.nickname = request.nickname();
-        profile.imageUrl = request.imageUrl();
-        profile.gender = request.gender();
-        profile.bio = request.bio();
-        profile.keyword = request.keyword();
-        profile.topic = request.topic();
+        profile.nickname = nickname;
+        profile.imageKey = imageKey;
+        profile.gender = gender;
+        profile.bio = bio;
+        profile.keyword = keyword;
+        profile.topic = topic;
         return profile;
+    }
+
+    public void updateProfile(String nickname, String imageKey, String bio,
+                              String keyword, String topic) {
+        this.nickname = nickname;
+        this.imageKey = imageKey;
+        this.bio = bio;
+        this.keyword = keyword;
+        this.topic = topic;
     }
 }
