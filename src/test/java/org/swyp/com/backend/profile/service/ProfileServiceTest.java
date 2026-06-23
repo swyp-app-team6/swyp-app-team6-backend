@@ -2,7 +2,6 @@ package org.swyp.com.backend.profile.service;
 
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -12,9 +11,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.swyp.com.backend.global.enumeration.Gender;
 import org.swyp.com.backend.global.enumeration.InterestType;
-import org.swyp.com.backend.global.enumeration.OAuthProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.profile.domain.Interest;
@@ -70,7 +69,7 @@ class ProfileServiceTest {
         // given
         User user = createUser();
         ProfileRegisterRequest request = createRegisterForm();
-        Profile profile = createProfile(user, request);
+        Profile profile = createProfile(user, 1L, request.nickname());
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(profileRepository.findByUser(user)).thenReturn(Optional.of(profile));
@@ -99,7 +98,7 @@ class ProfileServiceTest {
         // given
         User user = createUser();
         ProfileRegisterRequest request = createRegisterForm();
-        Profile profile = createProfile(user, request);
+        Profile profile = createProfile(user, 1L, request.nickname());
         Interest interest = createInterest();
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
@@ -141,17 +140,27 @@ class ProfileServiceTest {
     }
 
     private User createUser() {
-        return new User(1L, "test@example.com", UserRole.USER,
-                OAuthProvider.GOOGLE, "123", LocalDateTime.now(), null);
+        User user = new User();
+        ReflectionTestUtils.setField(user, "id", 1L);
+        ReflectionTestUtils.setField(user, "email", "test@example.com");
+        ReflectionTestUtils.setField(user, "role", UserRole.USER);
+        return user;
     }
 
     private Interest createInterest() {
-        return new Interest(1L, InterestType.TRAVEL, false);
+        Interest interest = new Interest();
+        ReflectionTestUtils.setField(interest, "id", 1L);
+        ReflectionTestUtils.setField(interest, "type", InterestType.TRAVEL);
+        ReflectionTestUtils.setField(interest, "deleted", false);
+        return interest;
     }
 
-    private Profile createProfile(User user, ProfileRegisterRequest request) {
-        return new Profile(1L, user, request.nickname(), request.imageKey(), request.gender(),
-                request.bio(), request.keyword(), request.topic(), null, null);
+    private Profile createProfile(User user, Long id, String nickname) {
+        Profile profile = new Profile();
+        ReflectionTestUtils.setField(profile, "id", id);
+        ReflectionTestUtils.setField(profile, "user", user);
+        ReflectionTestUtils.setField(profile, "nickname", nickname);
+        return profile;
     }
 
 }

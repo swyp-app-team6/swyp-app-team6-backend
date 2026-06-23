@@ -12,16 +12,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import java.util.Date;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.swyp.com.backend.global.enumeration.Gender;
 import org.swyp.com.backend.user.domain.User;
 
 @Entity
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
 public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
