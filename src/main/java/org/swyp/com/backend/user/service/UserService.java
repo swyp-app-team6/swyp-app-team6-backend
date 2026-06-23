@@ -18,6 +18,6 @@ public class UserService {
     public UserMeResponse getMe(Long userId) {
         return userRepository.findById(userId)
                 .map(UserMeResponse::from)
-                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
     }
 }

@@ -32,7 +32,7 @@ public class ProfileService {
 
     public MyProfileResponse getMyProfile(final Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
-                new BusinessException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+                new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
 
         Profile profile = profileRepository.findByUser(user).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
@@ -49,7 +49,7 @@ public class ProfileService {
     @Transactional
     public MyProfileResponse createProfile(final Long userId, final ProfileRegisterRequest profileForm) {
         User user = userRepository.findById(userId).orElseThrow(() ->
-                new BusinessException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+                new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
 
         if (profileRepository.findByUser(user).isPresent()) {
             throw new BusinessException(HttpStatus.CONFLICT, "이미 프로필을 생성하였습니다.");
@@ -69,7 +69,7 @@ public class ProfileService {
     @Transactional
     public MyProfileResponse updateProfile(final Long userId, final ProfileUpdateRequest profileForm) {
         User user = userRepository.findById(userId).orElseThrow(() ->
-                new BusinessException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+                new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
 
         Profile profile = profileRepository.findByUser(user).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
@@ -89,7 +89,7 @@ public class ProfileService {
     @Transactional
     public void deleteProfile(final Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
-                new BusinessException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+                new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
 
         Profile profile = profileRepository.findByUser(user).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
