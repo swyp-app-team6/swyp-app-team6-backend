@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.swyp.com.backend.global.enumeration.Gender;
 import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.enumeration.OAuthProvider;
@@ -54,6 +55,7 @@ class ProfileServiceTest {
         List<Interest> interestList = createInterestList();
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(profileRepository.findByUser(user)).thenReturn(Optional.empty());
         when(interestRepository.findByTypeInAndDeletedFalse(request.interests())).thenReturn(interestList);
 
         // when
@@ -61,6 +63,23 @@ class ProfileServiceTest {
 
         // then
         Assertions.assertEquals(response.nickname(), request.nickname());
+    }
+
+    @Test
+    void createProfileFailTest_ProfileAlreadyExist() {
+        // given
+        User user = createUser();
+        ProfileRegisterRequest request = createRegisterForm();
+        Profile profile = createProfile(user, request);
+
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(profileRepository.findByUser(user)).thenReturn(Optional.of(profile));
+
+        // then
+        BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+            profileService.createProfile(1L, request);
+        });
+        Assertions.assertEquals(HttpStatus.CONFLICT, exception.getStatus());
     }
 
     @Test
@@ -84,16 +103,30 @@ class ProfileServiceTest {
         Interest interest = createInterest();
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findById(profile.getUser().getId())).thenReturn(Optional.of(profile));
+        when(profileRepository.findByUser(user)).thenReturn(Optional.of(profile));
         when(profileInterestRepository.findByProfile(profile))
                 .thenReturn(List.of(ProfileInterest.createProfileInterest(profile, interest)));
 
         // when
-        MyProfileResponse response = profileService.getMyProfile(user.getId(), profile.getId());
+        MyProfileResponse response = profileService.getMyProfile(user.getId());
 
         // then
         Assertions.assertEquals(request.nickname(), response.nickname());
+    }
 
+    @Test
+    void getProfileFailTest_ProfileNotExist() {
+        // given
+        User user = createUser();
+
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(profileRepository.findByUser(user)).thenReturn(Optional.empty());
+
+        // then
+        BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+            profileService.getMyProfile(user.getId());
+        });
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
     }
 
     private List<Interest> createInterestList() {

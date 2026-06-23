@@ -9,14 +9,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import java.util.Date;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.swyp.com.backend.global.enumeration.Gender;
-import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
 import org.swyp.com.backend.user.domain.User;
 
 @Entity
@@ -27,7 +26,7 @@ public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     @Column(nullable = false, length = 10)
@@ -50,15 +49,16 @@ public class Profile {
     // 질문템플릿
     // 연애유형
 
-    public static Profile createProfile(User user, ProfileRegisterRequest request) {
+    public static Profile createProfile(User user, String nickname, String imageKey, Gender gender, String bio,
+                                        String keyword, String topic) {
         Profile profile = new Profile();
         profile.user = user;
-        profile.nickname = request.nickname();
-        profile.imageKey = request.imageKey();
-        profile.gender = request.gender();
-        profile.bio = request.bio();
-        profile.keyword = request.keyword();
-        profile.topic = request.topic();
+        profile.nickname = nickname;
+        profile.imageKey = imageKey;
+        profile.gender = gender;
+        profile.bio = bio;
+        profile.keyword = keyword;
+        profile.topic = topic;
         return profile;
     }
 }

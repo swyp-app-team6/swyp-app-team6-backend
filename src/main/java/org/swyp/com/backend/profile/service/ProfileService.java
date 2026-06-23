@@ -29,19 +29,12 @@ public class ProfileService {
     private final InterestRepository interestRepository;
     private final ProfileInterestRepository profileInterestRepository;
 
-    public MyProfileResponse getMyProfile(final Long userId, final Long profileId) {
+    public MyProfileResponse getMyProfile(final Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
 
-        Profile profile = profileRepository.findById(profileId).orElseThrow(() ->
+        Profile profile = profileRepository.findByUser(user).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
-
-        if (!profile.getUser().getId().equals(user.getId())) {
-            throw new BusinessException(
-                    HttpStatus.FORBIDDEN,
-                    "해당 프로필에 접근할 권한이 없습니다."
-            );
-        }
 
         List<Interest> interestList = profileInterestRepository.findByProfile(profile).stream()
                 .map(ProfileInterest::getInterest).toList();
@@ -53,17 +46,19 @@ public class ProfileService {
         throw new UnsupportedOperationException();
     }
 
-    public List<MyProfileResponse> getMyProfiles(final Long userId) {
-        throw new UnsupportedOperationException();
-    }
-
     @Transactional
     public MyProfileResponse createProfile(final Long userId, final ProfileRegisterRequest profileForm) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+        if (profileRepository.findByUser(user).isPresent()) {
+            throw new BusinessException(HttpStatus.CONFLICT, "이미 프로필을 생성하였습니다.");
+        }
+
         List<Interest> interestList = interestRepository.findByTypeInAndDeletedFalse(profileForm.interests());
 
-        Profile profile = Profile.createProfile(user, profileForm);
+        Profile profile = Profile.createProfile(user, profileForm.nickname(), profileForm.imageKey(),
+                profileForm.gender(),
+                profileForm.bio(), profileForm.keyword(), profileForm.topic());
         List<ProfileInterest> profileInterestList = new ArrayList<>();
 
         for (Interest interest : interestList) {
