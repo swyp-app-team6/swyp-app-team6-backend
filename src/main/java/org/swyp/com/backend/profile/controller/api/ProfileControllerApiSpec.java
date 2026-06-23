@@ -17,6 +17,73 @@ import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
 public interface ProfileControllerApiSpec {
 
     @Operation(
+            summary = "내 프로필 조회",
+            description = "현재 로그인된 사용자의 프로필 정보를 조회합니다.",
+            operationId = "getProfile"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "프로필 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "id": 1,
+                                              "nickname": "홍길동",
+                                              "image_key": "profile/user-uuid",
+                                              "gender": "M",
+                                              "bio": "여행을 좋아해요",
+                                              "keyword": "여행",
+                                              "topic": "맛집",
+                                              "interests": [
+                                                "TRAVEL",
+                                                "FOOD"
+                                              ]
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "title": "UNAUTHORIZED",
+                                              "status": 401,
+                                              "detail": "인증 정보가 유효하지 않습니다."
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "사용자 또는 프로필 정보 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "title": "NOT_FOUND",
+                                              "status": 404,
+                                              "detail": "프로필 정보를 찾을 수 없습니다."
+                                            }
+                                            """
+                            )
+                    )
+            )
+    })
+    ResponseEntity<MyProfileResponse> getMyProfile(
+            UserDetails userDetails
+    );
+
+    @Operation(
             summary = "프로필 등록",
             description = "현재 로그인된 사용자의 프로필을 등록합니다. "
                     + "닉네임, 성별, 프로필 이미지, 소개, 키워드, 주제, 관심사를 저장합니다.",

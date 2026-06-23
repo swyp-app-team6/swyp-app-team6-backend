@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,13 @@ import org.swyp.com.backend.profile.service.ProfileService;
 public class ProfileController implements ProfileControllerApiSpec {
     private final ProfileService profileService;
 
-    @PostMapping()
+    @GetMapping
+    public ResponseEntity<MyProfileResponse> getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
+        MyProfileResponse response = profileService.getMyProfile(Long.valueOf(userDetails.getUsername()));
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping
     public ResponseEntity<MyProfileResponse> registerProfile(@AuthenticationPrincipal UserDetails userDetails,
                                                              @Valid @RequestBody ProfileRegisterRequest registerRequest) {
         MyProfileResponse response = profileService.createProfile(Long.valueOf(userDetails.getUsername()),
