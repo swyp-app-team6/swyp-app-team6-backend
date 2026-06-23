@@ -17,6 +17,7 @@ import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
 import org.swyp.com.backend.profile.dto.MyProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
 import org.swyp.com.backend.profile.dto.ProfileResponse;
+import org.swyp.com.backend.profile.dto.ProfileUpdateRequest;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.repository.UserRepository;
 
@@ -36,8 +37,7 @@ public class ProfileService {
         Profile profile = profileRepository.findByUser(user).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
 
-        List<Interest> interestList = profileInterestRepository.findByProfile(profile).stream()
-                .map(ProfileInterest::getInterest).toList();
+        List<ProfileInterest> interestList = profileInterestRepository.findByProfile(profile);
 
         return toMyProfileResponseDto(profile, interestList);
     }
@@ -50,41 +50,62 @@ public class ProfileService {
     public MyProfileResponse createProfile(final Long userId, final ProfileRegisterRequest profileForm) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
         if (profileRepository.findByUser(user).isPresent()) {
             throw new BusinessException(HttpStatus.CONFLICT, "이미 프로필을 생성하였습니다.");
         }
-
-        List<Interest> interestList = interestRepository.findByTypeInAndDeletedFalse(profileForm.interests());
-
         Profile profile = Profile.createProfile(user, profileForm.nickname(), profileForm.imageKey(),
                 profileForm.gender(),
                 profileForm.bio(), profileForm.keyword(), profileForm.topic());
-        List<ProfileInterest> profileInterestList = new ArrayList<>();
 
-        for (Interest interest : interestList) {
-            profileInterestList.add(ProfileInterest.createProfileInterest(profile, interest));
-        }
+        List<ProfileInterest> profileInterestList = toProfileInterestList(profile, profileForm.interests());
 
         profileRepository.save(profile);
         profileInterestRepository.saveAll(profileInterestList);
 
-        return toMyProfileResponseDto(profile, interestList);
+        return toMyProfileResponseDto(profile, profileInterestList);
     }
 
     @Transactional
-    public MyProfileResponse updateProfile(final Long userId, final ProfileRegisterRequest profileForm) {
-        throw new UnsupportedOperationException();
+    public MyProfileResponse updateProfile(final Long userId, final ProfileUpdateRequest profileForm) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        Profile profile = profileRepository.findByUser(user).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
+
+        profile.updateProfile(profileForm.nickname(), profile.getImageKey(), profile.getBio(),
+                profile.getKeyword(), profile.getTopic());
+
+        profileInterestRepository.deleteByProfile(profile);
+
+        List<ProfileInterest> profileInterestList = toProfileInterestList(profile, profileForm.interests());
+
+        profileInterestRepository.saveAll(profileInterestList);
+
+        return toMyProfileResponseDto(profile, profileInterestList);
     }
 
-    private MyProfileResponse toMyProfileResponseDto(Profile profile, List<Interest> interestList) {
+    private MyProfileResponse toMyProfileResponseDto(Profile profile, List<ProfileInterest> interestList) {
         List<InterestType> interestTypeList = new ArrayList<>();
 
-        for (Interest interest : interestList) {
-            interestTypeList.add(interest.getType());
+        for (ProfileInterest interest : interestList) {
+            interestTypeList.add(interest.getInterest().getType());
         }
 
         return new MyProfileResponse(profile.getId(), profile.getNickname(),
                 profile.getImageKey(), profile.getGender(), profile.getBio(), profile.getKeyword(), profile.getTopic(),
                 interestTypeList);
+    }
+
+    private List<ProfileInterest> toProfileInterestList(Profile profile, List<InterestType> interestTypeList) {
+        List<Interest> interestList = interestRepository.findByTypeInAndDeletedFalse(interestTypeList);
+
+        List<ProfileInterest> profileInterestList = new ArrayList<>();
+        for (Interest interest : interestList) {
+            profileInterestList.add(ProfileInterest.createProfileInterest(profile, interest));
+        }
+
+        return profileInterestList;
     }
 }

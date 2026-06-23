@@ -29,7 +29,7 @@ class TokenProviderTest {
     void tokenGenerationSuccessTest() {
         // when
         CustomClaims claims = tokenProvider.generateToken(TokenType.ACCESS, JwtTestFixture.TEST_USER_ID,
-                JwtTestFixture.ROLE);
+                JwtTestFixture.TEST_ROLE);
 
         // then
         Assertions.assertInstanceOf(CustomClaims.class, claims);
@@ -40,7 +40,7 @@ class TokenProviderTest {
     void tokenValidationSuccessTest() {
         // given
         CustomClaims generated = tokenProvider.generateToken(TokenType.ACCESS, JwtTestFixture.TEST_USER_ID,
-                JwtTestFixture.ROLE);
+                JwtTestFixture.TEST_ROLE);
 
         // when
         CustomClaims verified = tokenProvider.validateToken(generated.getToken());

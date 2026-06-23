@@ -7,4 +7,6 @@ import org.swyp.com.backend.profile.domain.ProfileInterest;
 
 public interface ProfileInterestRepository extends JpaRepository<ProfileInterest, Long> {
     List<ProfileInterest> findByProfile(Profile profile);
+
+    void deleteByProfile(Profile profile);
 }

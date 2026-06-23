@@ -57,4 +57,13 @@ public class Profile {
         profile.topic = topic;
         return profile;
     }
+
+    public void updateProfile(String nickname, String imageKey, String bio,
+                              String keyword, String topic) {
+        this.nickname = nickname;
+        this.imageKey = imageKey;
+        this.bio = bio;
+        this.keyword = keyword;
+        this.topic = topic;
+    }
 }

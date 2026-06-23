@@ -53,7 +53,7 @@ class TokenServiceTest {
 
         // when
         TokenResponse actual = tokenService.issueTokenPair(
-                JwtTestFixture.TEST_USER_ID, JwtTestFixture.ROLE);
+                JwtTestFixture.TEST_USER_ID, JwtTestFixture.TEST_ROLE);
 
         // then
         CustomClaims accessClaims = tokenProvider.validateToken(actual.accessToken());
@@ -77,7 +77,7 @@ class TokenServiceTest {
 
         // when
         TokenResponse actual = tokenService.issueTokenPair(
-                JwtTestFixture.TEST_USER_ID, JwtTestFixture.ROLE);
+                JwtTestFixture.TEST_USER_ID, JwtTestFixture.TEST_ROLE);
 
         // then
         CustomClaims newRefreshClaims = tokenProvider.validateToken(actual.refreshToken());
