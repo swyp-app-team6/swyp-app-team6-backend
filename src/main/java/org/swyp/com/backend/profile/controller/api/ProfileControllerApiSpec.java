@@ -342,4 +342,65 @@ public interface ProfileControllerApiSpec {
             )
             ProfileUpdateRequest profileUpdateRequest
     );
+
+    @Operation(
+            summary = "프로필 삭제",
+            description = "현재 로그인된 사용자의 프로필을 삭제합니다. "
+                    + "프로필에 연결된 관심사 정보도 함께 삭제됩니다.",
+            operationId = "deleteProfile"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "프로필 삭제 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "title": "UNAUTHORIZED",
+                                              "status": 401,
+                                              "detail": "인증 정보가 유효하지 않습니다."
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "사용자 또는 프로필 정보 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            name = "USER_NOT_FOUND",
+                                            value = """
+                                                    {
+                                                      "title": "NOT_FOUND",
+                                                      "status": 404,
+                                                      "detail": "사용자 정보를 찾을 수 없습니다."
+                                                    }
+                                                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "PROFILE_NOT_FOUND",
+                                            value = """
+                                                    {
+                                                      "title": "NOT_FOUND",
+                                                      "status": 404,
+                                                      "detail": "프로필 정보를 찾을 수 없습니다."
+                                                    }
+                                                    """
+                                    )
+                            }
+                    )
+            )
+    })
+    ResponseEntity<Void> deleteProfile(
+            UserDetails userDetails
+    );
 }

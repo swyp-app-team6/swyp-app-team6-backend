@@ -3,9 +3,11 @@ package org.swyp.com.backend.profile.controller;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,5 +47,11 @@ public class ProfileController implements ProfileControllerApiSpec {
         MyProfileResponse response = profileService.updateProfile(Long.valueOf(userDetails.getUsername()),
                 profileUpdateRequest);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteProfile(@AuthenticationPrincipal UserDetails userDetails) {
+        profileService.deleteProfile(Long.valueOf(userDetails.getUsername()));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

@@ -86,6 +86,18 @@ public class ProfileService {
         return toMyProfileResponseDto(profile, profileInterestList);
     }
 
+    @Transactional
+    public void deleteProfile(final Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        Profile profile = profileRepository.findByUser(user).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
+
+        profileInterestRepository.deleteByProfile(profile);
+        profileRepository.delete(profile);
+    }
+
     private MyProfileResponse toMyProfileResponseDto(Profile profile, List<ProfileInterest> interestList) {
         List<InterestType> interestTypeList = new ArrayList<>();
 
@@ -108,4 +120,6 @@ public class ProfileService {
 
         return profileInterestList;
     }
+
+
 }
