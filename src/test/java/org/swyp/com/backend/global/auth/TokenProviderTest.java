@@ -9,8 +9,8 @@ import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.swyp.com.backend.global.auth.jwt.CustomClaims;
-import org.swyp.com.backend.global.auth.jwt.TokenProvider;
+import org.swyp.com.backend.auth.jwt.CustomClaims;
+import org.swyp.com.backend.auth.jwt.TokenProvider;
 import org.swyp.com.backend.global.enumeration.TokenType;
 import org.swyp.com.backend.support.JwtTestFixture;
 

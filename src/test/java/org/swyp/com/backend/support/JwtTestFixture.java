@@ -4,8 +4,8 @@ import io.jsonwebtoken.Jwts;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import org.swyp.com.backend.global.auth.jwt.JwtTokenProvider;
-import org.swyp.com.backend.global.auth.jwt.TokenProvider;
+import org.swyp.com.backend.auth.jwt.JwtTokenProvider;
+import org.swyp.com.backend.auth.jwt.TokenProvider;
 import org.swyp.com.backend.global.enumeration.Gender;
 import org.swyp.com.backend.global.enumeration.UserRole;
 

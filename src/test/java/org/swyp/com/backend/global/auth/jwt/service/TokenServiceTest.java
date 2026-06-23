@@ -20,11 +20,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.swyp.com.backend.global.auth.jwt.CustomClaims;
-import org.swyp.com.backend.global.auth.jwt.TokenProvider;
-import org.swyp.com.backend.global.auth.jwt.domain.RefreshToken;
-import org.swyp.com.backend.global.auth.jwt.domain.repository.RefreshTokenRepository;
-import org.swyp.com.backend.global.auth.jwt.dto.TokenResponse;
+import org.swyp.com.backend.auth.jwt.CustomClaims;
+import org.swyp.com.backend.auth.jwt.TokenProvider;
+import org.swyp.com.backend.auth.jwt.domain.RefreshToken;
+import org.swyp.com.backend.auth.jwt.domain.repository.RefreshTokenRepository;
+import org.swyp.com.backend.auth.jwt.dto.TokenResponse;
+import org.swyp.com.backend.auth.jwt.service.TokenService;
+import org.swyp.com.backend.auth.jwt.service.TokenServiceImpl;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.support.JwtTestFixture;
 
