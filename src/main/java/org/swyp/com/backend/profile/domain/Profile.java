@@ -12,13 +12,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.util.Date;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.swyp.com.backend.global.enumeration.Gender;
 import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
 import org.swyp.com.backend.user.domain.User;
 
 @Entity
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +54,7 @@ public class Profile {
         Profile profile = new Profile();
         profile.user = user;
         profile.nickname = request.nickname();
-        profile.imageKey = request.imageUrl();
+        profile.imageKey = request.imageKey();
         profile.gender = request.gender();
         profile.bio = request.bio();
         profile.keyword = request.keyword();

@@ -30,7 +30,23 @@ public class ProfileService {
     private final ProfileInterestRepository profileInterestRepository;
 
     public MyProfileResponse getMyProfile(final Long userId, final Long profileId) {
-        throw new UnsupportedOperationException();
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        Profile profile = profileRepository.findById(profileId).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
+
+        if (!profile.getUser().getId().equals(user.getId())) {
+            throw new BusinessException(
+                    HttpStatus.FORBIDDEN,
+                    "해당 프로필에 접근할 권한이 없습니다."
+            );
+        }
+
+        List<Interest> interestList = profileInterestRepository.findByProfile(profile).stream()
+                .map(ProfileInterest::getInterest).toList();
+
+        return toMyProfileResponseDto(profile, interestList);
     }
 
     public ProfileResponse getUserProfile(final Long uuid) {

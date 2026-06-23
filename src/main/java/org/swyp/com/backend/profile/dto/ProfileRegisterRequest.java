@@ -15,8 +15,8 @@ public record ProfileRegisterRequest(
         String nickname,
         @NotNull(message = "성별은 필수입니다.")
         Gender gender,
-        @JsonProperty("image_url")
-        String imageUrl,
+        @JsonProperty("image_key")
+        String imageKey,
         @NotBlank(message = "소개는 필수입니다.")
         @Size(max = 20, message = "소개는 최대 20자까지 입력 가능합니다.")
         String bio,

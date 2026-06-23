@@ -17,6 +17,8 @@ import org.swyp.com.backend.global.enumeration.OAuthProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.profile.domain.Interest;
+import org.swyp.com.backend.profile.domain.Profile;
+import org.swyp.com.backend.profile.domain.ProfileInterest;
 import org.swyp.com.backend.profile.domain.repository.InterestRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
@@ -73,6 +75,27 @@ class ProfileServiceTest {
         });
     }
 
+    @Test
+    void getProfileSuccessTest() {
+        // given
+        User user = createUser();
+        ProfileRegisterRequest request = createRegisterForm();
+        Profile profile = createProfile(user, request);
+        Interest interest = createInterest();
+
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(profileRepository.findById(profile.getUser().getId())).thenReturn(Optional.of(profile));
+        when(profileInterestRepository.findByProfile(profile))
+                .thenReturn(List.of(ProfileInterest.createProfileInterest(profile, interest)));
+
+        // when
+        MyProfileResponse response = profileService.getMyProfile(user.getId(), profile.getId());
+
+        // then
+        Assertions.assertEquals(request.nickname(), response.nickname());
+
+    }
+
     private List<Interest> createInterestList() {
         return List.of(createInterest());
     }
@@ -91,6 +114,11 @@ class ProfileServiceTest {
 
     private Interest createInterest() {
         return new Interest(1L, InterestType.TRAVEL, false);
+    }
+
+    private Profile createProfile(User user, ProfileRegisterRequest request) {
+        return new Profile(1L, user, request.nickname(), request.imageKey(), request.gender(),
+                request.bio(), request.keyword(), request.topic(), null, null);
     }
 
 }
