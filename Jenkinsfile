@@ -2,6 +2,8 @@ pipeline {
     agent any
 
     environment {
+        CONFIG_REPO = credentials('CONFIG_REPO')
+
         DOCKER_IMAGE = credentials('DOCKER_IMAGE')
         DOCKER_TAG   = "${env.BUILD_NUMBER}"
 
@@ -16,6 +18,12 @@ pipeline {
     }
 
     stages {
+        stage('Clean Workspace') {
+            steps {
+                deleteDir()
+            }
+        }
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -26,9 +34,19 @@ pipeline {
             steps {
                 echo 'Updating submodules...'
                 withCredentials([usernamePassword(credentialsId: 'github-token-swyp', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASSWORD')]) {
-                    sh 'git config --global url."https://${GIT_USER}:${GIT_PASSWORD}@github.com/".insteadOf "https://github.com/"'
-                    sh 'git submodule init'
-                    sh 'git submodule update --recursive --remote'
+                    sh '''
+                        git submodule init
+
+                        git submodule set-url \
+                            src/main/resources/config \
+                            https://${GIT_USER}:${GIT_PASSWORD}@github.com/${CONFIG_REPO}
+
+                        git submodule sync
+
+                        git -C src/main/resources/config remote -v || true
+
+                        git submodule update --init --recursive
+                    '''
                 }
             }
         }
