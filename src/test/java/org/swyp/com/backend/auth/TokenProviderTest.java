@@ -1,4 +1,4 @@
-package org.swyp.com.backend.global.auth;
+package org.swyp.com.backend.auth;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

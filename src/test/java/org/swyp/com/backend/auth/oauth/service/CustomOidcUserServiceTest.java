@@ -1,4 +1,4 @@
-package org.swyp.com.backend.global.auth.oauth.service;
+package org.swyp.com.backend.auth.oauth.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,7 +25,6 @@ import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.swyp.com.backend.auth.oauth.CustomOidcUser;
-import org.swyp.com.backend.auth.oauth.service.CustomOidcUserService;
 import org.swyp.com.backend.global.enumeration.OAuthProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
 import org.swyp.com.backend.support.JwtTestFixture;

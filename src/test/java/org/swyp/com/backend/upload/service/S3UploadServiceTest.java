@@ -1,4 +1,4 @@
-package org.swyp.com.backend.global.upload.service;
+package org.swyp.com.backend.upload.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.swyp.com.backend.upload.dto.PresignedUploadResponse;
-import org.swyp.com.backend.upload.service.S3UploadService;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;

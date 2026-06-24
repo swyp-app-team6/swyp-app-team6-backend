@@ -1,4 +1,4 @@
-package org.swyp.com.backend.global.auth.jwt.service;
+package org.swyp.com.backend.auth.jwt.service;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,8 +25,6 @@ import org.swyp.com.backend.auth.jwt.TokenProvider;
 import org.swyp.com.backend.auth.jwt.domain.RefreshToken;
 import org.swyp.com.backend.auth.jwt.domain.repository.RefreshTokenRepository;
 import org.swyp.com.backend.auth.jwt.dto.TokenResponse;
-import org.swyp.com.backend.auth.jwt.service.TokenService;
-import org.swyp.com.backend.auth.jwt.service.TokenServiceImpl;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.support.JwtTestFixture;
 
