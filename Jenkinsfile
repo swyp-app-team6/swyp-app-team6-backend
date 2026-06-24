@@ -103,19 +103,19 @@ pipeline {
         }
         success {
             echo 'Pipeline successfully completed!'
-//             slackSend(
-//                 channel: SLACK_CHANNEL,
-//                 color: '#2C953C',
-//                 message: ":white_check_mark: ${env.JOB_NAME} 배포 성공! (빌드 #${env.BUILD_NUMBER})\n${env.BUILD_URL}"
-//             )
+            slackSend(
+                channel: SLACK_CHANNEL,
+                color: '#2C953C',
+                message: ":white_check_mark: ${env.JOB_NAME} 배포 성공! (빌드 #${env.BUILD_NUMBER})\n${env.BUILD_URL}"
+            )
         }
         failure {
             echo 'Pipeline failed. Please check the logs.'
-//             slackSend(
-//                 channel: SLACK_CHANNEL,
-//                 color: '#FF3232',
-//                 message: ":x: ${env.JOB_NAME} 배포 실패! (빌드 #${env.BUILD_NUMBER})\n${env.BUILD_URL}"
-//             )
+            slackSend(
+                channel: SLACK_CHANNEL,
+                color: '#FF3232',
+                message: ":x: ${env.JOB_NAME} 배포 실패! (빌드 #${env.BUILD_NUMBER})\n${env.BUILD_URL}"
+            )
         }
     }
 }
