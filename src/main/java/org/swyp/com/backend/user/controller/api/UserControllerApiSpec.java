@@ -55,4 +55,50 @@ public interface UserControllerApiSpec {
             )
     })
     ResponseEntity<UserMeResponse> me(UserDetails userDetails);
+
+    @Operation(
+            summary = "회원 탈퇴",
+            description = "현재 로그인된 사용자의 계정을 삭제합니다."
+                    + "사용자와 연관된 프로필 및 관심사 정보도 함께 삭제됩니다.",
+            operationId = "deleteUser"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "회원 탈퇴 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "title": "UNAUTHORIZED",
+                                              "status": 401,
+                                              "detail": "인증이 필요합니다."
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "사용자 정보 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "title": "NOT_FOUND",
+                                              "status": 404,
+                                              "detail": "사용자 정보를 찾을 수 없습니다."
+                                            }
+                                            """
+                            )
+                    )
+            )
+    })
+    ResponseEntity<Void> deleteUser(UserDetails userDetails);
 }

@@ -1,5 +1,8 @@
 package org.swyp.com.backend.auth;
 
+import static org.swyp.com.backend.support.UserTestFixture.TEST_ROLE;
+import static org.swyp.com.backend.support.UserTestFixture.TEST_USER_ID;
+
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.SignatureException;
@@ -28,19 +31,19 @@ class TokenProviderTest {
     @Test
     void tokenGenerationSuccessTest() {
         // when
-        CustomClaims claims = tokenProvider.generateToken(TokenType.ACCESS, JwtTestFixture.TEST_USER_ID,
-                JwtTestFixture.TEST_ROLE);
+        CustomClaims claims = tokenProvider.generateToken(TokenType.ACCESS, TEST_USER_ID,
+                TEST_ROLE);
 
         // then
         Assertions.assertInstanceOf(CustomClaims.class, claims);
-        Assertions.assertEquals(JwtTestFixture.TEST_USER_ID, claims.getUserId());
+        Assertions.assertEquals(TEST_USER_ID, claims.getUserId());
     }
 
     @Test
     void tokenValidationSuccessTest() {
         // given
-        CustomClaims generated = tokenProvider.generateToken(TokenType.ACCESS, JwtTestFixture.TEST_USER_ID,
-                JwtTestFixture.TEST_ROLE);
+        CustomClaims generated = tokenProvider.generateToken(TokenType.ACCESS, TEST_USER_ID,
+                TEST_ROLE);
 
         // when
         CustomClaims verified = tokenProvider.validateToken(generated.getToken());
@@ -52,7 +55,8 @@ class TokenProviderTest {
     @Test
     void tokenValidationFailTest_expiredJwt() {
         // given
-        String generatedToken = JwtTestFixture.buildToken(testKey, UUID.randomUUID().toString(), new Date(0),
+        String generatedToken = JwtTestFixture.buildToken(TEST_USER_ID, TEST_ROLE, testKey,
+                UUID.randomUUID().toString(), new Date(0),
                 new Date(0));
 
         // when & then
@@ -68,7 +72,8 @@ class TokenProviderTest {
         Date issuedDate = new Date();
         Date expiresDate = new Date(issuedDate.getTime() + JwtTestFixture.REFRESH_EXP);
 
-        String generatedToken = JwtTestFixture.buildToken(invalidKey, UUID.randomUUID().toString(), issuedDate,
+        String generatedToken = JwtTestFixture.buildToken(TEST_USER_ID, TEST_ROLE, invalidKey,
+                UUID.randomUUID().toString(), issuedDate,
                 expiresDate);
 
         // when & then

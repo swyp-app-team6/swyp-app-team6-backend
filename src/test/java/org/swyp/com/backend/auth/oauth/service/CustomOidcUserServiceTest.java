@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.swyp.com.backend.support.UserTestFixture.TEST_USER_ID;
 
 import java.time.Instant;
 import java.util.List;
@@ -59,14 +60,14 @@ class CustomOidcUserServiceTest {
                 .thenReturn(Optional.empty());
 
         User savedUser = User.createOAuthUser(email, OAuthProvider.GOOGLE, sub, UserRole.USER);
-        setUserId(savedUser, JwtTestFixture.TEST_USER_ID);
+        setUserId(savedUser, TEST_USER_ID);
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
         //when
         CustomOidcUser actual = (CustomOidcUser) customOidcUserService.processOidcUser(oidcUserRequest, oidcUser);
 
         //then
-        assertThat(actual.userId()).isEqualTo(JwtTestFixture.TEST_USER_ID);
+        assertThat(actual.userId()).isEqualTo(TEST_USER_ID);
         assertThat(actual.role()).isEqualTo(UserRole.USER);
         verify(userRepository).save(any(User.class));
     }
@@ -82,7 +83,7 @@ class CustomOidcUserServiceTest {
         String registrationId = oidcUserRequest.getClientRegistration().getRegistrationId();
         OAuthProvider provider = OAuthProvider.valueOf(registrationId.toUpperCase());
         User savedUser = User.createOAuthUser(email, OAuthProvider.GOOGLE, sub, UserRole.USER);
-        setUserId(savedUser, JwtTestFixture.TEST_USER_ID);
+        setUserId(savedUser, TEST_USER_ID);
         when(userRepository.findByProviderAndProviderUserId(provider, sub))
                 .thenReturn(Optional.of(savedUser));
 
@@ -90,7 +91,7 @@ class CustomOidcUserServiceTest {
         CustomOidcUser actual = (CustomOidcUser) customOidcUserService.processOidcUser(oidcUserRequest, oidcUser);
 
         //then
-        assertThat(actual.userId()).isEqualTo(JwtTestFixture.TEST_USER_ID);
+        assertThat(actual.userId()).isEqualTo(TEST_USER_ID);
         assertThat(actual.role()).isEqualTo(UserRole.USER);
         verify(userRepository, never()).save(any(User.class));
     }

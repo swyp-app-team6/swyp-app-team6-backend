@@ -8,6 +8,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.swyp.com.backend.support.UserTestFixture.TEST_ROLE;
+import static org.swyp.com.backend.support.UserTestFixture.TEST_USER_ID;
 
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
@@ -48,20 +50,20 @@ class TokenServiceTest {
     @Test
     void issueTokenPair_issuance() {
         // given
-        when(refreshTokenRepository.findByUserId(JwtTestFixture.TEST_USER_ID))
+        when(refreshTokenRepository.findByUserId(TEST_USER_ID))
                 .thenReturn(Optional.empty());
 
         // when
         TokenResponse actual = tokenService.issueTokenPair(
-                JwtTestFixture.TEST_USER_ID, JwtTestFixture.TEST_ROLE);
+                TEST_USER_ID, TEST_ROLE);
 
         // then
         CustomClaims accessClaims = tokenProvider.validateToken(actual.accessToken());
         CustomClaims refreshClaims = tokenProvider.validateToken(actual.refreshToken());
 
         assertAll(
-                () -> assertEquals(JwtTestFixture.TEST_USER_ID, accessClaims.getUserId()),
-                () -> assertEquals(JwtTestFixture.TEST_USER_ID, refreshClaims.getUserId()),
+                () -> assertEquals(TEST_USER_ID, accessClaims.getUserId()),
+                () -> assertEquals(TEST_USER_ID, refreshClaims.getUserId()),
                 () -> verify(refreshTokenRepository).save(any(RefreshToken.class))
         );
     }
@@ -71,13 +73,13 @@ class TokenServiceTest {
         // given
         Date expiresDate = JwtTestFixture.getExpiresDate();
         String oldJti = UUID.randomUUID().toString();
-        RefreshToken existing = new RefreshToken(JwtTestFixture.TEST_USER_ID, oldJti, expiresDate);
-        when(refreshTokenRepository.findByUserId(JwtTestFixture.TEST_USER_ID))
+        RefreshToken existing = new RefreshToken(TEST_USER_ID, oldJti, expiresDate);
+        when(refreshTokenRepository.findByUserId(TEST_USER_ID))
                 .thenReturn(Optional.of(existing));
 
         // when
         TokenResponse actual = tokenService.issueTokenPair(
-                JwtTestFixture.TEST_USER_ID, JwtTestFixture.TEST_ROLE);
+                TEST_USER_ID, TEST_ROLE);
 
         // then
         CustomClaims newRefreshClaims = tokenProvider.validateToken(actual.refreshToken());
@@ -94,10 +96,10 @@ class TokenServiceTest {
         // given
         Date expiresDate = JwtTestFixture.getExpiresDate();
         String jti = UUID.randomUUID().toString();
-        String storedToken = JwtTestFixture.buildToken(testKey, jti, new Date(), expiresDate);
+        String storedToken = JwtTestFixture.buildToken(TEST_USER_ID, TEST_ROLE, testKey, jti, new Date(), expiresDate);
 
-        when(refreshTokenRepository.findByUserId(JwtTestFixture.TEST_USER_ID))
-                .thenReturn(Optional.of(new RefreshToken(JwtTestFixture.TEST_USER_ID, jti, expiresDate)));
+        when(refreshTokenRepository.findByUserId(TEST_USER_ID))
+                .thenReturn(Optional.of(new RefreshToken(TEST_USER_ID, jti, expiresDate)));
 
         // when
         TokenResponse actual = tokenService.reissueTokenPair(storedToken);
@@ -116,7 +118,7 @@ class TokenServiceTest {
     void reissueTokenPair_fail_otherKey() {
         // given
         Key invalidKey = JwtTestFixture.buildKey();
-        String token = JwtTestFixture.buildToken(invalidKey, UUID.randomUUID().toString(),
+        String token = JwtTestFixture.buildToken(TEST_USER_ID, TEST_ROLE, invalidKey, UUID.randomUUID().toString(),
                 new Date(), JwtTestFixture.getExpiresDate());
 
         // when & then
@@ -128,10 +130,11 @@ class TokenServiceTest {
     void reissueTokenPair_fail_jti_notMatched() {
         // given
         String jti = UUID.randomUUID().toString();
-        String storedToken = JwtTestFixture.buildToken(testKey, jti, new Date(), JwtTestFixture.getExpiresDate());
+        String storedToken = JwtTestFixture.buildToken(TEST_USER_ID, TEST_ROLE, testKey, jti, new Date(),
+                JwtTestFixture.getExpiresDate());
 
-        when(refreshTokenRepository.findByUserId(JwtTestFixture.TEST_USER_ID))
-                .thenReturn(Optional.of(new RefreshToken(JwtTestFixture.TEST_USER_ID, "not_match_uuid",
+        when(refreshTokenRepository.findByUserId(TEST_USER_ID))
+                .thenReturn(Optional.of(new RefreshToken(TEST_USER_ID, "not_match_uuid",
                         JwtTestFixture.getExpiresDate())));
 
         // when & then

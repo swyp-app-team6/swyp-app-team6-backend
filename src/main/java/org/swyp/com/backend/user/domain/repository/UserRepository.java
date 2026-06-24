@@ -13,4 +13,6 @@ public interface UserRepository {
     Optional<User> findByProviderAndProviderUserId(OAuthProvider provider, String providerUserId);
 
     User save(User user);
+
+    void delete(User user);
 }
