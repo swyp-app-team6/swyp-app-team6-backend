@@ -26,6 +26,14 @@ pipeline {
             steps {
                 echo 'Updating submodules...'
                 withCredentials([usernamePassword(credentialsId: 'github-token-swyp', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASSWORD')]) {
+                    sh '''
+                        echo "=== git config ==="
+                        git config --global --get-regexp url
+
+                        echo "=== submodule remote ==="
+                        git -C src/main/resources/config remote -v
+                    '''
+
                     sh 'git config --global url."https://${GIT_USER}:${GIT_PASSWORD}@github.com/".insteadOf "https://github.com/"'
                     sh 'git submodule init'
                     sh 'git submodule update --recursive --remote'
@@ -85,19 +93,19 @@ pipeline {
         }
         success {
             echo 'Pipeline successfully completed!'
-            slackSend(
-                channel: SLACK_CHANNEL,
-                color: '#2C953C',
-                message: ":white_check_mark: ${env.JOB_NAME} 배포 성공! (빌드 #${env.BUILD_NUMBER})\n${env.BUILD_URL}"
-            )
+//             slackSend(
+//                 channel: SLACK_CHANNEL,
+//                 color: '#2C953C',
+//                 message: ":white_check_mark: ${env.JOB_NAME} 배포 성공! (빌드 #${env.BUILD_NUMBER})\n${env.BUILD_URL}"
+//             )
         }
         failure {
             echo 'Pipeline failed. Please check the logs.'
-            slackSend(
-                channel: SLACK_CHANNEL,
-                color: '#FF3232',
-                message: ":x: ${env.JOB_NAME} 배포 실패! (빌드 #${env.BUILD_NUMBER})\n${env.BUILD_URL}"
-            )
+//             slackSend(
+//                 channel: SLACK_CHANNEL,
+//                 color: '#FF3232',
+//                 message: ":x: ${env.JOB_NAME} 배포 실패! (빌드 #${env.BUILD_NUMBER})\n${env.BUILD_URL}"
+//             )
         }
     }
 }
