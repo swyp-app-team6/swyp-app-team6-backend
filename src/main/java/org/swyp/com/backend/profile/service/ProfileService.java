@@ -10,14 +10,14 @@ import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.profile.domain.Interest;
 import org.swyp.com.backend.profile.domain.Profile;
-import org.swyp.com.backend.profile.domain.ProfileChoiceTemplate;
+import org.swyp.com.backend.profile.domain.ProfileChoice;
 import org.swyp.com.backend.profile.domain.ProfileInterest;
-import org.swyp.com.backend.profile.domain.ProfileShortTemplate;
+import org.swyp.com.backend.profile.domain.ProfileShort;
 import org.swyp.com.backend.profile.domain.repository.InterestRepository;
-import org.swyp.com.backend.profile.domain.repository.ProfileChoiceTemplateRepository;
+import org.swyp.com.backend.profile.domain.repository.ProfileChoiceRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
-import org.swyp.com.backend.profile.domain.repository.ProfileShortTemplateRepository;
+import org.swyp.com.backend.profile.domain.repository.ProfileShortRepository;
 import org.swyp.com.backend.profile.dto.ChoiceTemplate;
 import org.swyp.com.backend.profile.dto.MyProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
@@ -43,8 +43,8 @@ public class ProfileService {
     private final InterestRepository interestRepository;
     private final ProfileInterestRepository profileInterestRepository;
 
-    private final ProfileChoiceTemplateRepository profileChoiceTemplateRepository;
-    private final ProfileShortTemplateRepository profileShortTemplateRepository;
+    private final ProfileChoiceRepository profileChoiceRepository;
+    private final ProfileShortRepository profileShortRepository;
 
     public MyProfileResponse getMyProfile(final Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
@@ -54,8 +54,8 @@ public class ProfileService {
                 new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
 
         List<ProfileInterest> ProfileInterestList = profileInterestRepository.findByProfile(profile);
-        List<ProfileChoiceTemplate> profileChoiceList = profileChoiceTemplateRepository.findByProfile(profile);
-        List<ProfileShortTemplate> profileShortList = profileShortTemplateRepository.findByProfile(profile);
+        List<ProfileChoice> profileChoiceList = profileChoiceRepository.findByProfile(profile);
+        List<ProfileShort> profileShortList = profileShortRepository.findByProfile(profile);
 
         return toMyProfileResponseDto(profile, ProfileInterestList, profileChoiceList, profileShortList);
     }
@@ -82,21 +82,21 @@ public class ProfileService {
         profileRepository.save(profile);
         profileInterestRepository.saveAll(profileInterestList);
 
-        List<ProfileChoiceTemplate> profileChoiceTemplateList = new ArrayList<>();
-        List<ProfileShortTemplate> profileShortTemplateList = new ArrayList<>();
+        List<ProfileChoice> profileChoiceList = new ArrayList<>();
+        List<ProfileShort> profileShortList = new ArrayList<>();
 
         if (profileForm.choiceTemplate() != null) {
-            profileChoiceTemplateList = profileChoiceTemplateRepository.saveAll(
+            profileChoiceList = profileChoiceRepository.saveAll(
                     questionService.toProfileChoiceList(profile, profileForm.choiceTemplate()));
         }
 
         if (profileForm.shortTemplate() != null) {
-            profileShortTemplateList = profileShortTemplateRepository.saveAll(
+            profileShortList = profileShortRepository.saveAll(
                     questionService.toProfileShortList(profile, profileForm.shortTemplate()));
         }
 
-        return toMyProfileResponseDto(profile, profileInterestList, profileChoiceTemplateList,
-                profileShortTemplateList);
+        return toMyProfileResponseDto(profile, profileInterestList, profileChoiceList,
+                profileShortList);
     }
 
     @Transactional
@@ -116,23 +116,23 @@ public class ProfileService {
         }
 
         if (profileForm.choiceTemplate() != null) {
-            profileChoiceTemplateRepository.deleteByProfile(profile);
-            profileChoiceTemplateRepository.saveAll(
+            profileChoiceRepository.deleteByProfile(profile);
+            profileChoiceRepository.saveAll(
                     questionService.toProfileChoiceList(profile, profileForm.choiceTemplate()));
         }
 
         if (profileForm.shortTemplate() != null) {
-            profileShortTemplateRepository.deleteByProfile(profile);
-            profileShortTemplateRepository.saveAll(
+            profileShortRepository.deleteByProfile(profile);
+            profileShortRepository.saveAll(
                     questionService.toProfileShortList(profile, profileForm.shortTemplate()));
         }
 
         List<ProfileInterest> profileInterestList = profileInterestRepository.findByProfile(profile);
-        List<ProfileChoiceTemplate> profileChoiceTemplateList = profileChoiceTemplateRepository.findByProfile(profile);
-        List<ProfileShortTemplate> profileShortTemplateList = profileShortTemplateRepository.findByProfile(profile);
+        List<ProfileChoice> profileChoiceList = profileChoiceRepository.findByProfile(profile);
+        List<ProfileShort> profileShortList = profileShortRepository.findByProfile(profile);
 
-        return toMyProfileResponseDto(profile, profileInterestList, profileChoiceTemplateList,
-                profileShortTemplateList);
+        return toMyProfileResponseDto(profile, profileInterestList, profileChoiceList,
+                profileShortList);
     }
 
     @Transactional
@@ -144,14 +144,14 @@ public class ProfileService {
                 new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
 
         profileInterestRepository.deleteByProfile(profile);
-        profileChoiceTemplateRepository.deleteByProfile(profile);
-        profileShortTemplateRepository.deleteByProfile(profile);
+        profileChoiceRepository.deleteByProfile(profile);
+        profileShortRepository.deleteByProfile(profile);
         profileRepository.delete(profile);
     }
 
     private MyProfileResponse toMyProfileResponseDto(Profile profile, List<ProfileInterest> interestList,
-                                                     List<ProfileChoiceTemplate> profileChoiceTemplateList,
-                                                     List<ProfileShortTemplate> profileShortTemplateList) {
+                                                     List<ProfileChoice> profileChoiceList,
+                                                     List<ProfileShort> profileShortList) {
 
         List<InterestType> interestTypeList = new ArrayList<>();
         List<ChoiceTemplate> choiceTemplateList = new ArrayList<>();
@@ -161,12 +161,12 @@ public class ProfileService {
             interestTypeList.add(interest.getInterest().getType());
         }
 
-        for (ProfileChoiceTemplate profileChoice : profileChoiceTemplateList) {
+        for (ProfileChoice profileChoice : profileChoiceList) {
             choiceTemplateList.add(
                     toChoiceTemplate(profileChoice.getAnswer().getQuestion(), profileChoice.getAnswer()));
         }
 
-        for (ProfileShortTemplate profileShort : profileShortTemplateList) {
+        for (ProfileShort profileShort : profileShortList) {
             shortTemplateList.add(toShortTemplate(profileShort.getQuestion(), profileShort.getAnswer()));
         }
 

@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.profile.domain.Profile;
-import org.swyp.com.backend.profile.domain.ProfileChoiceTemplate;
-import org.swyp.com.backend.profile.domain.ProfileShortTemplate;
+import org.swyp.com.backend.profile.domain.ProfileChoice;
+import org.swyp.com.backend.profile.domain.ProfileShort;
 import org.swyp.com.backend.profile.dto.ChoiceTemplate;
 import org.swyp.com.backend.profile.dto.ShortTemplate;
 import org.swyp.com.backend.question.domain.MultipleChoiceAnswer;
@@ -66,8 +66,8 @@ public class QuestionService {
                 shortQuestionList);
     }
 
-    public List<ProfileChoiceTemplate> toProfileChoiceList(Profile profile, List<ChoiceTemplate> choiceTemplateList) {
-        List<ProfileChoiceTemplate> profileChoiceTemplateList = new ArrayList<>();
+    public List<ProfileChoice> toProfileChoiceList(Profile profile, List<ChoiceTemplate> choiceTemplateList) {
+        List<ProfileChoice> profileChoiceList = new ArrayList<>();
 
         for (ChoiceTemplate choiceTemplate : choiceTemplateList) {
             MultipleChoiceQuestion question = multipleChoiceQuestionRepository
@@ -79,14 +79,14 @@ public class QuestionService {
                     .orElseThrow(() ->
                             new BusinessException(HttpStatus.NOT_FOUND, "답변 템플릿 정보를 찾을 수 없습니다."));
 
-            profileChoiceTemplateList.add(ProfileChoiceTemplate.createProfileChoiceTemplate(profile, answer));
+            profileChoiceList.add(ProfileChoice.createProfileChoice(profile, answer));
         }
 
-        return profileChoiceTemplateList;
+        return profileChoiceList;
     }
 
-    public List<ProfileShortTemplate> toProfileShortList(Profile profile, List<ShortTemplate> shortTemplateList) {
-        List<ProfileShortTemplate> profileShortTemplateList = new ArrayList<>();
+    public List<ProfileShort> toProfileShortList(Profile profile, List<ShortTemplate> shortTemplateList) {
+        List<ProfileShort> profileShortList = new ArrayList<>();
 
         for (ShortTemplate shortTemplate : shortTemplateList) {
             ShortAnswerQuestion question = shortAnswerQuestionRepository
@@ -95,9 +95,9 @@ public class QuestionService {
                             new BusinessException(HttpStatus.NOT_FOUND, "질문 템플릿 정보를 찾을 수 없습니다."));
             String answer = shortTemplate.answer();
 
-            profileShortTemplateList.add(ProfileShortTemplate.createProfileShortTemplate(profile, question, answer));
+            profileShortList.add(ProfileShort.createProfileShortTemplate(profile, question, answer));
         }
 
-        return profileShortTemplateList;
+        return profileShortList;
     }
 }

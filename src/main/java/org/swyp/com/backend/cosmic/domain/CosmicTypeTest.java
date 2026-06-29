@@ -12,9 +12,9 @@ import lombok.Getter;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 
 @Entity
-@Table(name = "dating_type_question")
+@Table(name = "cosmic_type_test")
 @Getter
-public class CosmicTypeQuestion {
+public class CosmicTypeTest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

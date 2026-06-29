@@ -12,7 +12,7 @@ import org.swyp.com.backend.question.domain.MultipleChoiceAnswer;
 
 @Entity
 @Getter
-public class ProfileChoiceTemplate {
+public class ProfileChoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,10 +23,10 @@ public class ProfileChoiceTemplate {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private MultipleChoiceAnswer answer;
 
-    public static ProfileChoiceTemplate createProfileChoiceTemplate(Profile profile, MultipleChoiceAnswer answer) {
-        ProfileChoiceTemplate profileChoiceTemplate = new ProfileChoiceTemplate();
-        profileChoiceTemplate.profile = profile;
-        profileChoiceTemplate.answer = answer;
-        return profileChoiceTemplate;
+    public static ProfileChoice createProfileChoice(Profile profile, MultipleChoiceAnswer answer) {
+        ProfileChoice profileChoice = new ProfileChoice();
+        profileChoice.profile = profile;
+        profileChoice.answer = answer;
+        return profileChoice;
     }
 }

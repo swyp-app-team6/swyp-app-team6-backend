@@ -5,8 +5,8 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.swyp.com.backend.cosmic.domain.CosmicTypeQuestion;
-import org.swyp.com.backend.cosmic.domain.repository.CosmicTypeQuestionRepository;
+import org.swyp.com.backend.cosmic.domain.CosmicTypeTest;
+import org.swyp.com.backend.cosmic.domain.repository.CosmicTypeTestRepository;
 import org.swyp.com.backend.cosmic.dto.CosmicTest;
 import org.swyp.com.backend.cosmic.dto.CosmicTestAnswer;
 import org.swyp.com.backend.cosmic.dto.CosmicTestResponse;
@@ -15,18 +15,18 @@ import org.swyp.com.backend.cosmic.dto.CosmicTestResponse;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CosmicService {
-    private final CosmicTypeQuestionRepository cosmicTypeQuestionRepository;
+    private final CosmicTypeTestRepository cosmicTypeTestRepository;
 
     public CosmicTestResponse getCosmicTestResponse() {
-        List<CosmicTypeQuestion> cosmicTypeQuestionList = cosmicTypeQuestionRepository.findByDeletedFalse();
+        List<CosmicTypeTest> cosmicTypeTestList = cosmicTypeTestRepository.findByDeletedFalse();
 
-        List<CosmicTest> cosmicTestList = cosmicTypeQuestionList.stream()
+        List<CosmicTest> cosmicTestList = cosmicTypeTestList.stream()
                 .collect(Collectors.groupingBy(
-                        CosmicTypeQuestion::getQuestionId
+                        CosmicTypeTest::getQuestionId
                 ))
                 .values().stream()
                 .map(questionGroup -> {
-                    CosmicTypeQuestion cosmicTypeQuestion = questionGroup.getFirst();
+                    CosmicTypeTest cosmicTypeTest = questionGroup.getFirst();
 
                     List<CosmicTestAnswer> cosmicTestAnswerList = questionGroup.stream()
                             .map(question ->
@@ -34,7 +34,7 @@ public class CosmicService {
                                             question.getCosmic(), question.getScore()))
                             .toList();
 
-                    return new CosmicTest(cosmicTypeQuestion.getQuestionId(), cosmicTypeQuestion.getContent(),
+                    return new CosmicTest(cosmicTypeTest.getQuestionId(), cosmicTypeTest.getContent(),
                             cosmicTestAnswerList);
                 })
                 .toList();

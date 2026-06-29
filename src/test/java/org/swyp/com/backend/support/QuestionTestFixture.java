@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.swyp.com.backend.global.enumeration.CustomQuestionType;
 import org.swyp.com.backend.profile.domain.Profile;
-import org.swyp.com.backend.profile.domain.ProfileChoiceTemplate;
-import org.swyp.com.backend.profile.domain.ProfileShortTemplate;
+import org.swyp.com.backend.profile.domain.ProfileChoice;
+import org.swyp.com.backend.profile.domain.ProfileShort;
 import org.swyp.com.backend.profile.dto.ChoiceTemplate;
 import org.swyp.com.backend.profile.dto.ShortTemplate;
 import org.swyp.com.backend.question.domain.MultipleChoiceAnswer;
@@ -63,45 +63,45 @@ public class QuestionTestFixture {
         return Arrays.stream(shortTemplate).toList();
     }
 
-    public static List<ProfileChoiceTemplate> createProfileChoiceTemplateList(Profile profile,
-                                                                              List<MultipleChoiceAnswer> multipleChoiceAnswerList) {
-        List<ProfileChoiceTemplate> profileChoiceTemplateList = new ArrayList<>();
+    public static List<ProfileChoice> createProfileChoiceList(Profile profile,
+                                                              List<MultipleChoiceAnswer> multipleChoiceAnswerList) {
+        List<ProfileChoice> profileChoiceList = new ArrayList<>();
         long id = 1L;
         for (MultipleChoiceAnswer multipleChoiceAnswer : multipleChoiceAnswerList) {
-            profileChoiceTemplateList.add(createProfileChoiceTemplate(id++, profile, multipleChoiceAnswer));
+            profileChoiceList.add(createProfileChoice(id++, profile, multipleChoiceAnswer));
         }
-        return profileChoiceTemplateList;
+        return profileChoiceList;
     }
 
-    public static List<ProfileShortTemplate> createProfileShortTemplateList(Profile profile,
-                                                                            List<ShortAnswerQuestion> shortAnswerQuestionList,
-                                                                            List<String> answer) {
-        List<ProfileShortTemplate> profileShortTemplateList = new ArrayList<>();
+    public static List<ProfileShort> createProfileShortList(Profile profile,
+                                                            List<ShortAnswerQuestion> shortAnswerQuestionList,
+                                                            List<String> answer) {
+        List<ProfileShort> profileShortList = new ArrayList<>();
         long id = 1L;
         for (int i = 0; i < shortAnswerQuestionList.size(); i++) {
-            profileShortTemplateList.add(
-                    createProfileShortTemplate(id++, profile, shortAnswerQuestionList.get(i), answer.get(i)));
+            profileShortList.add(
+                    createProfileShort(id++, profile, shortAnswerQuestionList.get(i), answer.get(i)));
         }
-        return profileShortTemplateList;
+        return profileShortList;
     }
 
-    private static ProfileChoiceTemplate createProfileChoiceTemplate(Long id, Profile profile,
-                                                                     MultipleChoiceAnswer answer) {
-        ProfileChoiceTemplate profileChoiceTemplate = new ProfileChoiceTemplate();
-        ReflectionTestUtils.setField(profileChoiceTemplate, "id", id);
-        ReflectionTestUtils.setField(profileChoiceTemplate, "profile", profile);
-        ReflectionTestUtils.setField(profileChoiceTemplate, "answer", answer);
-        return profileChoiceTemplate;
+    private static ProfileChoice createProfileChoice(Long id, Profile profile,
+                                                     MultipleChoiceAnswer answer) {
+        ProfileChoice profileChoice = new ProfileChoice();
+        ReflectionTestUtils.setField(profileChoice, "id", id);
+        ReflectionTestUtils.setField(profileChoice, "profile", profile);
+        ReflectionTestUtils.setField(profileChoice, "answer", answer);
+        return profileChoice;
     }
 
-    private static ProfileShortTemplate createProfileShortTemplate(Long id, Profile profile,
-                                                                   ShortAnswerQuestion question, String answer) {
-        ProfileShortTemplate profileShortTemplate = new ProfileShortTemplate();
-        ReflectionTestUtils.setField(profileShortTemplate, "id", id);
-        ReflectionTestUtils.setField(profileShortTemplate, "profile", profile);
-        ReflectionTestUtils.setField(profileShortTemplate, "question", question);
-        ReflectionTestUtils.setField(profileShortTemplate, "answer", answer);
-        return profileShortTemplate;
+    private static ProfileShort createProfileShort(Long id, Profile profile,
+                                                   ShortAnswerQuestion question, String answer) {
+        ProfileShort profileShort = new ProfileShort();
+        ReflectionTestUtils.setField(profileShort, "id", id);
+        ReflectionTestUtils.setField(profileShort, "profile", profile);
+        ReflectionTestUtils.setField(profileShort, "question", question);
+        ReflectionTestUtils.setField(profileShort, "answer", answer);
+        return profileShort;
     }
 
     public static ChoiceTemplate createChoiceTemplate(Long questionId, CustomQuestionType type, String question,

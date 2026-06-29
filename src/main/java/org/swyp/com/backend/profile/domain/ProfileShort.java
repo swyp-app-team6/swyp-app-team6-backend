@@ -13,7 +13,7 @@ import org.swyp.com.backend.question.domain.ShortAnswerQuestion;
 
 @Entity
 @Getter
-public class ProfileShortTemplate {
+public class ProfileShort {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,12 +26,12 @@ public class ProfileShortTemplate {
     @Column(nullable = false)
     private String answer;
 
-    public static ProfileShortTemplate createProfileShortTemplate(Profile profile, ShortAnswerQuestion question,
-                                                                  String answer) {
-        ProfileShortTemplate profileShortTemplate = new ProfileShortTemplate();
-        profileShortTemplate.profile = profile;
-        profileShortTemplate.question = question;
-        profileShortTemplate.answer = answer;
-        return profileShortTemplate;
+    public static ProfileShort createProfileShortTemplate(Profile profile, ShortAnswerQuestion question,
+                                                          String answer) {
+        ProfileShort profileShort = new ProfileShort();
+        profileShort.profile = profile;
+        profileShort.question = question;
+        profileShort.answer = answer;
+        return profileShort;
     }
 }

@@ -44,14 +44,14 @@ import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.profile.domain.Interest;
 import org.swyp.com.backend.profile.domain.Profile;
-import org.swyp.com.backend.profile.domain.ProfileChoiceTemplate;
+import org.swyp.com.backend.profile.domain.ProfileChoice;
 import org.swyp.com.backend.profile.domain.ProfileInterest;
-import org.swyp.com.backend.profile.domain.ProfileShortTemplate;
+import org.swyp.com.backend.profile.domain.ProfileShort;
 import org.swyp.com.backend.profile.domain.repository.InterestRepository;
-import org.swyp.com.backend.profile.domain.repository.ProfileChoiceTemplateRepository;
+import org.swyp.com.backend.profile.domain.repository.ProfileChoiceRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
-import org.swyp.com.backend.profile.domain.repository.ProfileShortTemplateRepository;
+import org.swyp.com.backend.profile.domain.repository.ProfileShortRepository;
 import org.swyp.com.backend.profile.dto.ChoiceTemplate;
 import org.swyp.com.backend.profile.dto.MyProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
@@ -80,9 +80,9 @@ class ProfileServiceTest {
     @Mock
     ProfileInterestRepository profileInterestRepository;
     @Mock
-    ProfileChoiceTemplateRepository profileChoiceTemplateRepository;
+    ProfileChoiceRepository profileChoiceRepository;
     @Mock
-    ProfileShortTemplateRepository profileShortTemplateRepository;
+    ProfileShortRepository profileShortRepository;
     @Mock
     MultipleChoiceQuestionRepository multipleChoiceQuestionRepository;
     @Mock
@@ -98,7 +98,7 @@ class ProfileServiceTest {
         questionService = new QuestionService(multipleChoiceQuestionRepository, multipleChoiceAnswerRepository,
                 shortAnswerQuestionRepository);
         profileService = new ProfileService(questionService, userRepository, profileRepository, interestRepository,
-                profileInterestRepository, profileChoiceTemplateRepository, profileShortTemplateRepository);
+                profileInterestRepository, profileChoiceRepository, profileShortRepository);
     }
 
     @Test
@@ -121,8 +121,8 @@ class ProfileServiceTest {
 
         // then
         Assertions.assertEquals(response.nickname(), request.nickname());
-        verify(profileChoiceTemplateRepository, never()).saveAll(any(List.class));
-        verify(profileShortTemplateRepository, never()).saveAll(any(List.class));
+        verify(profileChoiceRepository, never()).saveAll(any(List.class));
+        verify(profileShortRepository, never()).saveAll(any(List.class));
     }
 
     @Test
@@ -173,8 +173,8 @@ class ProfileServiceTest {
 
         // then
         Assertions.assertEquals(response.nickname(), request.nickname());
-        verify(profileChoiceTemplateRepository).saveAll(any(List.class));
-        verify(profileShortTemplateRepository).saveAll(any(List.class));
+        verify(profileChoiceRepository).saveAll(any(List.class));
+        verify(profileShortRepository).saveAll(any(List.class));
     }
 
     @Test
@@ -238,9 +238,9 @@ class ProfileServiceTest {
         ShortAnswerQuestion shortQuestion = QuestionTestFixture.createShortAnswerQuestion(1L, BLANK,
                 TEST_SHORT_ANSWER_QUESTION, false);
 
-        List<ProfileChoiceTemplate> profileChoiceTemplateList = QuestionTestFixture.createProfileChoiceTemplateList(
+        List<ProfileChoice> profileChoiceList = QuestionTestFixture.createProfileChoiceList(
                 profile, List.of(choiceAnswer1));
-        List<ProfileShortTemplate> profileShortTemplateList = QuestionTestFixture.createProfileShortTemplateList(
+        List<ProfileShort> profileShortList = QuestionTestFixture.createProfileShortList(
                 profile, List.of(shortQuestion), List.of(
                         TEST_ANSWER));
 
@@ -261,8 +261,8 @@ class ProfileServiceTest {
         when(profileRepository.findByUser(user)).thenReturn(Optional.of(profile));
         when(profileInterestRepository.findByProfile(profile))
                 .thenReturn(profileInterestList);
-        when(profileChoiceTemplateRepository.findByProfile(profile)).thenReturn(profileChoiceTemplateList);
-        when(profileShortTemplateRepository.findByProfile(profile)).thenReturn(profileShortTemplateList);
+        when(profileChoiceRepository.findByProfile(profile)).thenReturn(profileChoiceList);
+        when(profileShortRepository.findByProfile(profile)).thenReturn(profileShortList);
 
         // when
         MyProfileResponse response = profileService.getMyProfile(user.getId());
