@@ -5,7 +5,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.swyp.com.backend.auth.jwt.dto.TokenResponse;
@@ -13,6 +16,23 @@ import org.swyp.com.backend.auth.oauth.apple.dto.AppleLoginRequest;
 
 @Tag(name = "App Apple SSO", description = "앱(Android/iOS) 전용 Apple 소셜 로그인")
 public interface AppleAuthApiSpec {
+
+    @Operation(
+            summary = "Apple 웹 로그인 (테스트용)",
+            description = """
+                    브라우저에서 직접 접속하면 Apple 로그인 페이지로 리다이렉트됩니다.
+                    로그인 완료 후 서비스 자체 토큰(`accessToken`, `refreshToken`)이 JSON으로 반환됩니다.
+
+                    **테스트 순서**
+                    1. 브라우저 주소창에 이 엔드포인트 URL을 직접 입력하여 접속
+                    2. Apple 계정으로 로그인
+                    3. 응답 JSON에서 `accessToken` 복사
+                    4. Swagger UI 우측 상단 **Authorize** → 토큰 입력
+                    5. `POST /auth/apple/token` 또는 `GET /users/me` 등으로 인증 확인
+                    """,
+            responses = @ApiResponse(responseCode = "302", description = "Apple 로그인 페이지로 리다이렉트")
+    )
+    void redirectToApple(HttpServletResponse response) throws IOException;
 
     @Operation(
             summary = "앱 Apple 로그인",

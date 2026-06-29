@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.UUID;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,7 +52,7 @@ public class AppleAuthController implements AppleAuthApiSpec {
         response.sendRedirect(url);
     }
 
-    // Apple이 form_post로 직접 호출하는 콜백 — Swagger 테스트 불가
+    @Hidden
     @PostMapping("/callback")
     public ResponseEntity<TokenResponse> callback(
             @RequestParam String code,
