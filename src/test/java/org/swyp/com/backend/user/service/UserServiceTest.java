@@ -2,8 +2,15 @@ package org.swyp.com.backend.user.service;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.swyp.com.backend.support.ProfileTestFixture.TEST_AGE;
+import static org.swyp.com.backend.support.ProfileTestFixture.TEST_BIO;
+import static org.swyp.com.backend.support.ProfileTestFixture.TEST_COSMIC;
+import static org.swyp.com.backend.support.ProfileTestFixture.TEST_GENDER;
+import static org.swyp.com.backend.support.ProfileTestFixture.TEST_IMAGE_KEY;
+import static org.swyp.com.backend.support.ProfileTestFixture.TEST_JOB;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_PROFILE_ID;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_PROFILE_NICKNAME;
+import static org.swyp.com.backend.support.ProfileTestFixture.TEST_REGION;
 import static org.swyp.com.backend.support.UserTestFixture.TEST_ROLE;
 import static org.swyp.com.backend.support.UserTestFixture.TEST_USER_EMAIL;
 import static org.swyp.com.backend.support.UserTestFixture.TEST_USER_ID;
@@ -46,7 +53,8 @@ class UserServiceTest {
     void deleteUserSuccessTest() {
         // given
         User user = UserTestFixture.createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
-        Profile profile = ProfileTestFixture.createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME);
+        Profile profile = ProfileTestFixture.createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY,
+                TEST_GENDER, TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(profileRepository.findByUser(user)).thenReturn(Optional.of(profile));

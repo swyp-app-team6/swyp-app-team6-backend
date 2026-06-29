@@ -13,7 +13,9 @@ import jakarta.persistence.OneToOne;
 import java.util.Date;
 import java.util.UUID;
 import lombok.Getter;
+import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.enumeration.Gender;
+import org.swyp.com.backend.global.enumeration.Region;
 import org.swyp.com.backend.user.domain.User;
 
 @Entity
@@ -22,48 +24,73 @@ public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
     @Column(nullable = false, length = 10)
     private String nickname;
-    @Column(name = "image_key")
+    @Column(nullable = false, name = "image_key")
     private String imageKey;
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Gender gender;
+    @Column(nullable = false)
+    private Integer age;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Region region;
     @Column(nullable = false, length = 20)
+    private String job;
+
+    @Column(length = 20)
     private String bio;
-    @Column(nullable = false, length = 10)
-    private String keyword;
-    @Column(nullable = false, length = 20)
-    private String topic;
+    @Column
+    @Enumerated(EnumType.STRING)
+    private CosmicDatingType cosmic;
+
     @Column(length = 36)
     private UUID qr;
     @Column(name = "qr_expires_at")
     private Date qrExpiresAt;
-    // 질문템플릿
-    // 연애유형
 
-    public static Profile createProfile(User user, String nickname, String imageKey, Gender gender, String bio,
-                                        String keyword, String topic) {
+    public static Profile createProfile(User user, String nickname, String imageKey, Gender gender, Integer age,
+                                        Region region, String job,
+                                        String bio, CosmicDatingType cosmic) {
         Profile profile = new Profile();
         profile.user = user;
         profile.nickname = nickname;
         profile.imageKey = imageKey;
         profile.gender = gender;
+        profile.age = age;
+        profile.region = region;
+        profile.job = job;
         profile.bio = bio;
-        profile.keyword = keyword;
-        profile.topic = topic;
+        profile.cosmic = cosmic;
         return profile;
     }
 
-    public void updateProfile(String nickname, String imageKey, String bio,
-                              String keyword, String topic) {
-        this.nickname = nickname;
-        this.imageKey = imageKey;
-        this.bio = bio;
-        this.keyword = keyword;
-        this.topic = topic;
+    public void updateProfile(String nickname, String imageKey, Integer age, Region region, String job, String bio,
+                              CosmicDatingType cosmic) {
+        if (nickname != null) {
+            this.nickname = nickname;
+        }
+        if (imageKey != null) {
+            this.imageKey = imageKey;
+        }
+        if (age != null) {
+            this.age = age;
+        }
+        if (region != null) {
+            this.region = region;
+        }
+        if (job != null) {
+            this.job = job;
+        }
+        if (bio != null) {
+            this.bio = bio;
+        }
+        if (cosmic != null) {
+            this.cosmic = cosmic;
+        }
     }
 }
