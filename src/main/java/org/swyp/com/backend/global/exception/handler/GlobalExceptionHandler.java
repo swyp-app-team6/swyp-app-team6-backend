@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.marker.Markers;
 import org.springframework.core.convert.ConversionFailedException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
@@ -178,6 +179,16 @@ public class GlobalExceptionHandler {
         problemDetail.setTitle(HttpStatus.SERVICE_UNAVAILABLE.name());
         problemDetail.setDetail("외부 서비스와의 연결에 실패했습니다. 조금 뒤 다시 시도해주세요.");
 
+        return problemDetail;
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ProblemDetail handleDataIntegrityViolation(DataIntegrityViolationException e) {
+        logWarn(HttpStatus.CONFLICT, e, "DATA_CONFLICT");
+
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        problemDetail.setTitle(HttpStatus.CONFLICT.name());
+        problemDetail.setDetail("이미 존재하는 데이터와 충돌이 발생했습니다.");
         return problemDetail;
     }
 
