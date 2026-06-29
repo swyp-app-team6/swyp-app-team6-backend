@@ -15,6 +15,13 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        // Apple form_post 콜백은 브라우저 form submit이므로 CORS 체크 대상 제외
+        registry.addMapping("/auth/apple/callback")
+                .allowedOrigins("*")
+                .allowedMethods("POST")
+                .allowedHeaders("*")
+                .allowCredentials(false);
+
         registry.addMapping("/**")
                 .allowedOrigins(allowedOrigins)
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
