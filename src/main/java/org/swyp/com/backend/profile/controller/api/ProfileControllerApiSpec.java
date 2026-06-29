@@ -3,6 +3,7 @@ package org.swyp.com.backend.profile.controller.api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -28,6 +29,7 @@ public interface ProfileControllerApiSpec {
                     description = "프로필 조회 성공",
                     content = @Content(
                             mediaType = "application/json",
+                            schema = @Schema(implementation = MyProfileResponse.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
@@ -129,6 +131,7 @@ public interface ProfileControllerApiSpec {
                     description = "프로필 등록 성공",
                     content = @Content(
                             mediaType = "application/json",
+                            schema = @Schema(implementation = MyProfileResponse.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
@@ -248,6 +251,7 @@ public interface ProfileControllerApiSpec {
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
+                            schema = @Schema(implementation = ProfileRegisterRequest.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
@@ -267,24 +271,16 @@ public interface ProfileControllerApiSpec {
                                               "choice_template": [
                                                 {
                                                   "question_id": 1,
-                                                  "question_type": "BINARY",
-                                                  "question": "저는 호감이 생기면",
-                                                  "answer_id": 1,
-                                                  "answer": "티가 나는 편이에요"
+                                                  "answer_id": 1
                                                 },
                                                 {
                                                   "question_id": 2,
-                                                  "question_type": "BINARY",
-                                                  "question": "애프터 신청은",
-                                                  "answer_id": 2,
-                                                  "answer": "상대가 해주면 좋아요"
+                                                  "answer_id": 2
                                                 }
                                               ],
                                               "short_template": [
                                                 {
                                                   "question_id": 5,
-                                                  "question_type": "BLANK",
-                                                  "question": "나는 자주 이런 말을 들어요 “너는 진짜 ______ 같아”",
                                                   "answer": "긍정적인 사람"
                                                 }
                                               ]
@@ -309,6 +305,7 @@ public interface ProfileControllerApiSpec {
                     description = "프로필 수정 성공",
                     content = @Content(
                             mediaType = "application/json",
+                            schema = @Schema(implementation = MyProfileResponse.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
@@ -424,6 +421,7 @@ public interface ProfileControllerApiSpec {
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
+                            schema = @Schema(implementation = ProfileUpdateRequest.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
@@ -437,10 +435,7 @@ public interface ProfileControllerApiSpec {
                                               "choice_template": [
                                                 {
                                                   "question_id": 1,
-                                                  "question_type": "BINARY",
-                                                  "question": "저는 호감이 생기면",
-                                                  "answer_id": 2,
-                                                  "answer": "살짝 숨기는 편이에요"
+                                                  "answer_id": 2
                                                 }
                                               ]
                                             }

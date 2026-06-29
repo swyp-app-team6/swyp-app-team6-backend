@@ -6,8 +6,6 @@ import java.util.List;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.enumeration.Region;
-import org.swyp.com.backend.question.dto.ChoiceTemplate;
-import org.swyp.com.backend.question.dto.ShortTemplate;
 
 public record ProfileUpdateRequest(
         @Size(min = 3, max = 10, message = "닉네임은 3~10자여야 합니다.")

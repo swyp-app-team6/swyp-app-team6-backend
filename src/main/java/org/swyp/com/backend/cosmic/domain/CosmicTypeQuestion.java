@@ -1,4 +1,4 @@
-package org.swyp.com.backend.question.domain;
+package org.swyp.com.backend.cosmic.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,11 +8,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 
 @Entity
 @Table(name = "dating_type_question")
-public class DatingTypeQuestion {
+@Getter
+public class CosmicTypeQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

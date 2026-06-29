@@ -11,10 +11,10 @@ import org.swyp.com.backend.global.enumeration.Region;
 import org.swyp.com.backend.profile.domain.Interest;
 import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.domain.ProfileInterest;
+import org.swyp.com.backend.profile.dto.ChoiceTemplate;
 import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
 import org.swyp.com.backend.profile.dto.ProfileUpdateRequest;
-import org.swyp.com.backend.question.dto.ChoiceTemplate;
-import org.swyp.com.backend.question.dto.ShortTemplate;
+import org.swyp.com.backend.profile.dto.ShortTemplate;
 import org.swyp.com.backend.user.domain.User;
 
 public class ProfileTestFixture {

@@ -8,11 +8,11 @@ import org.swyp.com.backend.global.enumeration.CustomQuestionType;
 import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.domain.ProfileChoiceTemplate;
 import org.swyp.com.backend.profile.domain.ProfileShortTemplate;
+import org.swyp.com.backend.profile.dto.ChoiceTemplate;
+import org.swyp.com.backend.profile.dto.ShortTemplate;
 import org.swyp.com.backend.question.domain.MultipleChoiceAnswer;
 import org.swyp.com.backend.question.domain.MultipleChoiceQuestion;
 import org.swyp.com.backend.question.domain.ShortAnswerQuestion;
-import org.swyp.com.backend.question.dto.ChoiceTemplate;
-import org.swyp.com.backend.question.dto.ShortTemplate;
 
 public class QuestionTestFixture {
     public static final String TEST_MULTIPLE_CHOICE_QUESTION = "testMultipleChoiceQuestion";

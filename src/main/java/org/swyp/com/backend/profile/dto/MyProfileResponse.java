@@ -6,8 +6,6 @@ import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.enumeration.Gender;
 import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.enumeration.Region;
-import org.swyp.com.backend.question.dto.ChoiceTemplate;
-import org.swyp.com.backend.question.dto.ShortTemplate;
 
 public record MyProfileResponse(
         Long id,
