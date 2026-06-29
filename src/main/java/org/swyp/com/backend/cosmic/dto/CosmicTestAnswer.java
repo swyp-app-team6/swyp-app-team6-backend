@@ -7,7 +7,8 @@ public record CosmicTestAnswer(
         @JsonProperty("answer_id")
         Integer answerId,
         String answer,
-        CosmicDatingType cosmic,
+        @JsonProperty("cosmic_type")
+        CosmicDatingType cosmicType,
         Integer score
 ) {
 }
