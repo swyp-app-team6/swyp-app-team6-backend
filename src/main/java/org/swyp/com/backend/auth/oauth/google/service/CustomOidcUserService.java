@@ -1,4 +1,4 @@
-package org.swyp.com.backend.auth.oauth.service;
+package org.swyp.com.backend.auth.oauth.google.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
@@ -7,7 +7,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.swyp.com.backend.auth.oauth.CustomOidcUser;
+import org.swyp.com.backend.auth.oauth.google.CustomOidcUser;
 import org.swyp.com.backend.global.enumeration.OAuthProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
 import org.swyp.com.backend.user.domain.User;

@@ -1,4 +1,4 @@
-package org.swyp.com.backend.auth.oauth.service;
+package org.swyp.com.backend.auth.oauth.google.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.swyp.com.backend.auth.oauth.dto.GoogleAuthResult;
+import org.swyp.com.backend.auth.oauth.common.SocialAuthResult;
 import org.swyp.com.backend.global.enumeration.OAuthProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
 import org.swyp.com.backend.global.exception.BusinessException;
@@ -24,7 +24,7 @@ import org.swyp.com.backend.user.domain.repository.UserRepository;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class GoogleAppLoginServiceImpl implements GoogleAppLoginService {
+public class GoogleAuthServiceImpl implements GoogleAuthService {
 
     private final UserRepository userRepository;
 
@@ -39,7 +39,7 @@ public class GoogleAppLoginServiceImpl implements GoogleAppLoginService {
 
     @Override
     @Transactional
-    public GoogleAuthResult authenticate(String idToken) {
+    public SocialAuthResult authenticate(String idToken) {
         Payload payload = verifyIdToken(idToken);
 
         String sub = payload.getSubject();
@@ -50,7 +50,7 @@ public class GoogleAppLoginServiceImpl implements GoogleAppLoginService {
                         User.createOAuthUser(email, OAuthProvider.GOOGLE, sub, UserRole.USER)
                 ));
 
-        return new GoogleAuthResult(user.getId(), user.getRole());
+        return new SocialAuthResult(user.getId(), user.getRole());
     }
 
     private Payload verifyIdToken(String idToken) {

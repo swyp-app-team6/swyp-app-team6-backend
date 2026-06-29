@@ -1,4 +1,4 @@
-package org.swyp.com.backend.auth.oauth;
+package org.swyp.com.backend.auth.oauth.google;
 
 import java.util.Collection;
 import java.util.Map;
