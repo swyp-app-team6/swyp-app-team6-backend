@@ -1,4 +1,4 @@
-package org.swyp.com.backend.auth.oauth.handler;
+package org.swyp.com.backend.auth.oauth.google.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,7 +10,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import org.swyp.com.backend.auth.jwt.dto.TokenResponse;
 import org.swyp.com.backend.auth.jwt.service.TokenService;
-import org.swyp.com.backend.auth.oauth.CustomOidcUser;
+import org.swyp.com.backend.auth.oauth.google.CustomOidcUser;
 
 @Component
 @RequiredArgsConstructor
