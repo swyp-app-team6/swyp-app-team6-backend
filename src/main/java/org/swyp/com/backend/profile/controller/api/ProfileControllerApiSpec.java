@@ -3,6 +3,7 @@ package org.swyp.com.backend.profile.controller.api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -28,19 +29,40 @@ public interface ProfileControllerApiSpec {
                     description = "프로필 조회 성공",
                     content = @Content(
                             mediaType = "application/json",
+                            schema = @Schema(implementation = MyProfileResponse.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
                                               "id": 1,
                                               "nickname": "홍길동",
-                                              "image_key": "profile/user-uuid",
+                                              "image_key": "image-key",
                                               "gender": "M",
-                                              "bio": "여행을 좋아해요",
-                                              "keyword": "여행",
-                                              "topic": "맛집",
+                                              "age": 25,
+                                              "region": "SEOUL",
+                                              "job": "개발자",
                                               "interests": [
                                                 "TRAVEL",
-                                                "FOOD"
+                                                "SPORTS",
+                                                "MUSIC"
+                                              ],
+                                              "bio": "여행을 좋아해요",
+                                              "cosmic_type": "GALAXY",
+                                              "choice_template": [
+                                                {
+                                                  "question_id": 1,
+                                                  "question_type": "BINARY",
+                                                  "question": "저는 호감이 생기면",
+                                                  "answer_id": 1,
+                                                  "answer": "티가 나는 편이에요"
+                                                }
+                                              ],
+                                              "short_template": [
+                                                {
+                                                  "question_id": 5,
+                                                  "question_type": "BLANK",
+                                                  "question": "나는 자주 이런 말을 들어요 “너는 진짜 ______ 같아”",
+                                                  "answer": "긍정적인 사람"
+                                                }
                                               ]
                                             }
                                             """
@@ -100,7 +122,7 @@ public interface ProfileControllerApiSpec {
     @Operation(
             summary = "프로필 등록",
             description = "현재 로그인된 사용자의 프로필을 등록합니다. "
-                    + "닉네임, 성별, 프로필 이미지, 소개, 키워드, 주제, 관심사를 저장합니다.",
+                    + "필수 정보(닉네임, 이미지, 성별, 나이, 지역, 직업, 관심사), 부가 정보(자기 소개, 코스믹 유형, 객관식 질문 템플릿, 주관식 질문 템플릿) 저장합니다.",
             operationId = "registerProfile"
     )
     @ApiResponses(value = {
@@ -109,19 +131,47 @@ public interface ProfileControllerApiSpec {
                     description = "프로필 등록 성공",
                     content = @Content(
                             mediaType = "application/json",
+                            schema = @Schema(implementation = MyProfileResponse.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
                                               "id": 1,
                                               "nickname": "홍길동",
-                                              "image_key": "profile/user-uuid",
+                                              "image_key": "image-key",
                                               "gender": "M",
-                                              "bio": "여행을 좋아해요",
-                                              "keyword": "여행",
-                                              "topic": "맛집",
+                                              "age": 25,
+                                              "region": "SEOUL",
+                                              "job": "개발자",
                                               "interests": [
                                                 "TRAVEL",
-                                                "FOOD"
+                                                "SPORTS",
+                                                "MUSIC"
+                                              ],
+                                              "bio": "여행을 좋아해요",
+                                              "cosmic_type": "GALAXY",
+                                              "choice_template": [
+                                                {
+                                                  "question_id": 1,
+                                                  "question_type": "BINARY",
+                                                  "question": "저는 호감이 생기면",
+                                                  "answer_id": 1,
+                                                  "answer": "티가 나는 편이에요"
+                                                },
+                                                {
+                                                  "question_id": 2,
+                                                  "question_type": "BINARY",
+                                                  "question": "애프터 신청은",
+                                                  "answer_id": 2,
+                                                  "answer": "상대가 해주면 좋아요"
+                                                }
+                                              ],
+                                              "short_template": [
+                                                {
+                                                  "question_id": 5,
+                                                  "question_type": "BLANK",
+                                                  "question": "나는 자주 이런 말을 들어요 “너는 진짜 ______ 같아”",
+                                                  "answer": "긍정적인 사람"
+                                                }
                                               ]
                                             }
                                             """
@@ -201,18 +251,38 @@ public interface ProfileControllerApiSpec {
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
+                            schema = @Schema(implementation = ProfileRegisterRequest.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
                                               "nickname": "홍길동",
+                                              "image_key": "image-key",
                                               "gender": "M",
-                                              "image_key": "profile/user-uuid",
-                                              "bio": "여행을 좋아해요",
-                                              "keyword": "여행",
-                                              "topic": "맛집",
+                                              "age": 25,
+                                              "region": "SEOUL",
+                                              "job": "개발자",
                                               "interests": [
                                                 "TRAVEL",
-                                                "FOOD"
+                                                "SPORTS",
+                                                "MUSIC"
+                                              ],
+                                              "bio": "여행을 좋아해요",
+                                              "cosmic_type": "GALAXY",
+                                              "choice_template": [
+                                                {
+                                                  "question_id": 1,
+                                                  "answer_id": 1
+                                                },
+                                                {
+                                                  "question_id": 2,
+                                                  "answer_id": 2
+                                                }
+                                              ],
+                                              "short_template": [
+                                                {
+                                                  "question_id": 5,
+                                                  "answer": "긍정적인 사람"
+                                                }
                                               ]
                                             }
                                             """
@@ -224,8 +294,9 @@ public interface ProfileControllerApiSpec {
 
     @Operation(
             summary = "프로필 수정",
-            description = "현재 로그인된 사용자의 프로필 정보를 수정합니다. "
-                    + "닉네임, 프로필 이미지, 소개, 키워드, 주제, 관심사를 변경할 수 있습니다.",
+            description = "현재 로그인된 사용자의 프로필을 수정합니다. "
+                    + "기본 정보(닉네임, 이미지, 나이, 지역, 직업, 관심사), 부가 정보(자기 소개, 코스믹 유형, 객관식 질문 템플릿, 주관식 질문 템플릿)를 수정합니다."
+                    + "수정하려는 정보만 입력합니다.",
             operationId = "updateProfile"
     )
     @ApiResponses(value = {
@@ -234,19 +305,46 @@ public interface ProfileControllerApiSpec {
                     description = "프로필 수정 성공",
                     content = @Content(
                             mediaType = "application/json",
+                            schema = @Schema(implementation = MyProfileResponse.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
                                               "id": 1,
                                               "nickname": "홍길동",
-                                              "image_key": "profile/user-uuid",
+                                              "image_key": "image-key",
                                               "gender": "M",
-                                              "bio": "여행과 맛집을 좋아해요",
-                                              "keyword": "여행",
-                                              "topic": "카페",
+                                              "age": 26,
+                                              "region": "SEOUL",
+                                              "job": "백엔드 개발자",
                                               "interests": [
                                                 "TRAVEL",
-                                                "FOOD"
+                                                "SPORTS",
+                                                "CAFE"
+                                              ],
+                                              "bio": "여행과 운동을 좋아해요",
+                                              "choice_template": [
+                                                {
+                                                  "question_id": 1,
+                                                  "question_type": "BINARY",
+                                                  "question": "저는 호감이 생기면",
+                                                  "answer_id": 2,
+                                                  "answer": "살짝 숨기는 편이에요"
+                                                },
+                                                {
+                                                  "question_id": 2,
+                                                  "question_type": "BINARY",
+                                                  "question": "애프터 신청은",
+                                                  "answer_id": 2,
+                                                  "answer": "상대가 해주면 좋아요"
+                                                }
+                                              ],
+                                              "short_template": [
+                                                {
+                                                  "question_id": 5,
+                                                  "question_type": "BLANK",
+                                                  "question": "나는 자주 이런 말을 들어요 “너는 진짜 ______ 같아”",
+                                                  "answer": "긍정적인 사람"
+                                                }
                                               ]
                                             }
                                             """
@@ -323,17 +421,22 @@ public interface ProfileControllerApiSpec {
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
+                            schema = @Schema(implementation = ProfileUpdateRequest.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
-                                              "nickname": "홍길동",
-                                              "image_key": "profile/user-uuid",
-                                              "bio": "여행과 맛집을 좋아해요",
-                                              "keyword": "여행",
-                                              "topic": "카페",
+                                              "age": 26,
                                               "interests": [
                                                 "TRAVEL",
-                                                "FOOD"
+                                                "SPORTS",
+                                                "CAFE"
+                                              ],
+                                              "bio": "여행과 운동을 좋아해요",
+                                              "choice_template": [
+                                                {
+                                                  "question_id": 1,
+                                                  "answer_id": 2
+                                                }
                                               ]
                                             }
                                             """
@@ -346,7 +449,7 @@ public interface ProfileControllerApiSpec {
     @Operation(
             summary = "프로필 삭제",
             description = "현재 로그인된 사용자의 프로필을 삭제합니다. "
-                    + "프로필에 연결된 관심사 정보도 함께 삭제됩니다.",
+                    + "프로필 정보와 관심사, 객관식 질문 템플릿, 주관식 질문 템플릿 등 프로필에 연결된 모든 정보가 함께 삭제됩니다.",
             operationId = "deleteProfile"
     )
     @ApiResponses(value = {

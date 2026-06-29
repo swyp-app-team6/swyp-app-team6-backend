@@ -4,41 +4,54 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.enumeration.Gender;
 import org.swyp.com.backend.global.enumeration.InterestType;
+import org.swyp.com.backend.global.enumeration.Region;
 import org.swyp.com.backend.profile.domain.Interest;
 import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.domain.ProfileInterest;
+import org.swyp.com.backend.profile.dto.ChoiceTemplate;
 import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
 import org.swyp.com.backend.profile.dto.ProfileUpdateRequest;
+import org.swyp.com.backend.profile.dto.ShortTemplate;
 import org.swyp.com.backend.user.domain.User;
 
 public class ProfileTestFixture {
-    
+
     public static final Long TEST_PROFILE_ID = 1L;
     public static final String TEST_PROFILE_NICKNAME = "TestNickName";
-    public static final Gender TEST_GENDER = Gender.M;
     public static final String TEST_IMAGE_KEY = "test/image-key";
+    public static final Gender TEST_GENDER = Gender.M;
+    public static final Integer TEST_AGE = 25;
+    public static final Region TEST_REGION = Region.SEOUL;
+    public static final String TEST_JOB = "testJob";
     public static final String TEST_BIO = "testBio";
-    public static final String TEST_KEYWORD = "testKeyword";
-    public static final String TEST_TOPIC = "testTopic";
+    public static final CosmicDatingType TEST_COSMIC = CosmicDatingType.SOLA;
 
-    public static ProfileRegisterRequest createProfileForm(String nickname, Gender gender, String imageKey, String bio,
-                                                           String keyword, String topic,
-                                                           List<InterestType> interestTypeList) {
-        return new ProfileRegisterRequest(nickname, gender,
-                imageKey, bio, keyword,
-                topic, interestTypeList);
+    public static ProfileRegisterRequest createProfileForm(String nickname, String imageKey, Gender gender, Integer age,
+                                                           Region region, String job,
+                                                           List<InterestType> interestTypeList, String bio,
+                                                           CosmicDatingType cosmicType,
+                                                           List<ChoiceTemplate> choiceTemplateList,
+                                                           List<ShortTemplate> shortTemplateList
+    ) {
+        return new ProfileRegisterRequest(nickname, imageKey, gender, age, region, job, interestTypeList, bio,
+                cosmicType,
+                choiceTemplateList, shortTemplateList);
 
     }
 
-    public static ProfileUpdateRequest createUpdateProfileForm(String nickname, String imageKey, String bio,
-                                                               String keyword, String topic,
-                                                               List<InterestType> interestTypeList) {
-        return new ProfileUpdateRequest(nickname,
-                imageKey, bio, keyword,
-                topic, interestTypeList);
-
+    public static ProfileUpdateRequest createUpdateProfileForm(String nickname, String imageKey, Integer age,
+                                                               Region region, String job,
+                                                               List<InterestType> interestTypeList, String bio,
+                                                               CosmicDatingType cosmicType,
+                                                               List<ChoiceTemplate> choiceTemplateList,
+                                                               List<ShortTemplate> shortTemplateList
+    ) {
+        return new ProfileUpdateRequest(nickname, imageKey, age, region, job, interestTypeList, bio,
+                cosmicType,
+                choiceTemplateList, shortTemplateList);
     }
 
     public static List<Interest> createInterestList(List<InterestType> interestTypeList) {
@@ -71,7 +84,8 @@ public class ProfileTestFixture {
         return interest;
     }
 
-    public static Profile createProfile(Long id, User user, String nickname) {
+    public static Profile createProfile(Long id, User user, String nickname, String imageKey, Gender gender,
+                                        Integer age, Region region, String job, String bio, CosmicDatingType cosmic) {
         Profile profile = new Profile();
         ReflectionTestUtils.setField(profile, "id", id);
         ReflectionTestUtils.setField(profile, "user", user);
@@ -79,7 +93,7 @@ public class ProfileTestFixture {
         return profile;
     }
 
-    public static ProfileInterest createProfileInterest(Long id, Profile profile, Interest interest) {
+    private static ProfileInterest createProfileInterest(Long id, Profile profile, Interest interest) {
         ProfileInterest profileInterest = new ProfileInterest();
         ReflectionTestUtils.setField(profileInterest, "id", id);
         ReflectionTestUtils.setField(profileInterest, "profile", profile);
