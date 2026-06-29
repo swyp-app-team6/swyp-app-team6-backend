@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.UUID;
-import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +38,7 @@ public class AppleAuthController implements AppleAuthApiSpec {
         return ResponseEntity.ok(tokenResponse);
     }
 
+    @Override
     @GetMapping
     public void redirectToApple(HttpServletResponse response) throws IOException {
         String state = Base64.getUrlEncoder().encodeToString(UUID.randomUUID().toString().getBytes());
@@ -52,7 +52,7 @@ public class AppleAuthController implements AppleAuthApiSpec {
         response.sendRedirect(url);
     }
 
-    @Hidden
+    @Override
     @PostMapping("/callback")
     public ResponseEntity<TokenResponse> callback(
             @RequestParam String code,

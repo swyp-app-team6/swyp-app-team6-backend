@@ -1,16 +1,17 @@
 package org.swyp.com.backend.auth.oauth.apple.controller.api;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.swyp.com.backend.auth.jwt.dto.TokenResponse;
 import org.swyp.com.backend.auth.oauth.apple.dto.AppleLoginRequest;
 
@@ -20,9 +21,10 @@ public interface AppleAuthApiSpec {
     @Operation(
             summary = "Apple 웹 로그인 (테스트용)",
             description = """
+                    `https://api.orbitss.xyz/auth/apple`
                     브라우저에서 직접 접속하면 Apple 로그인 페이지로 리다이렉트됩니다.
                     로그인 완료 후 서비스 자체 토큰(`accessToken`, `refreshToken`)이 JSON으로 반환됩니다.
-
+                    
                     **테스트 순서**
                     1. 브라우저 주소창에 이 엔드포인트 URL을 직접 입력하여 접속
                     2. Apple 계정으로 로그인
@@ -58,4 +60,10 @@ public interface AppleAuthApiSpec {
             }
     )
     ResponseEntity<TokenResponse> appleAppLogin(@Valid @RequestBody AppleLoginRequest request);
+
+    @Hidden
+    ResponseEntity<TokenResponse> callback(
+            @RequestParam String code,
+            @RequestParam(required = false) String id_token,
+            @RequestParam(required = false) String state);
 }
