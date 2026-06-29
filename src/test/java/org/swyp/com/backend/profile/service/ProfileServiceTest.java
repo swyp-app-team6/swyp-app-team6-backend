@@ -192,8 +192,8 @@ class ProfileServiceTest {
     void updateProfileInterestSuccessTest() {
         // given
         List<InterestType> exInterestTypeList = createInterestTypeList(InterestType.MUSIC);
-        List<InterestType> updatedInterestTypeList = createInterestTypeList(InterestType.TRAVEL, InterestType.BOOKS,
-                InterestType.FOOD);
+        List<InterestType> updatedInterestTypeList = createInterestTypeList(InterestType.TRAVEL, InterestType.READING,
+                InterestType.RESTAURANT);
 
         User user = createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
         Profile profile = createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME);
