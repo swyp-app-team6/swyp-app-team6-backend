@@ -1,4 +1,4 @@
-package org.swyp.com.backend.auth.oauth.service;
+package org.swyp.com.backend.auth.oauth.google.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,7 +25,7 @@ import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.swyp.com.backend.auth.oauth.CustomOidcUser;
+import org.swyp.com.backend.auth.oauth.google.CustomOidcUser;
 import org.swyp.com.backend.global.enumeration.OAuthProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
 import org.swyp.com.backend.support.JwtTestFixture;
@@ -75,8 +75,6 @@ class CustomOidcUserServiceTest {
     @Test
     void processOidcUser_existOauthUser() {
         //given
-        String sub = OAuthProvider.GOOGLE.toString();
-        String email = "test@email.com";
         OidcUserRequest oidcUserRequest = createOidcUserRequest(sub, email);
         OidcUser oidcUser = createOidcUser(sub, email);
 
