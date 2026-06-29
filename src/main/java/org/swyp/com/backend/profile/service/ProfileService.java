@@ -74,8 +74,8 @@ public class ProfileService {
         Profile profile = profileRepository.findByUser(user).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
 
-        profile.updateProfile(profileForm.nickname(), profile.getImageKey(), profile.getBio(),
-                profile.getKeyword(), profile.getTopic());
+        profile.updateProfile(profileForm.nickname(), profileForm.getImageKey(), profileForm.getBio(),
+                profileForm.getKeyword(), profileForm.getTopic());
 
         profileInterestRepository.deleteByProfile(profile);
 
