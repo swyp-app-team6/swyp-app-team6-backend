@@ -1,12 +1,10 @@
 package org.swyp.com.backend.cosmic.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.swyp.com.backend.cosmic.domain.CosmicTypeTest;
-import org.swyp.com.backend.cosmic.domain.repository.CosmicTypeTestRepository;
+import org.swyp.com.backend.cosmic.domain.repository.CosmicQuestionRepository;
 import org.swyp.com.backend.cosmic.dto.CosmicTest;
 import org.swyp.com.backend.cosmic.dto.CosmicTestAnswer;
 import org.swyp.com.backend.cosmic.dto.CosmicTestResponse;
@@ -15,28 +13,22 @@ import org.swyp.com.backend.cosmic.dto.CosmicTestResponse;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CosmicService {
-    private final CosmicTypeTestRepository cosmicTypeTestRepository;
+
+    private final CosmicQuestionRepository cosmicQuestionRepository;
 
     public CosmicTestResponse getCosmicTestResponse() {
-        List<CosmicTypeTest> cosmicTypeTestList = cosmicTypeTestRepository.findByDeletedFalse();
-
-        List<CosmicTest> cosmicTestList = cosmicTypeTestList.stream()
-                .collect(Collectors.groupingBy(
-                        CosmicTypeTest::getQuestionId
+        List<CosmicTest> cosmicTestList = cosmicQuestionRepository.findByDeletedFalse().stream()
+                .map(question -> new CosmicTest(
+                        question.getId().intValue(),
+                        question.getContent(),
+                        question.getAnswers().stream()
+                                .map(answer -> new CosmicTestAnswer(
+                                        answer.getId().intValue(),
+                                        answer.getAnswer(),
+                                        answer.getCosmic(),
+                                        answer.getScore()))
+                                .toList()
                 ))
-                .values().stream()
-                .map(questionGroup -> {
-                    CosmicTypeTest cosmicTypeTest = questionGroup.getFirst();
-
-                    List<CosmicTestAnswer> cosmicTestAnswerList = questionGroup.stream()
-                            .map(question ->
-                                    new CosmicTestAnswer(question.getAnswerId(), question.getAnswer(),
-                                            question.getCosmic(), question.getScore()))
-                            .toList();
-
-                    return new CosmicTest(cosmicTypeTest.getQuestionId(), cosmicTypeTest.getContent(),
-                            cosmicTestAnswerList);
-                })
                 .toList();
 
         return new CosmicTestResponse(cosmicTestList);
