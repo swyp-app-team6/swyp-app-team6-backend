@@ -2,8 +2,6 @@ package org.swyp.com.backend.question.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -35,21 +33,14 @@ public class QuestionService {
     private final ShortAnswerQuestionRepository shortAnswerQuestionRepository;
 
     public CustomQuestionResponse getCustomQuestionResponse() {
-        List<MultipleChoiceQuestion> questions =
-                multipleChoiceQuestionRepository.findByDeletedFalse();
-
-        Map<Long, List<MultipleChoiceAnswer>> answerMap =
-                multipleChoiceAnswerRepository.findByDeletedFalse().stream()
-                        .collect(Collectors.groupingBy(answer -> answer.getQuestion().getId()));
-
         List<MultipleQuestion> multipleQuestionList =
-                questions.stream()
+                multipleChoiceQuestionRepository.findByDeletedFalseWithAnswers().stream()
                         .map(question -> new MultipleQuestion(
                                 question.getId(),
                                 question.getType(),
                                 question.getContent(),
-                                answerMap.getOrDefault(question.getId(), List.of())
-                                        .stream()
+                                question.getAnswers().stream()
+                                        .filter(a -> !a.getDeleted())
                                         .map(answer -> new MultipleAnswer(
                                                 answer.getAnswerId(),
                                                 answer.getContent()

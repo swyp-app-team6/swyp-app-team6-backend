@@ -1,12 +1,16 @@
 package org.swyp.com.backend.question.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.List;
 import lombok.Getter;
 import org.swyp.com.backend.global.enumeration.CustomQuestionType;
 
@@ -24,4 +28,7 @@ public class MultipleChoiceQuestion {
     private String content;
     @Column(nullable = false)
     private Boolean deleted = false;
+
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<MultipleChoiceAnswer> answers;
 }
