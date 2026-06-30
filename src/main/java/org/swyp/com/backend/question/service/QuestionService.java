@@ -2,6 +2,8 @@ package org.swyp.com.backend.question.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -58,37 +60,54 @@ public class QuestionService {
     }
 
     public List<ProfileChoice> toProfileChoiceList(Profile profile, List<ChoiceTemplate> choiceTemplateList) {
-        List<ProfileChoice> profileChoiceList = new ArrayList<>();
+        List<Long> questionIds = choiceTemplateList.stream().map(ChoiceTemplate::questionId).toList();
 
-        for (ChoiceTemplate choiceTemplate : choiceTemplateList) {
-            MultipleChoiceQuestion question = multipleChoiceQuestionRepository
-                    .findByIdAndDeletedFalse(choiceTemplate.questionId())
-                    .orElseThrow(() ->
-                            new BusinessException(HttpStatus.NOT_FOUND, "질문 템플릿 정보를 찾을 수 없습니다."));
-            MultipleChoiceAnswer answer = multipleChoiceAnswerRepository
-                    .findByQuestionAndAnswerIdAndDeletedFalse(question, choiceTemplate.answerId())
-                    .orElseThrow(() ->
-                            new BusinessException(HttpStatus.NOT_FOUND, "답변 템플릿 정보를 찾을 수 없습니다."));
+        Map<Long, MultipleChoiceQuestion> questionMap = multipleChoiceQuestionRepository.findAllById(questionIds)
+                .stream()
+                .filter(q -> !q.getDeleted())
+                .collect(Collectors.toMap(MultipleChoiceQuestion::getId, q -> q));
 
-            profileChoiceList.add(ProfileChoice.createProfileChoice(profile, answer));
-        }
+        // (questionId, answerId) → answer
+        Map<Long, Map<Integer, MultipleChoiceAnswer>> answerMap =
+                multipleChoiceAnswerRepository.findByQuestionIdInAndDeletedFalse(questionIds).stream()
+                        .collect(Collectors.groupingBy(
+                                a -> a.getQuestion().getId(),
+                                Collectors.toMap(MultipleChoiceAnswer::getAnswerId, a -> a)
+                        ));
 
-        return profileChoiceList;
+        return choiceTemplateList.stream()
+                .map(choiceTemplate -> {
+                    MultipleChoiceQuestion question = questionMap.get(choiceTemplate.questionId());
+                    if (question == null) {
+                        throw new BusinessException(HttpStatus.NOT_FOUND, "질문 템플릿 정보를 찾을 수 없습니다.");
+                    }
+                    MultipleChoiceAnswer answer = answerMap
+                            .getOrDefault(choiceTemplate.questionId(), Map.of())
+                            .get(choiceTemplate.answerId());
+                    if (answer == null) {
+                        throw new BusinessException(HttpStatus.NOT_FOUND, "답변 템플릿 정보를 찾을 수 없습니다.");
+                    }
+                    return ProfileChoice.createProfileChoice(profile, answer);
+                })
+                .toList();
     }
 
     public List<ProfileShort> toProfileShortList(Profile profile, List<ShortTemplate> shortTemplateList) {
-        List<ProfileShort> profileShortList = new ArrayList<>();
+        List<Long> questionIds = shortTemplateList.stream().map(ShortTemplate::questionId).toList();
 
-        for (ShortTemplate shortTemplate : shortTemplateList) {
-            ShortAnswerQuestion question = shortAnswerQuestionRepository
-                    .findByIdAndDeletedFalse(shortTemplate.questionId())
-                    .orElseThrow(() ->
-                            new BusinessException(HttpStatus.NOT_FOUND, "질문 템플릿 정보를 찾을 수 없습니다."));
-            String answer = shortTemplate.answer();
+        Map<Long, ShortAnswerQuestion> questionMap = shortAnswerQuestionRepository.findAllById(questionIds)
+                .stream()
+                .filter(q -> !q.getDeleted())
+                .collect(Collectors.toMap(ShortAnswerQuestion::getId, q -> q));
 
-            profileShortList.add(ProfileShort.createProfileShortTemplate(profile, question, answer));
-        }
-
-        return profileShortList;
+        return shortTemplateList.stream()
+                .map(shortTemplate -> {
+                    ShortAnswerQuestion question = questionMap.get(shortTemplate.questionId());
+                    if (question == null) {
+                        throw new BusinessException(HttpStatus.NOT_FOUND, "질문 템플릿 정보를 찾을 수 없습니다.");
+                    }
+                    return ProfileShort.createProfileShortTemplate(profile, question, shortTemplate.answer());
+                })
+                .toList();
     }
 }

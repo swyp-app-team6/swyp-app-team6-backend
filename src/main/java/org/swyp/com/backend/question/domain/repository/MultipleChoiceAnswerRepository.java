@@ -14,4 +14,6 @@ public interface MultipleChoiceAnswerRepository extends JpaRepository<MultipleCh
                                                                             Integer answerId);
 
     List<MultipleChoiceAnswer> findByDeletedFalse();
+
+    List<MultipleChoiceAnswer> findByQuestionIdInAndDeletedFalse(List<Long> questionIds);
 }
