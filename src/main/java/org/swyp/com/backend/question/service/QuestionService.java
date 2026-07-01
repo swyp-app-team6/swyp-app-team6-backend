@@ -1,8 +1,8 @@
 package org.swyp.com.backend.question.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -42,7 +42,6 @@ public class QuestionService {
                                 question.getType(),
                                 question.getContent(),
                                 question.getAnswers().stream()
-                                        .filter(a -> !a.getDeleted())
                                         .map(answer -> new MultipleAnswer(
                                                 answer.getAnswerId(),
                                                 answer.getContent()
@@ -62,28 +61,24 @@ public class QuestionService {
     public List<ProfileChoice> toProfileChoiceList(Profile profile, List<ChoiceTemplate> choiceTemplateList) {
         List<Long> questionIds = choiceTemplateList.stream().map(ChoiceTemplate::questionId).toList();
 
-        Map<Long, MultipleChoiceQuestion> questionMap = multipleChoiceQuestionRepository.findAllById(questionIds)
-                .stream()
-                .filter(q -> !q.getDeleted())
-                .collect(Collectors.toMap(MultipleChoiceQuestion::getId, q -> q));
+        Set<Long> validQuestionIds = multipleChoiceQuestionRepository.findByIdInAndDeletedFalse(questionIds).stream()
+                .map(MultipleChoiceQuestion::getId)
+                .collect(Collectors.toSet());
 
-        // (questionId, answerId) → answer
-        Map<Long, Map<Integer, MultipleChoiceAnswer>> answerMap =
+        Map<String, MultipleChoiceAnswer> answerMap =
                 multipleChoiceAnswerRepository.findByQuestionIdInAndDeletedFalse(questionIds).stream()
-                        .collect(Collectors.groupingBy(
-                                a -> a.getQuestion().getId(),
-                                Collectors.toMap(MultipleChoiceAnswer::getAnswerId, a -> a)
+                        .collect(Collectors.toMap(
+                                a -> a.getQuestion().getId() + ":" + a.getAnswerId(),
+                                a -> a
                         ));
 
         return choiceTemplateList.stream()
                 .map(choiceTemplate -> {
-                    MultipleChoiceQuestion question = questionMap.get(choiceTemplate.questionId());
-                    if (question == null) {
+                    if (!validQuestionIds.contains(choiceTemplate.questionId())) {
                         throw new BusinessException(HttpStatus.NOT_FOUND, "질문 템플릿 정보를 찾을 수 없습니다.");
                     }
-                    MultipleChoiceAnswer answer = answerMap
-                            .getOrDefault(choiceTemplate.questionId(), Map.of())
-                            .get(choiceTemplate.answerId());
+                    MultipleChoiceAnswer answer = answerMap.get(
+                            choiceTemplate.questionId() + ":" + choiceTemplate.answerId());
                     if (answer == null) {
                         throw new BusinessException(HttpStatus.NOT_FOUND, "답변 템플릿 정보를 찾을 수 없습니다.");
                     }
@@ -95,9 +90,9 @@ public class QuestionService {
     public List<ProfileShort> toProfileShortList(Profile profile, List<ShortTemplate> shortTemplateList) {
         List<Long> questionIds = shortTemplateList.stream().map(ShortTemplate::questionId).toList();
 
-        Map<Long, ShortAnswerQuestion> questionMap = shortAnswerQuestionRepository.findAllById(questionIds)
+        Map<Long, ShortAnswerQuestion> questionMap = shortAnswerQuestionRepository.findByIdInAndDeletedFalse(
+                        questionIds)
                 .stream()
-                .filter(q -> !q.getDeleted())
                 .collect(Collectors.toMap(ShortAnswerQuestion::getId, q -> q));
 
         return shortTemplateList.stream()

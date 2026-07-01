@@ -11,6 +11,8 @@ public interface MultipleChoiceQuestionRepository extends JpaRepository<Multiple
 
     List<MultipleChoiceQuestion> findByDeletedFalse();
 
-    @Query("SELECT DISTINCT q FROM MultipleChoiceQuestion q LEFT JOIN FETCH q.answers WHERE q.deleted = false")
+    List<MultipleChoiceQuestion> findByIdInAndDeletedFalse(List<Long> ids);
+
+    @Query("SELECT DISTINCT q FROM MultipleChoiceQuestion q LEFT JOIN FETCH q.answers a WHERE q.deleted = false AND a.deleted = false")
     List<MultipleChoiceQuestion> findByDeletedFalseWithAnswers();
 }

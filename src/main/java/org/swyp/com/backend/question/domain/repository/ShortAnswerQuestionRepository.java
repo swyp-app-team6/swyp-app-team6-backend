@@ -9,4 +9,6 @@ public interface ShortAnswerQuestionRepository extends JpaRepository<ShortAnswer
     Optional<ShortAnswerQuestion> findByIdAndDeletedFalse(Long id);
 
     List<ShortAnswerQuestion> findByDeletedFalse();
+
+    List<ShortAnswerQuestion> findByIdInAndDeletedFalse(List<Long> ids);
 }
