@@ -6,5 +6,5 @@ import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.user.domain.User;
 
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
-    Optional<Profile> findByUser(User user);
+    Optional<Profile> findByUserAndDeletedFalse(User user);
 }

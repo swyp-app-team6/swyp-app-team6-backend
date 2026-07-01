@@ -54,7 +54,7 @@ public class ProfileService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
 
-        Profile profile = profileRepository.findByUser(user).orElseThrow(() ->
+        Profile profile = profileRepository.findByUserAndDeletedFalse(user).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
 
         List<ProfileInterest> ProfileInterestList = profileInterestRepository.findByProfile(profile);
@@ -73,7 +73,7 @@ public class ProfileService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
 
-        if (profileRepository.findByUser(user).isPresent()) {
+        if (profileRepository.findByUserAndDeletedFalse(user).isPresent()) {
             throw new BusinessException(HttpStatus.CONFLICT, "이미 프로필을 생성하였습니다.");
         }
 
@@ -111,7 +111,7 @@ public class ProfileService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
 
-        Profile profile = profileRepository.findByUser(user).orElseThrow(() ->
+        Profile profile = profileRepository.findByUserAndDeletedFalse(user).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
 
         Cosmic cosmic =
@@ -150,13 +150,10 @@ public class ProfileService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
 
-        Profile profile = profileRepository.findByUser(user).orElseThrow(() ->
+        Profile profile = profileRepository.findByUserAndDeletedFalse(user).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
 
-        profileInterestRepository.deleteByProfile(profile);
-        profileChoiceRepository.deleteByProfile(profile);
-        profileShortRepository.deleteByProfile(profile);
-        profileRepository.delete(profile);
+        profile.deleteProfile();
     }
 
     private MyProfileResponse toMyProfileResponseDto(Profile profile, List<ProfileInterest> interestList,

@@ -129,7 +129,7 @@ class ProfileServiceTest {
                 TEST_REGION, TEST_JOB, interestTypeList, null, null, null, null);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findByUser(user)).thenReturn(Optional.empty());
+        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.empty());
         when(interestRepository.findByTypeInAndDeletedFalse(request.interests())).thenReturn(interestList);
 
         // when
@@ -178,7 +178,7 @@ class ProfileServiceTest {
                 shortTemplateList);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findByUser(user)).thenReturn(Optional.empty());
+        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.empty());
         when(interestRepository.findByTypeInAndDeletedFalse(request.interests())).thenReturn(interestList);
         when(multipleChoiceQuestionRepository.findByIdAndDeletedFalse(choiceQuestion.getId())).thenReturn(
                 Optional.of(choiceQuestion));
@@ -210,7 +210,7 @@ class ProfileServiceTest {
                 TEST_REGION, TEST_JOB, interestTypeList, null, null, null, null);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findByUser(user)).thenReturn(Optional.of(profile));
+        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.of(profile));
 
         // then
         BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
@@ -279,7 +279,7 @@ class ProfileServiceTest {
                 shortTemplateList);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findByUser(user)).thenReturn(Optional.of(profile));
+        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.of(profile));
         when(profileInterestRepository.findByProfile(profile))
                 .thenReturn(profileInterestList);
         when(profileChoiceRepository.findByProfile(profile)).thenReturn(profileChoiceList);
@@ -300,7 +300,7 @@ class ProfileServiceTest {
         User user = createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findByUser(user)).thenReturn(Optional.empty());
+        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.empty());
 
         // then
         BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
@@ -322,7 +322,7 @@ class ProfileServiceTest {
                 null, null, null, null, null, null, null);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findByUser(user)).thenReturn(Optional.of(profile));
+        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.of(profile));
 
         // when
         MyProfileResponse response = profileService.updateProfile(user.getId(), request);
@@ -349,7 +349,7 @@ class ProfileServiceTest {
                 null, null, interestTypeList, null, null, null, null);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findByUser(user)).thenReturn(Optional.of(profile));
+        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.of(profile));
         when(interestRepository.findByTypeInAndDeletedFalse(request.interests())).thenReturn(interestList);
 
         // when

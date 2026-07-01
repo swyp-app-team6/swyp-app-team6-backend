@@ -36,7 +36,7 @@ public class UserService {
 
         appleAuthService.revoke(userId);
 
-        profileRepository.findByUser(user)
+        profileRepository.findByUserAndDeletedFalse(user)
                 .ifPresent(profile -> {
                     profileInterestRepository.deleteByProfile(profile);
                     profileRepository.delete(profile);

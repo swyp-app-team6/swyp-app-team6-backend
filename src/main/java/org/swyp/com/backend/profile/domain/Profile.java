@@ -10,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import java.util.Date;
 import java.util.UUID;
 import lombok.Getter;
@@ -26,7 +25,7 @@ public class Profile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @JoinColumn(name = "user_id", nullable = false)
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
     @Column(nullable = false, length = 10)
     private String nickname;
@@ -54,6 +53,9 @@ public class Profile {
     @Column(name = "qr_expires_at")
     private Date qrExpiresAt;
 
+    @Column(nullable = false)
+    private Boolean deleted;
+
     public static Profile createProfile(User user, String nickname, String imageKey, Gender gender, Integer age,
                                         Region region, String job,
                                         String bio, Cosmic cosmic) {
@@ -67,6 +69,7 @@ public class Profile {
         profile.job = job;
         profile.bio = bio;
         profile.cosmic = cosmic;
+        profile.deleted = false;
         return profile;
     }
 
@@ -93,5 +96,9 @@ public class Profile {
         if (cosmic != null) {
             this.cosmic = cosmic;
         }
+    }
+
+    public void deleteProfile() {
+        this.deleted = true;
     }
 }
