@@ -27,7 +27,7 @@ public class ProfileTestFixture {
     public static final Region TEST_REGION = Region.SEOUL;
     public static final String TEST_JOB = "testJob";
     public static final String TEST_BIO = "testBio";
-    public static final CosmicDatingType TEST_COSMIC = CosmicDatingType.SOLA;
+    public static final CosmicDatingType TEST_COSMIC_TYPE = CosmicDatingType.SOLA;
 
     public static ProfileRegisterRequest createProfileForm(String nickname, String imageKey, Gender gender, Integer age,
                                                            Region region, String job,

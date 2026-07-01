@@ -4,7 +4,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_AGE;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_BIO;
-import static org.swyp.com.backend.support.ProfileTestFixture.TEST_COSMIC;
+import static org.swyp.com.backend.support.ProfileTestFixture.TEST_COSMIC_TYPE;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_GENDER;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_IMAGE_KEY;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_JOB;
@@ -54,7 +54,7 @@ class UserServiceTest {
         // given
         User user = UserTestFixture.createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
         Profile profile = ProfileTestFixture.createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY,
-                TEST_GENDER, TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC);
+                TEST_GENDER, TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(profileRepository.findByUser(user)).thenReturn(Optional.of(profile));

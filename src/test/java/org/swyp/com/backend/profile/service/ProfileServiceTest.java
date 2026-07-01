@@ -6,9 +6,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.swyp.com.backend.global.enumeration.CustomQuestionType.BINARY;
 import static org.swyp.com.backend.global.enumeration.CustomQuestionType.BLANK;
+import static org.swyp.com.backend.support.CosmicTestFixture.TEST_COSMIC_DELETED;
+import static org.swyp.com.backend.support.CosmicTestFixture.TEST_COSMIC_DETAIL;
+import static org.swyp.com.backend.support.CosmicTestFixture.TEST_COSMIC_ID;
+import static org.swyp.com.backend.support.CosmicTestFixture.TEST_COSMIC_IMAGE_KEY;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_AGE;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_BIO;
-import static org.swyp.com.backend.support.ProfileTestFixture.TEST_COSMIC;
+import static org.swyp.com.backend.support.ProfileTestFixture.TEST_COSMIC_TYPE;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_GENDER;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_IMAGE_KEY;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_JOB;
@@ -40,6 +44,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.swyp.com.backend.cosmic.domain.Cosmic;
+import org.swyp.com.backend.cosmic.domain.repository.CosmicRepository;
+import org.swyp.com.backend.cosmic.domain.repository.CosmicTypeTestRepository;
+import org.swyp.com.backend.cosmic.service.CosmicService;
 import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.profile.domain.Interest;
@@ -64,6 +72,7 @@ import org.swyp.com.backend.question.domain.repository.MultipleChoiceAnswerRepos
 import org.swyp.com.backend.question.domain.repository.MultipleChoiceQuestionRepository;
 import org.swyp.com.backend.question.domain.repository.ShortAnswerQuestionRepository;
 import org.swyp.com.backend.question.service.QuestionService;
+import org.swyp.com.backend.support.CosmicTestFixture;
 import org.swyp.com.backend.support.QuestionTestFixture;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.repository.UserRepository;
@@ -89,15 +98,22 @@ class ProfileServiceTest {
     MultipleChoiceAnswerRepository multipleChoiceAnswerRepository;
     @Mock
     ShortAnswerQuestionRepository shortAnswerQuestionRepository;
+    @Mock
+    CosmicRepository cosmicRepository;
+    @Mock
+    CosmicTypeTestRepository cosmicTypeTestRepository;
 
     ProfileService profileService;
     QuestionService questionService;
+    CosmicService cosmicService;
 
     @BeforeEach
     void setUp() {
+        cosmicService = new CosmicService(cosmicRepository, cosmicTypeTestRepository);
         questionService = new QuestionService(multipleChoiceQuestionRepository, multipleChoiceAnswerRepository,
                 shortAnswerQuestionRepository);
-        profileService = new ProfileService(questionService, userRepository, profileRepository, interestRepository,
+        profileService = new ProfileService(questionService, cosmicService, userRepository, profileRepository,
+                interestRepository,
                 profileInterestRepository, profileChoiceRepository, profileShortRepository);
     }
 
@@ -130,7 +146,9 @@ class ProfileServiceTest {
         // given
         User user = createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
         Profile profile = createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER,
-                TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC);
+                TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
+        Cosmic cosmic = CosmicTestFixture.createCosmic(TEST_COSMIC_ID, TEST_COSMIC_TYPE, TEST_COSMIC_DETAIL,
+                TEST_COSMIC_IMAGE_KEY, TEST_COSMIC_DELETED);
 
         // entity-setup
         List<InterestType> interestTypeList = createInterestTypeList(InterestType.TRAVEL);
@@ -156,7 +174,8 @@ class ProfileServiceTest {
         List<ShortTemplate> shortTemplateList = QuestionTestFixture.createshortTemplateList(shortTemplate);
 
         ProfileRegisterRequest request = createProfileForm(TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER, TEST_AGE,
-                TEST_REGION, TEST_JOB, interestTypeList, TEST_BIO, TEST_COSMIC, choiceTemplateList, shortTemplateList);
+                TEST_REGION, TEST_JOB, interestTypeList, TEST_BIO, TEST_COSMIC_TYPE, choiceTemplateList,
+                shortTemplateList);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(profileRepository.findByUser(user)).thenReturn(Optional.empty());
@@ -167,6 +186,7 @@ class ProfileServiceTest {
                 choiceAnswer1.getAnswerId())).thenReturn(Optional.of(choiceAnswer1));
         when(shortAnswerQuestionRepository.findByIdAndDeletedFalse(shortQuestion.getId())).thenReturn(
                 Optional.of(shortQuestion));
+        when(cosmicRepository.findByType(TEST_COSMIC_TYPE)).thenReturn(Optional.of(cosmic));
 
         // when
         MyProfileResponse response = profileService.createProfile(user.getId(), request);
@@ -182,7 +202,7 @@ class ProfileServiceTest {
         // given
         User user = createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
         Profile profile = createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER,
-                TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC);
+                TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
 
         List<InterestType> interestTypeList = createInterestTypeList(InterestType.TRAVEL);
 
@@ -222,7 +242,7 @@ class ProfileServiceTest {
         // given
         User user = createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
         Profile profile = createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER,
-                TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC);
+                TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
 
         // entity-setup
         List<InterestType> interestTypeList = createInterestTypeList(InterestType.TRAVEL);
@@ -255,7 +275,8 @@ class ProfileServiceTest {
         List<ShortTemplate> shortTemplateList = QuestionTestFixture.createshortTemplateList(shortTemplate);
 
         ProfileRegisterRequest request = createProfileForm(TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER, TEST_AGE,
-                TEST_REGION, TEST_JOB, interestTypeList, TEST_BIO, TEST_COSMIC, choiceTemplateList, shortTemplateList);
+                TEST_REGION, TEST_JOB, interestTypeList, TEST_BIO, TEST_COSMIC_TYPE, choiceTemplateList,
+                shortTemplateList);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(profileRepository.findByUser(user)).thenReturn(Optional.of(profile));
@@ -295,7 +316,7 @@ class ProfileServiceTest {
 
         User user = createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
         Profile profile = createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER,
-                TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC);
+                TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
 
         ProfileUpdateRequest request = createUpdateProfileForm(updateName, null, null,
                 null, null, null, null, null, null, null);
@@ -319,7 +340,7 @@ class ProfileServiceTest {
 
         User user = createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
         Profile profile = createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER,
-                TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC);
+                TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
 
         List<InterestType> interestTypeList = updatedInterestTypeList;
         List<Interest> interestList = createInterestList(interestTypeList);
