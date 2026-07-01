@@ -33,7 +33,7 @@ public class AppleAuthController implements AppleAuthApiSpec {
     @Override
     @PostMapping("/token")
     public ResponseEntity<TokenResponse> appleAppLogin(@Valid @RequestBody AppleLoginRequest request) {
-        SocialAuthResult result = appleAuthService.loginWithIdentityToken(request.identityToken());
+        SocialAuthResult result = appleAuthService.loginWithIdentityToken(request.identityToken(), request.authorizationCode());
         TokenResponse tokenResponse = tokenService.issueTokenPair(result.userId(), result.role());
         return ResponseEntity.ok(tokenResponse);
     }
@@ -61,7 +61,7 @@ public class AppleAuthController implements AppleAuthApiSpec {
 
         SocialAuthResult result;
         if (id_token != null && !id_token.isBlank()) {
-            result = appleAuthService.loginWithIdentityToken(id_token);
+            result = appleAuthService.loginWithIdentityToken(id_token, code);
         } else {
             result = appleAuthService.loginWithCode(code);
         }

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.swyp.com.backend.auth.oauth.apple.domain.repository.AppleRefreshTokenRepository;
 import org.swyp.com.backend.auth.oauth.common.SocialAuthResult;
 import org.swyp.com.backend.global.enumeration.OAuthProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
@@ -30,6 +31,8 @@ class AppleAuthServiceTest {
     @Mock
     UserRepository userRepository;
     @Mock
+    AppleRefreshTokenRepository appleRefreshTokenRepository;
+    @Mock
     Claims claims;
 
     AppleAuthService appleAuthService;
@@ -39,7 +42,7 @@ class AppleAuthServiceTest {
 
     @BeforeEach
     void setup() {
-        appleAuthService = new AppleAuthService(tokenVerifier, tokenClient, userRepository);
+        appleAuthService = new AppleAuthService(tokenVerifier, tokenClient, userRepository, appleRefreshTokenRepository);
     }
 
     @Test
@@ -57,7 +60,7 @@ class AppleAuthServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
         //when
-        SocialAuthResult result = appleAuthService.loginWithIdentityToken("dummy.token");
+        SocialAuthResult result = appleAuthService.loginWithIdentityToken("dummy.token", null);
 
         //then
         assertThat(result.userId()).isEqualTo(TEST_USER_ID);
@@ -77,7 +80,7 @@ class AppleAuthServiceTest {
                 .thenReturn(Optional.of(existingUser));
 
         //when
-        SocialAuthResult result = appleAuthService.loginWithIdentityToken("dummy.token");
+        SocialAuthResult result = appleAuthService.loginWithIdentityToken("dummy.token", null);
 
         //then
         assertThat(result.userId()).isEqualTo(TEST_USER_ID);
@@ -98,7 +101,7 @@ class AppleAuthServiceTest {
         when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(googleUser));
 
         //when
-        SocialAuthResult result = appleAuthService.loginWithIdentityToken("dummy.token");
+        SocialAuthResult result = appleAuthService.loginWithIdentityToken("dummy.token", null);
 
         //then
         assertThat(result.userId()).isEqualTo(TEST_USER_ID);
