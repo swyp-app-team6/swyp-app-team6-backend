@@ -13,6 +13,8 @@ import jakarta.persistence.ManyToOne;
 import java.util.Date;
 import java.util.UUID;
 import lombok.Getter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.swyp.com.backend.cosmic.domain.Cosmic;
 import org.swyp.com.backend.global.enumeration.Gender;
 import org.swyp.com.backend.global.enumeration.Region;
@@ -49,6 +51,7 @@ public class Profile {
     private Cosmic cosmic;
 
     @Column(length = 36)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID qr;
     @Column(name = "qr_expires_at")
     private Date qrExpiresAt;
@@ -100,5 +103,10 @@ public class Profile {
 
     public void deleteProfile() {
         this.deleted = true;
+    }
+
+    public void updateProfileQR(UUID qr, Date qrExpiresAt) {
+        this.qr = qr;
+        this.qrExpiresAt = qrExpiresAt;
     }
 }

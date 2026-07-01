@@ -1,7 +1,9 @@
 package org.swyp.com.backend.profile.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ import org.swyp.com.backend.profile.dto.MyProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
 import org.swyp.com.backend.profile.dto.ProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileUpdateRequest;
+import org.swyp.com.backend.profile.dto.QrResponse;
 import org.swyp.com.backend.profile.dto.ShortTemplate;
 import org.swyp.com.backend.question.domain.MultipleChoiceAnswer;
 import org.swyp.com.backend.question.domain.MultipleChoiceQuestion;
@@ -64,8 +67,25 @@ public class ProfileService {
         return toMyProfileResponseDto(profile, ProfileInterestList, profileChoiceList, profileShortList);
     }
 
-    public ProfileResponse getUserProfile(final Long uuid) {
+    public ProfileResponse getUserProfile(final Long userId) {
         throw new UnsupportedOperationException();
+    }
+
+    public ProfileResponse getUserProfile(final UUID uuid) {
+        Profile profile = profileRepository.findByQrAndDeletedFalse(uuid).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
+
+        Date now = new Date();
+
+        if (profile.getQrExpiresAt().before(now)) {
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "만료된 QR 코드 입니다.");
+        }
+
+        List<ProfileInterest> ProfileInterestList = profileInterestRepository.findByProfile(profile);
+        List<ProfileChoice> profileChoiceList = profileChoiceRepository.findByProfile(profile);
+        List<ProfileShort> profileShortList = profileShortRepository.findByProfile(profile);
+
+        return toProfileResponseDto(profile, ProfileInterestList, profileChoiceList, profileShortList);
     }
 
     @Transactional
@@ -187,6 +207,39 @@ public class ProfileService {
                 interestTypeList, profile.getBio(), type, imageKey, detail, choiceTemplateList, shortTemplateList);
     }
 
+
+    private ProfileResponse toProfileResponseDto(Profile profile, List<ProfileInterest> interestList,
+                                                 List<ProfileChoice> profileChoiceList,
+                                                 List<ProfileShort> profileShortList) {
+
+        List<InterestType> interestTypeList = new ArrayList<>();
+        List<ChoiceTemplate> choiceTemplateList = new ArrayList<>();
+        List<ShortTemplate> shortTemplateList = new ArrayList<>();
+
+        for (ProfileInterest interest : interestList) {
+            interestTypeList.add(interest.getInterest().getType());
+        }
+
+        for (ProfileChoice profileChoice : profileChoiceList) {
+            choiceTemplateList.add(
+                    toChoiceTemplate(profileChoice.getAnswer().getQuestion(), profileChoice.getAnswer()));
+        }
+
+        for (ProfileShort profileShort : profileShortList) {
+            shortTemplateList.add(toShortTemplate(profileShort.getQuestion(), profileShort.getAnswer()));
+        }
+
+        Cosmic cosmic = profile.getCosmic();
+        CosmicDatingType type = cosmic != null ? cosmic.getType() : null;
+        String imageKey = cosmic != null ? cosmic.getImageKey() : null;
+        String detail = cosmic != null ? cosmic.getDetail() : null;
+
+        return new ProfileResponse(profile.getNickname(),
+                profile.getImageKey(), profile.getGender(), profile.getAge(), profile.getRegion(), profile.getJob(),
+                interestTypeList, profile.getBio(), type, imageKey, detail, choiceTemplateList, shortTemplateList);
+    }
+
+
     private ChoiceTemplate toChoiceTemplate(MultipleChoiceQuestion question, MultipleChoiceAnswer answer) {
         return new ChoiceTemplate(question.getId(), question.getType(),
                 question.getContent(), answer.getAnswerId(), answer.getContent());
@@ -205,5 +258,24 @@ public class ProfileService {
         }
 
         return profileInterestList;
+    }
+
+    @Transactional
+    public QrResponse getQrUUID(final Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
+
+        Profile profile = profileRepository.findByUserAndDeletedFalse(user).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
+
+        Date now = new Date();
+
+        if (profile.getQr() == null
+                || (profile.getQrExpiresAt() != null && profile.getQrExpiresAt().before(now))) {
+
+            profile.updateProfileQR(UUID.randomUUID(), new Date(now.getTime() + 1000L * 60 * 3));
+        }
+
+        return new QrResponse(profile.getQr());
     }
 }
