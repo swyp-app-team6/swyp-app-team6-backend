@@ -22,6 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.swyp.com.backend.auth.jwt.domain.repository.RefreshTokenRepository;
+import org.swyp.com.backend.auth.oauth.apple.service.AppleAuthService;
 import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
@@ -40,13 +41,15 @@ class UserServiceTest {
     ProfileInterestRepository profileInterestRepository;
     @Mock
     RefreshTokenRepository refreshTokenRepository;
+    @Mock
+    AppleAuthService appleAuthService;
 
     UserService userService;
 
     @BeforeEach
     void setUp() {
         userService = new UserService(userRepository, profileRepository, profileInterestRepository,
-                refreshTokenRepository);
+                refreshTokenRepository, appleAuthService);
     }
 
     @Test
@@ -63,6 +66,7 @@ class UserServiceTest {
         userService.deleteUser(user.getId());
 
         // then
+        verify(appleAuthService).revoke(user.getId());
         verify(profileRepository).delete(profile);
         verify(profileInterestRepository).deleteByProfile(profile);
         verify(userRepository).delete(user);

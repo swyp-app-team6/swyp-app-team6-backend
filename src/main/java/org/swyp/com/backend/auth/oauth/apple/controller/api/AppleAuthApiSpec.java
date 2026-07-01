@@ -43,14 +43,15 @@ public interface AppleAuthApiSpec {
                     
                     **연동 순서**
                     1. 앱에서 Apple SDK로 로그인
-                    2. 로그인 결과에서 `identityToken` 추출
-                    3. 이 엔드포인트에 POST
+                    2. 로그인 결과에서 `identityToken`, `authorizationCode` 추출
+                    3. 이 엔드포인트에 POST (`authorizationCode`는 회원탈퇴 시 Apple 계정 연결 해제에 필요하므로 함께 전달 권장)
                     4. 응답의 `accessToken`을 이후 모든 API 요청 헤더에 포함: `Authorization: Bearer <accessToken>`
                     5. `accessToken` 만료 시 `POST /auth/refresh`에 `refreshToken` 전달하여 재발급
-                    
+
                     **주의사항**
                     - `identityToken`은 발급 후 **5분** 이내에 전달해야 합니다.
                     - 동일한 `identityToken`은 재사용할 수 없습니다 (Apple 정책).
+                    - `authorizationCode`가 없으면 로그인은 정상 처리되지만, 이후 회원탈퇴 시 Apple 서버 쪽 연결 해제(revoke)는 수행되지 않습니다.
                     """,
             responses = {
                     @ApiResponse(responseCode = "200", description = "로그인 성공",

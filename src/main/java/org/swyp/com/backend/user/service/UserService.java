@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.swyp.com.backend.auth.jwt.domain.repository.RefreshTokenRepository;
+import org.swyp.com.backend.auth.oauth.apple.service.AppleAuthService;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
@@ -21,6 +22,7 @@ public class UserService {
     private final ProfileRepository profileRepository;
     private final ProfileInterestRepository profileInterestRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AppleAuthService appleAuthService;
 
     public UserMeResponse getMe(Long userId) {
         return userRepository.findById(userId)
@@ -31,6 +33,8 @@ public class UserService {
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
+
+        appleAuthService.revoke(userId);
 
         profileRepository.findByUser(user)
                 .ifPresent(profile -> {
