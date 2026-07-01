@@ -73,6 +73,18 @@ public class AppleAuthService {
         }
     }
 
+    @Transactional
+    public void revoke(Long userId) {
+        appleRefreshTokenRepository.findByUserId(userId).ifPresent(token -> {
+            try {
+                tokenClient.revoke(token.getRefreshToken());
+            } catch (Exception e) {
+                log.warn("Apple revoke 호출 실패. userId={}", userId, e);
+            }
+            appleRefreshTokenRepository.delete(token);
+        });
+    }
+
     private void saveRefreshToken(Long userId, String refreshToken) {
         if (refreshToken == null || refreshToken.isBlank()) {
             return;

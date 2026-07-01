@@ -45,4 +45,28 @@ public class AppleTokenClient {
             throw new ExternalApiConnectionException("Apple 토큰 교환 서버와의 연결에 실패했습니다.", "APPLE");
         }
     }
+
+    public void revoke(String refreshToken) {
+        try {
+            String clientSecret = clientSecretGenerator.generate();
+
+            MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+            form.add("client_id", appleProperties.getClientId());
+            form.add("client_secret", clientSecret);
+            form.add("token", refreshToken);
+            form.add("token_type_hint", "refresh_token");
+
+            restClient.post()
+                    .uri("/auth/revoke")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(form)
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (org.springframework.web.client.RestClientResponseException e) {
+            throw new ExternalApiConnectionException(
+                    "Apple 토큰 revoke 실패 (status=" + e.getStatusCode() + ", body=" + e.getResponseBodyAsString() + ")", "APPLE");
+        } catch (Exception e) {
+            throw new ExternalApiConnectionException("Apple revoke 서버와의 연결에 실패했습니다.", "APPLE");
+        }
+    }
 }
