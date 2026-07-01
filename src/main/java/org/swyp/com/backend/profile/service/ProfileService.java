@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.swyp.com.backend.cosmic.domain.Cosmic;
+import org.swyp.com.backend.cosmic.service.CosmicService;
+import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.profile.domain.Interest;
@@ -36,6 +39,7 @@ import org.swyp.com.backend.user.domain.repository.UserRepository;
 @Transactional(readOnly = true)
 public class ProfileService {
     private final QuestionService questionService;
+    private final CosmicService cosmicService;
 
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
@@ -73,9 +77,12 @@ public class ProfileService {
             throw new BusinessException(HttpStatus.CONFLICT, "이미 프로필을 생성하였습니다.");
         }
 
+        Cosmic cosmic =
+                profileForm.cosmicType() != null ? cosmicService.getCosmicByCosmicType(profileForm.cosmicType()) : null;
+
         Profile profile = Profile.createProfile(user, profileForm.nickname(), profileForm.imageKey(),
                 profileForm.gender(), profileForm.age(), profileForm.region(), profileForm.job(),
-                profileForm.bio(), profileForm.cosmicType());
+                profileForm.bio(), cosmic);
 
         List<ProfileInterest> profileInterestList = toProfileInterestList(profile, profileForm.interests());
 
@@ -107,8 +114,11 @@ public class ProfileService {
         Profile profile = profileRepository.findByUser(user).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
 
+        Cosmic cosmic =
+                profileForm.cosmicType() != null ? cosmicService.getCosmicByCosmicType(profileForm.cosmicType()) : null;
+
         profile.updateProfile(profileForm.nickname(), profileForm.imageKey(), profileForm.age(), profileForm.region(),
-                profileForm.job(), profileForm.bio(), profileForm.cosmicType());
+                profileForm.job(), profileForm.bio(), cosmic);
 
         if (profileForm.interests() != null) {
             profileInterestRepository.deleteByProfile(profile);
@@ -170,9 +180,14 @@ public class ProfileService {
             shortTemplateList.add(toShortTemplate(profileShort.getQuestion(), profileShort.getAnswer()));
         }
 
+        Cosmic cosmic = profile.getCosmic();
+        CosmicDatingType type = cosmic != null ? cosmic.getType() : null;
+        String imageKey = cosmic != null ? cosmic.getImageKey() : null;
+        String detail = cosmic != null ? cosmic.getDetail() : null;
+
         return new MyProfileResponse(profile.getId(), profile.getNickname(),
                 profile.getImageKey(), profile.getGender(), profile.getAge(), profile.getRegion(), profile.getJob(),
-                interestTypeList, profile.getBio(), profile.getCosmic(), choiceTemplateList, shortTemplateList);
+                interestTypeList, profile.getBio(), type, imageKey, detail, choiceTemplateList, shortTemplateList);
     }
 
     private ChoiceTemplate toChoiceTemplate(MultipleChoiceQuestion question, MultipleChoiceAnswer answer) {

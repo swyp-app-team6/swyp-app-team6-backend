@@ -9,11 +9,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import java.util.Date;
 import java.util.UUID;
 import lombok.Getter;
-import org.swyp.com.backend.global.enumeration.CosmicDatingType;
+import org.swyp.com.backend.cosmic.domain.Cosmic;
 import org.swyp.com.backend.global.enumeration.Gender;
 import org.swyp.com.backend.global.enumeration.Region;
 import org.swyp.com.backend.user.domain.User;
@@ -44,9 +45,9 @@ public class Profile {
 
     @Column(length = 20)
     private String bio;
-    @Column
-    @Enumerated(EnumType.STRING)
-    private CosmicDatingType cosmic;
+    @ManyToOne
+    @JoinColumn(name = "cosmic_id")
+    private Cosmic cosmic;
 
     @Column(length = 36)
     private UUID qr;
@@ -55,7 +56,7 @@ public class Profile {
 
     public static Profile createProfile(User user, String nickname, String imageKey, Gender gender, Integer age,
                                         Region region, String job,
-                                        String bio, CosmicDatingType cosmic) {
+                                        String bio, Cosmic cosmic) {
         Profile profile = new Profile();
         profile.user = user;
         profile.nickname = nickname;
@@ -70,7 +71,7 @@ public class Profile {
     }
 
     public void updateProfile(String nickname, String imageKey, Integer age, Region region, String job, String bio,
-                              CosmicDatingType cosmic) {
+                              Cosmic cosmic) {
         if (nickname != null) {
             this.nickname = nickname;
         }

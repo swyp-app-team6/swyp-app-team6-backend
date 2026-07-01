@@ -20,6 +20,10 @@ public record MyProfileResponse(
         String bio,
         @JsonProperty("cosmic_type")
         CosmicDatingType cosmicType,
+        @JsonProperty("cosmic_type_image_key")
+        String cosmicTypeImageKey,
+        @JsonProperty("cosmic_type_detail")
+        String cosmicTypeDetail,
         @JsonProperty("choice_template")
         List<ChoiceTemplate> choiceTemplate,
         @JsonProperty("short_template")

@@ -7,37 +7,22 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 
 @Entity
-@Table(name = "cosmic_type_test")
 @Getter
-public class CosmicTypeTest {
+public class Cosmic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
-    private Integer questionId;
-    @Column(nullable = false)
-    private String content;
-    @Column(nullable = false)
-    private Integer answerId;
-    @Column(nullable = false)
-    private String answer;
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private CosmicDatingType type;
-    @ManyToOne
-    @JoinColumn(name = "cosmic_id", nullable = false)
-    private Cosmic cosmic;
     @Column(nullable = false)
-    private Integer score;
-
+    private CosmicDatingType type;
+    @Column(nullable = false)
+    private String detail;
+    @Column(nullable = false)
+    private String imageKey;
     @Column(nullable = false)
     private Boolean deleted = false;
 }
