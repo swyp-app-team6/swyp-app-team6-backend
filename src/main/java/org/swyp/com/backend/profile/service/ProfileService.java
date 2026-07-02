@@ -12,14 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.swyp.com.backend.cosmic.domain.Cosmic;
 import org.swyp.com.backend.cosmic.service.CosmicService;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
-import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.exception.BusinessException;
-import org.swyp.com.backend.profile.domain.Interest;
+import org.swyp.com.backend.interest.domain.Interest;
+import org.swyp.com.backend.interest.service.InterestService;
 import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.domain.ProfileChoice;
 import org.swyp.com.backend.profile.domain.ProfileInterest;
 import org.swyp.com.backend.profile.domain.ProfileShort;
-import org.swyp.com.backend.profile.domain.repository.InterestRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileChoiceRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
@@ -44,11 +43,11 @@ import org.swyp.com.backend.user.domain.repository.UserRepository;
 public class ProfileService {
     private final QuestionService questionService;
     private final CosmicService cosmicService;
+    private final InterestService interestService;
 
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
 
-    private final InterestRepository interestRepository;
     private final ProfileInterestRepository profileInterestRepository;
 
     private final ProfileChoiceRepository profileChoiceRepository;
@@ -145,7 +144,8 @@ public class ProfileService {
                 profileForm.gender(), profileForm.age(), profileForm.region(), profileForm.job(),
                 profileForm.bio(), cosmic);
 
-        List<ProfileInterest> profileInterestList = toProfileInterestList(profile, profileForm.interests());
+        List<ProfileInterest> profileInterestList = interestService.toProfileInterestList(profile,
+                profileForm.interests());
 
         profileRepository.save(profile);
         profileInterestRepository.saveAll(profileInterestList);
@@ -183,7 +183,7 @@ public class ProfileService {
 
         if (profileForm.interests() != null) {
             profileInterestRepository.deleteByProfile(profile);
-            profileInterestRepository.saveAll(toProfileInterestList(profile, profileForm.interests()));
+            profileInterestRepository.saveAll(interestService.toProfileInterestList(profile, profileForm.interests()));
         }
 
         if (profileForm.choiceTemplate() != null) {
@@ -257,17 +257,6 @@ public class ProfileService {
 
     private ShortTemplate toShortTemplate(ShortAnswerQuestion question, String answer) {
         return new ShortTemplate(question.getId(), question.getType(), question.getContent(), answer);
-    }
-
-    private List<ProfileInterest> toProfileInterestList(Profile profile, List<InterestType> interestTypeList) {
-        List<Interest> interestList = interestRepository.findByTypeInAndDeletedFalse(interestTypeList);
-
-        List<ProfileInterest> profileInterestList = new ArrayList<>();
-        for (Interest interest : interestList) {
-            profileInterestList.add(ProfileInterest.createProfileInterest(profile, interest));
-        }
-
-        return profileInterestList;
     }
 
     @Transactional

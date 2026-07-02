@@ -1,4 +1,4 @@
-package org.swyp.com.backend.profile.domain;
+package org.swyp.com.backend.interest.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

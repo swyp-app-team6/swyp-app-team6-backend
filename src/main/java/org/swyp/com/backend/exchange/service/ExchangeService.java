@@ -22,7 +22,7 @@ import org.swyp.com.backend.exchange.dto.ExchangeResult;
 import org.swyp.com.backend.global.enumeration.ExchangeStatus;
 import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.exception.BusinessException;
-import org.swyp.com.backend.profile.domain.Interest;
+import org.swyp.com.backend.interest.domain.Interest;
 import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.dto.InterestTypeLabel;
 import org.swyp.com.backend.profile.dto.ProfileResponse;

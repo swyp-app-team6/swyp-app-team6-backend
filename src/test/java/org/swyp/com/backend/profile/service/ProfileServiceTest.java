@@ -50,12 +50,13 @@ import org.swyp.com.backend.cosmic.domain.repository.CosmicTypeTestRepository;
 import org.swyp.com.backend.cosmic.service.CosmicService;
 import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.exception.BusinessException;
-import org.swyp.com.backend.profile.domain.Interest;
+import org.swyp.com.backend.interest.domain.Interest;
+import org.swyp.com.backend.interest.domain.repository.InterestRepository;
+import org.swyp.com.backend.interest.service.InterestService;
 import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.domain.ProfileChoice;
 import org.swyp.com.backend.profile.domain.ProfileInterest;
 import org.swyp.com.backend.profile.domain.ProfileShort;
-import org.swyp.com.backend.profile.domain.repository.InterestRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileChoiceRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
@@ -106,14 +107,16 @@ class ProfileServiceTest {
     ProfileService profileService;
     QuestionService questionService;
     CosmicService cosmicService;
+    InterestService interestService;
 
     @BeforeEach
     void setUp() {
         cosmicService = new CosmicService(cosmicRepository, cosmicTypeTestRepository);
         questionService = new QuestionService(multipleChoiceQuestionRepository, multipleChoiceAnswerRepository,
                 shortAnswerQuestionRepository);
-        profileService = new ProfileService(questionService, cosmicService, userRepository, profileRepository,
-                interestRepository,
+        interestService = new InterestService(interestRepository);
+        profileService = new ProfileService(questionService, cosmicService, interestService, userRepository,
+                profileRepository,
                 profileInterestRepository, profileChoiceRepository, profileShortRepository);
     }
 
