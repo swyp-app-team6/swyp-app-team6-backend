@@ -9,18 +9,18 @@ import org.swyp.com.backend.global.enumeration.CustomQuestionType;
 public record ChoiceTemplate(
         @JsonProperty("question_id")
         @NotNull(message = "question_id_null")
-        @Schema(description = "질문 ID")
+        @Schema(description = "질문 ID (응답시 포함)")
         Long questionId,
         @JsonProperty("question_type")
-        @Schema(description = "질문 유형 (응답 시에만 포함)")
+        @Schema(description = "질문 유형")
         CustomQuestionType questionType,
-        @Schema(description = "질문 내용 (응답 시에만 포함)")
+        @Schema(description = "질문 내용")
         String question,
         @JsonProperty("answer_id")
         @NotNull(message = "answer_id_null")
-        @Schema(description = "선택한 답변 ID")
+        @Schema(description = "선택한 답변 ID (응답시 포함)")
         Integer answerId,
-        @Schema(description = "선택한 답변 내용 (응답 시에만 포함)")
+        @Schema(description = "답변 내용")
         String answer
 ) {
 }
