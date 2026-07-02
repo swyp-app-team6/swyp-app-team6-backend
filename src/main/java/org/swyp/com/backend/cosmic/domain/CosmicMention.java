@@ -9,7 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-public class CosmicFeature {
+public class CosmicMention {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,5 +17,5 @@ public class CosmicFeature {
     @JoinColumn(name = "cosmic_id", nullable = false)
     private Cosmic cosmic;
     @Column(nullable = false)
-    private String feature;
+    private String mention;
 }
