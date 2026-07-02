@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
+import org.swyp.com.backend.exchange.controller.api.ExchangeControllerApiSpec;
 import org.swyp.com.backend.exchange.dto.ExchangeResponse;
 import org.swyp.com.backend.exchange.service.ExchangeService;
 import org.swyp.com.backend.profile.dto.ProfileResponse;
@@ -23,7 +24,7 @@ import org.swyp.com.backend.profile.dto.ProfileResponse;
 @RequestMapping("/exchange")
 @SecurityRequirement(name = "bearerAuth")
 @Slf4j
-public class ExchangeController {
+public class ExchangeController implements ExchangeControllerApiSpec {
     private static final Long EXCHANGE_TIMEOUT = Duration.ofMinutes(1).toMillis();
     private final ExchangeService exchangeService;
 
@@ -36,8 +37,7 @@ public class ExchangeController {
         exchangeService.waitForProfileResponse(Long.valueOf(userDetails.getUsername()), result);
 
         result.onTimeout(() -> {
-            log.info("waitProfileResponse timeout");
-            result.setResult(ResponseEntity.noContent().build());
+            result.setResult(ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).build());
         });
 
         result.onCompletion(() -> {
@@ -57,8 +57,7 @@ public class ExchangeController {
         exchangeService.waitForExchangeResponse(Long.valueOf(userDetails.getUsername()), uuid, result);
 
         result.onTimeout(() -> {
-            log.info("waitExchangeResponse timeout");
-            result.setResult(ResponseEntity.noContent().build());
+            result.setResult(ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).build());
         });
 
         result.onCompletion(() -> {
@@ -84,6 +83,21 @@ public class ExchangeController {
     ) {
 
         exchangeService.rejectExchange(Long.valueOf(userDetails.getUsername()), profileId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/cancel")
+    public ResponseEntity<Void> cancelExchangeWait(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        exchangeService.cancelExchangeWait(Long.valueOf(userDetails.getUsername()));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/cancel/{profile_id}")
+    public ResponseEntity<Void> cancelExchangeStart(
+            @PathVariable("profile_id") Long profileId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        exchangeService.cancelExchangeStart(Long.valueOf(userDetails.getUsername()), profileId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

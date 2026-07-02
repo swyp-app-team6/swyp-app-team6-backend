@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,6 @@ import org.swyp.com.backend.profile.service.ProfileService;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Slf4j
 public class ExchangeService {
 
     private final ProfileService profileService;
@@ -39,26 +37,23 @@ public class ExchangeService {
     private final ProfileExchangeRepository profileExchangeRepository;
     private final MatchedInterestRepository matchedInterestRepository;
 
-    private final Map<Long, DeferredResult<ResponseEntity<ProfileResponse>>> waiting1 = new ConcurrentHashMap<>();
-    private final Map<KeyPair, DeferredResult<ResponseEntity<ExchangeResponse>>> waiting2 = new ConcurrentHashMap<>();
+    private final Map<Long, DeferredResult<ResponseEntity<ProfileResponse>>> exchangeStartPending = new ConcurrentHashMap<>();
+    private final Map<KeyPair, DeferredResult<ResponseEntity<ExchangeResponse>>> exchangeAcceptPending = new ConcurrentHashMap<>();
 
-    // B가 exchange/wait 호출시
     public void waitForProfileResponse(Long userId,
-                                       DeferredResult<ResponseEntity<ProfileResponse>> result) { // userId : B
+                                       DeferredResult<ResponseEntity<ProfileResponse>> result) {
         Profile profile = profileService.getProfileByUserId(userId);
-        // B 프로필 정보 대기
-        waiting1.put(profile.getId(), result);
+        exchangeStartPending.put(profile.getId(), result);
     }
 
-    // A가 B의 uuid와 함께 exchange/start 호출시
-    public void waitForExchangeResponse(Long userId, UUID targetUUID, // userId : A, targetUUID : B
+    public void waitForExchangeResponse(Long userId, UUID targetUUID,
                                         DeferredResult<ResponseEntity<ExchangeResponse>> result) {
 
         Profile myProfile = profileService.getProfileByUserId(userId);
         Profile targetProfile = profileService.getProfileByUUID(targetUUID);
 
         DeferredResult<ResponseEntity<ProfileResponse>> targetWaiting =
-                waiting1.remove(targetProfile.getId());
+                exchangeStartPending.remove(targetProfile.getId());
 
         if (targetWaiting == null || targetWaiting.isSetOrExpired()) {
             throw new BusinessException(HttpStatus.CONFLICT, "상대방이 교환 대기 중이 아닙니다.");
@@ -66,37 +61,28 @@ public class ExchangeService {
 
         ProfileResponse response = profileService.getProfileResponseByUserId(userId);
 
-        // (A, B)
         KeyPair key = new KeyPair(myProfile.getId(), targetProfile.getId());
-        log.info("(" + key.waitingProfileId() + " ," + key.expectedProfileId() + " )");
 
-        // A 프로필을 target으로 전송
         boolean success = targetWaiting.setResult(
                 ResponseEntity.ok(response)
         );
 
         if (success) {
-            // A 교환 결과 정보 대기
-            waiting2.put(key, result);
+            exchangeAcceptPending.put(key, result);
         }
     }
 
-    // B가 exchange/accept 호출시
     @Transactional
-    public ExchangeResponse getExchangeResponse(Long userId, Long targetProfileId) {// userId : B, targetProfileId :A
+    public ExchangeResponse getExchangeResponse(Long userId, Long targetProfileId) {
         Profile myProfile = profileService.getProfileByUserId(userId);
         Profile targetProfile = profileService.getProfileById(targetProfileId);
 
-        // (A, B)
         KeyPair key = new KeyPair(targetProfile.getId(), myProfile.getId());
 
-        log.info("(" + key.waitingProfileId() + " ," + key.expectedProfileId() + " )");
-
         DeferredResult<ResponseEntity<ExchangeResponse>> targetWaiting =
-                waiting2.remove(key);
+                exchangeAcceptPending.remove(key);
 
         if (targetWaiting == null || targetWaiting.isSetOrExpired()) {
-            log.info("교환 실패");
             throw new BusinessException(HttpStatus.CONFLICT, "상대방이 교환 대기 중이 아닙니다.");
         }
 
@@ -138,7 +124,6 @@ public class ExchangeService {
         );
 
         if (!success) {
-            log.info("교환 실패");
             throw new BusinessException(HttpStatus.CONFLICT, "상대방이 교환 대기 중이 아닙니다.");
         }
 
@@ -172,7 +157,6 @@ public class ExchangeService {
         return matchedInterest;
     }
 
-    // B가 거절 exchange/decline
     public void rejectExchange(Long userId, Long targetProfileId) {
         Profile myProfile = profileService.getProfileByUserId(userId);
         Profile targetProfile = profileService.getProfileById(targetProfileId);
@@ -180,14 +164,12 @@ public class ExchangeService {
         KeyPair key = new KeyPair(targetProfile.getId(), myProfile.getId());
 
         DeferredResult<ResponseEntity<ExchangeResponse>> targetWaiting =
-                waiting2.remove(key);
+                exchangeAcceptPending.remove(key);
 
         if (targetWaiting == null || targetWaiting.isSetOrExpired()) {
-            log.info("교환 실패");
             throw new BusinessException(HttpStatus.CONFLICT, "상대방이 교환 대기 중이 아닙니다.");
         }
 
-        log.info("교환 거절");
         ExchangeResponse response = new ExchangeResponse(ExchangeStatus.DECLINED, null);
 
         targetWaiting.setResult(
@@ -195,19 +177,13 @@ public class ExchangeService {
         );
     }
 
-    // onCompletion(timeout)
     public void removeProfileResponse(Long userId) {
         Profile profile = profileService.getProfileByUserId(userId);
 
         DeferredResult<ResponseEntity<ProfileResponse>> removed =
-                waiting1.remove(profile.getId());
-
-        if (removed != null) {
-            log.info("waiting1 removed");
-        }
+                exchangeStartPending.remove(profile.getId());
     }
 
-    // onCompletion(timeout)
     public void removeExchangeResponse(Long userId, UUID targetUUID) {
         Profile myProfile = profileService.getProfileByUserId(userId);
         Profile targetProfile = profileService.getProfileByUUID(targetUUID);
@@ -215,14 +191,39 @@ public class ExchangeService {
         KeyPair key = new KeyPair(myProfile.getId(), targetProfile.getId());
 
         DeferredResult<ResponseEntity<ExchangeResponse>> removed =
-                waiting2.remove(key);
-
-        if (removed != null) {
-            log.info("waiting2 removed");
-        }
+                exchangeAcceptPending.remove(key);
     }
 
-    // 교환 취소
+    public void cancelExchangeWait(Long userId) {
+        Profile profile = profileService.getProfileByUserId(userId);
 
-    // 교환 취소
+        DeferredResult<ResponseEntity<ProfileResponse>> waiting =
+                exchangeStartPending.remove(profile.getId());
+
+        if (waiting == null || waiting.isSetOrExpired()) {
+            throw new BusinessException(HttpStatus.CONFLICT, "교환 대기 중이 아닙니다.");
+        }
+
+        waiting.setResult(
+                ResponseEntity.noContent().build()
+        );
+    }
+
+    public void cancelExchangeStart(Long userId, Long targetProfileId) {
+        Profile myProfile = profileService.getProfileByUserId(userId);
+        Profile targetProfile = profileService.getProfileById(targetProfileId);
+
+        KeyPair key = new KeyPair(myProfile.getId(), targetProfile.getId());
+
+        DeferredResult<ResponseEntity<ExchangeResponse>> waiting =
+                exchangeAcceptPending.remove(key);
+
+        if (waiting == null || waiting.isSetOrExpired()) {
+            throw new BusinessException(HttpStatus.CONFLICT, "교환 대기 중이 아닙니다.");
+        }
+
+        waiting.setResult(
+                ResponseEntity.noContent().build()
+        );
+    }
 }

@@ -8,11 +8,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
 import org.swyp.com.backend.profile.dto.ProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileUpdateRequest;
+import org.swyp.com.backend.profile.dto.QrResponse;
 
 @Tag(name = "Profile", description = "프로필 관련 API")
 @SecurityRequirement(name = "bearerAuth")
@@ -455,7 +457,8 @@ public interface ProfileControllerApiSpec {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "204",
-                    description = "프로필 삭제 성공"
+                    description = "프로필 삭제 성공",
+                    content = @Content
             ),
             @ApiResponse(
                     responseCode = "401",
@@ -504,6 +507,190 @@ public interface ProfileControllerApiSpec {
             )
     })
     ResponseEntity<Void> deleteProfile(
+            UserDetails userDetails
+    );
+
+    @Operation(
+            summary = "UUID 조회 및 생성",
+            description = "QR 생성을 위한 자신의 프로필 UUID 정보를 응답합니다.",
+            operationId = "getQrUUID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "UUID 응답 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = QrResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "uuid": "550e8400-e29b-41d4-a716-446655440000"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "title": "UNAUTHORIZED",
+                                              "status": 401,
+                                              "detail": "인증이 필요합니다."
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "사용자 또는 프로필 정보 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            name = "USER_NOT_FOUND",
+                                            value = """
+                                                    {
+                                                      "title": "NOT_FOUND",
+                                                      "status": 404,
+                                                      "detail": "사용자 정보를 찾을 수 없습니다."
+                                                    }
+                                                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "PROFILE_NOT_FOUND",
+                                            value = """
+                                                    {
+                                                      "title": "NOT_FOUND",
+                                                      "status": 404,
+                                                      "detail": "프로필 정보를 찾을 수 없습니다."
+                                                    }
+                                                    """
+                                    )
+                            }
+                    )
+            )
+    })
+    ResponseEntity<QrResponse> getQrUUID(
+            UserDetails userDetails
+    );
+
+    @Operation(
+            summary = "상대방 프로필 조회",
+            description = "QR 코드 UUID를 이용하여 상대방의 프로필 정보를 조회합니다.",
+            operationId = "getProfileByUUID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "프로필 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ProfileResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "id": 1,
+                                              "nickname": "홍길동",
+                                              "image_key": "image-key",
+                                              "gender": "M",
+                                              "age": 26,
+                                              "region": "SEOUL",
+                                              "job": "개발자",
+                                              "interests": [
+                                                "TRAVEL",
+                                                "SPORTS",
+                                                "CAFE"
+                                              ],
+                                              "bio": "여행과 운동을 좋아해요",
+                                              "cosmic_type": null,
+                                              "cosmic_type_image_key": null,
+                                              "cosmic_type_detail": null,
+                                              "choice_template": [
+                                                {
+                                                  "question_id": 1,
+                                                  "question_type": "BINARY",
+                                                  "question": "저는 호감이 생기면",
+                                                  "answer_id": 2,
+                                                  "answer": "살짝 숨기는 편이에요"
+                                                }
+                                              ],
+                                              "short_template": []
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "잘못된 요청 파라미터",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            name = "INVALID_PARAMETER",
+                                            value = """
+                                                    {
+                                                      "title": "BAD_REQUEST",
+                                                      "status": 400,
+                                                      "detail": "요청 파라미터 형식이 잘못되었습니다."
+                                                    }
+                                                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "QR_EXPIRED",
+                                            value = """
+                                                    {
+                                                      "title": "BAD_REQUEST",
+                                                      "status": 400,
+                                                      "detail": "만료된 QR 코드 입니다."
+                                                    }
+                                                    """
+                                    )
+                            }
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "title": "UNAUTHORIZED",
+                                              "status": 401,
+                                              "detail": "인증이 필요합니다."
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "프로필 정보 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "title": "NOT_FOUND",
+                                              "status": 404,
+                                              "detail": "프로필 정보를 찾을 수 없습니다."
+                                            }
+                                            """
+                            )
+                    )
+            )
+    })
+    ResponseEntity<ProfileResponse> getProfile(
+            UUID uuid,
             UserDetails userDetails
     );
 }
