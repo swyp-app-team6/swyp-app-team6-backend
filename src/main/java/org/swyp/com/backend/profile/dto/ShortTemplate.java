@@ -11,16 +11,16 @@ import org.swyp.com.backend.global.enumeration.CustomQuestionType;
 public record ShortTemplate(
         @JsonProperty("question_id")
         @NotNull(message = "question_id_null")
-        @Schema(description = "질문 ID")
+        @Schema(description = "질문 ID (응답시 포함)")
         Long questionId,
         @JsonProperty("question_type")
-        @Schema(description = "질문 유형 (응답 시에만 포함)")
+        @Schema(description = "질문 유형")
         CustomQuestionType questionType,
-        @Schema(description = "질문 내용 (응답 시에만 포함)")
+        @Schema(description = "질문 내용")
         String question,
         @NotBlank(message = "question_id_null")
         @Size(min = 1, max = 20, message = "입력값은 1~20자여야 합니다.")
-        @Schema(description = "입력한 답변 (1~20자)")
+        @Schema(description = "입력한 답변 (1~20자)  (응답시 포함)")
         String answer
 ) {
 }

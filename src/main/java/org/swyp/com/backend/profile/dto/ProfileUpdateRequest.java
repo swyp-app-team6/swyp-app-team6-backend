@@ -20,13 +20,14 @@ public record ProfileUpdateRequest(
         Integer age,
         @Schema(description = "거주지")
         Region region,
+        @Size(max = 10, message = "직무분야는 최대 10자여야 합니다.")
         @Schema(description = "직업")
         String job,
         @Size(min = 3, max = 5, message = "관심사는 3~5개까지 선택 가능합니다.")
         @Schema(description = "관심사 목록 (3~5개)")
         List<InterestType> interests,
-        @Size(max = 50, message = "자기소개는 최대 50자까지 입력 가능합니다.")
-        @Schema(description = "자기소개 (최대 50자)")
+        @Size(max = 100, message = "자기소개는 최대 100자까지 입력 가능합니다.")
+        @Schema(description = "자기소개 (최대 100자)")
         String bio,
         @JsonProperty("cosmic_type")
         @Schema(description = "Cosmic 테스트 결과로 산출된 코스믹 유형")
