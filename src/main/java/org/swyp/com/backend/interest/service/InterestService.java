@@ -9,9 +9,9 @@ import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.interest.domain.Interest;
 import org.swyp.com.backend.interest.domain.repository.InterestRepository;
 import org.swyp.com.backend.interest.dto.InterestResponse;
+import org.swyp.com.backend.interest.dto.InterestTypeLabel;
 import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.domain.ProfileInterest;
-import org.swyp.com.backend.profile.dto.InterestTypeLabel;
 
 @Service
 @RequiredArgsConstructor

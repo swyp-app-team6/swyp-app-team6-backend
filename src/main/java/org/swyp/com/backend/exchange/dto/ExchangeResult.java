@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.swyp.com.backend.profile.dto.InterestTypeLabel;
+import org.swyp.com.backend.interest.dto.InterestTypeLabel;
 import org.swyp.com.backend.profile.dto.ProfileResponse;
 
 @Schema(description = "교환 상세 정보")

@@ -1,4 +1,4 @@
-package org.swyp.com.backend.profile.dto;
+package org.swyp.com.backend.interest.dto;
 
 import org.swyp.com.backend.global.enumeration.InterestType;
 

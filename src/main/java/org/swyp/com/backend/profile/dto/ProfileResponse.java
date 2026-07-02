@@ -6,6 +6,7 @@ import java.util.List;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.enumeration.Gender;
 import org.swyp.com.backend.global.enumeration.Region;
+import org.swyp.com.backend.interest.dto.InterestTypeLabel;
 
 @Schema(description = "프로필 상세 응답")
 public record ProfileResponse(
