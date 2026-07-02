@@ -10,8 +10,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.swyp.com.backend.profile.dto.MyProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
+import org.swyp.com.backend.profile.dto.ProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileUpdateRequest;
 
 @Tag(name = "Profile", description = "프로필 관련 API")
@@ -29,7 +29,7 @@ public interface ProfileControllerApiSpec {
                     description = "프로필 조회 성공",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = MyProfileResponse.class),
+                            schema = @Schema(implementation = ProfileResponse.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
@@ -115,7 +115,7 @@ public interface ProfileControllerApiSpec {
                     )
             )
     })
-    ResponseEntity<MyProfileResponse> getMyProfile(
+    ResponseEntity<ProfileResponse> getMyProfile(
             UserDetails userDetails
     );
 
@@ -131,7 +131,7 @@ public interface ProfileControllerApiSpec {
                     description = "프로필 등록 성공",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = MyProfileResponse.class),
+                            schema = @Schema(implementation = ProfileResponse.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
@@ -243,7 +243,7 @@ public interface ProfileControllerApiSpec {
                     )
             )
     })
-    ResponseEntity<MyProfileResponse> registerProfile(
+    ResponseEntity<ProfileResponse> registerProfile(
             UserDetails userDetails,
 
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -305,7 +305,7 @@ public interface ProfileControllerApiSpec {
                     description = "프로필 수정 성공",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = MyProfileResponse.class),
+                            schema = @Schema(implementation = ProfileResponse.class),
                             examples = @ExampleObject(
                                     value = """
                                             {
@@ -413,7 +413,7 @@ public interface ProfileControllerApiSpec {
                     )
             )
     })
-    ResponseEntity<MyProfileResponse> updateProfile(
+    ResponseEntity<ProfileResponse> updateProfile(
             UserDetails userDetails,
 
             @io.swagger.v3.oas.annotations.parameters.RequestBody(

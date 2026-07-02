@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.swyp.com.backend.profile.controller.api.ProfileControllerApiSpec;
-import org.swyp.com.backend.profile.dto.MyProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
 import org.swyp.com.backend.profile.dto.ProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileUpdateRequest;
@@ -32,23 +31,23 @@ public class ProfileController implements ProfileControllerApiSpec {
     private final ProfileService profileService;
 
     @GetMapping
-    public ResponseEntity<MyProfileResponse> getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
-        MyProfileResponse response = profileService.getMyProfile(Long.valueOf(userDetails.getUsername()));
+    public ResponseEntity<ProfileResponse> getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
+        ProfileResponse response = profileService.getProfileResponseByUserId(Long.valueOf(userDetails.getUsername()));
         return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    public ResponseEntity<MyProfileResponse> registerProfile(@AuthenticationPrincipal UserDetails userDetails,
-                                                             @Valid @RequestBody ProfileRegisterRequest registerRequest) {
-        MyProfileResponse response = profileService.createProfile(Long.valueOf(userDetails.getUsername()),
+    public ResponseEntity<ProfileResponse> registerProfile(@AuthenticationPrincipal UserDetails userDetails,
+                                                           @Valid @RequestBody ProfileRegisterRequest registerRequest) {
+        ProfileResponse response = profileService.createProfile(Long.valueOf(userDetails.getUsername()),
                 registerRequest);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping
-    public ResponseEntity<MyProfileResponse> updateProfile(@AuthenticationPrincipal UserDetails userDetails,
-                                                           @Valid @RequestBody ProfileUpdateRequest profileUpdateRequest) {
-        MyProfileResponse response = profileService.updateProfile(Long.valueOf(userDetails.getUsername()),
+    public ResponseEntity<ProfileResponse> updateProfile(@AuthenticationPrincipal UserDetails userDetails,
+                                                         @Valid @RequestBody ProfileUpdateRequest profileUpdateRequest) {
+        ProfileResponse response = profileService.updateProfile(Long.valueOf(userDetails.getUsername()),
                 profileUpdateRequest);
         return ResponseEntity.ok(response);
     }
@@ -68,7 +67,7 @@ public class ProfileController implements ProfileControllerApiSpec {
     @GetMapping("/{uuid}")
     public ResponseEntity<ProfileResponse> getProfile(@PathVariable("uuid") UUID uuid,
                                                       @AuthenticationPrincipal UserDetails userDetails) {
-        ProfileResponse profileResponse = profileService.getUserProfile(uuid);
+        ProfileResponse profileResponse = profileService.getProfileResponseByUUID(uuid);
         return ResponseEntity.ok(profileResponse);
     }
 

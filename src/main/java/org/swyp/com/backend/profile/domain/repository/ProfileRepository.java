@@ -10,4 +10,6 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
     Optional<Profile> findByUserAndDeletedFalse(User user);
 
     Optional<Profile> findByQrAndDeletedFalse(UUID uuid);
+
+    Optional<Profile> findByIdAndDeletedFalse(Long id);
 }

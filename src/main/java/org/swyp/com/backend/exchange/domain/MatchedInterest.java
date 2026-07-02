@@ -23,4 +23,11 @@ public class MatchedInterest {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private InterestType type;
+
+    public static MatchedInterest createMatchedInterest(Exchange exchange, InterestType type) {
+        MatchedInterest matchedInterest = new MatchedInterest();
+        matchedInterest.exchange = exchange;
+        matchedInterest.type = type;
+        return matchedInterest;
+    }
 }

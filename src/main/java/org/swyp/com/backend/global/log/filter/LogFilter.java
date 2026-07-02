@@ -27,7 +27,8 @@ public class LogFilter extends OncePerRequestFilter {
     private static final List<String> EXCLUDE_URI = List.of(
             "/actuator/**",
             "/swagger-ui/**",
-            "/v3/api-docs/**"
+            "/v3/api-docs/**",
+            "/exchange/**"
     );
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 

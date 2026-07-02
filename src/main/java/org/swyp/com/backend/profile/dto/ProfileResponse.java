@@ -8,8 +8,10 @@ import org.swyp.com.backend.global.enumeration.Gender;
 import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.enumeration.Region;
 
-@Schema(description = "프로필 정보 응답")
+@Schema(description = "프로필 상세 응답")
 public record ProfileResponse(
+        @Schema(description = "프로필 ID")
+        Long id,
         @Schema(description = "닉네임")
         String nickname,
         @JsonProperty("image_key")
