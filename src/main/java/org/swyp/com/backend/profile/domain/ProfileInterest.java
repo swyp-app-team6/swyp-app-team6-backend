@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
+import org.swyp.com.backend.interest.domain.Interest;
 
 @Entity
 @Getter

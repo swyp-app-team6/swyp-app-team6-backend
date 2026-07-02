@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.enumeration.Gender;
-import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.enumeration.Region;
+import org.swyp.com.backend.interest.dto.InterestTypeLabel;
 
 @Schema(description = "프로필 상세 응답")
 public record ProfileResponse(
@@ -26,7 +26,7 @@ public record ProfileResponse(
         @Schema(description = "직업")
         String job,
         @Schema(description = "관심사 목록")
-        List<InterestType> interests,
+        List<InterestTypeLabel> interests,
         @Schema(description = "자기소개")
         String bio,
         @JsonProperty("cosmic_type")

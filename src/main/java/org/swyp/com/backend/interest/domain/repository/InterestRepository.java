@@ -1,11 +1,13 @@
-package org.swyp.com.backend.profile.domain.repository;
+package org.swyp.com.backend.interest.domain.repository;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.swyp.com.backend.global.enumeration.InterestType;
-import org.swyp.com.backend.profile.domain.Interest;
+import org.swyp.com.backend.interest.domain.Interest;
 
 public interface InterestRepository extends JpaRepository<Interest, Long> {
 
     List<Interest> findByTypeInAndDeletedFalse(List<InterestType> typeList);
+
+    List<Interest> findByDeletedFalse();
 }

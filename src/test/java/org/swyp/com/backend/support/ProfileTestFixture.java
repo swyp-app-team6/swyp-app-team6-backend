@@ -8,7 +8,7 @@ import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.enumeration.Gender;
 import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.enumeration.Region;
-import org.swyp.com.backend.profile.domain.Interest;
+import org.swyp.com.backend.interest.domain.Interest;
 import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.domain.ProfileInterest;
 import org.swyp.com.backend.profile.dto.ChoiceTemplate;

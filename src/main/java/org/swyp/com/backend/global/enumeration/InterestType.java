@@ -10,14 +10,14 @@ public enum InterestType {
     SPORTS("운동"),
     MUSIC("음악"),
     VIDEO("유튜브"),
-    RESTAURANT("맛집"),
-    CAFE("카페"),
+    RESTAURANT("맛집탐방"),
+    CAFE("카페투어"),
     CULTURE("문화생활"),
     READING("독서"),
     GAME("게임"),
     SELF_DEVELOPMENT("자기계발"),
     INVESTING("재테크"),
-    MOVIE("영화");
+    MOVIE("영화감상");
 
     private final String label;
 }
