@@ -8,4 +8,6 @@ import org.swyp.com.backend.profile.domain.Interest;
 public interface InterestRepository extends JpaRepository<Interest, Long> {
 
     List<Interest> findByTypeInAndDeletedFalse(List<InterestType> typeList);
+
+    List<Interest> findByDeletedFalse();
 }
