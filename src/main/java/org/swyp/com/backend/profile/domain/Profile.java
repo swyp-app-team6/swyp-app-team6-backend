@@ -10,10 +10,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import java.util.Date;
 import java.util.UUID;
 import lombok.Getter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.swyp.com.backend.cosmic.domain.Cosmic;
 import org.swyp.com.backend.global.enumeration.Gender;
 import org.swyp.com.backend.global.enumeration.Region;
@@ -26,7 +27,7 @@ public class Profile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @JoinColumn(name = "user_id", nullable = false)
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
     @Column(nullable = false, length = 10)
     private String nickname;
@@ -50,9 +51,13 @@ public class Profile {
     private Cosmic cosmic;
 
     @Column(length = 36)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID qr;
     @Column(name = "qr_expires_at")
     private Date qrExpiresAt;
+
+    @Column(nullable = false)
+    private Boolean deleted;
 
     public static Profile createProfile(User user, String nickname, String imageKey, Gender gender, Integer age,
                                         Region region, String job,
@@ -67,6 +72,7 @@ public class Profile {
         profile.job = job;
         profile.bio = bio;
         profile.cosmic = cosmic;
+        profile.deleted = false;
         return profile;
     }
 
@@ -93,5 +99,14 @@ public class Profile {
         if (cosmic != null) {
             this.cosmic = cosmic;
         }
+    }
+
+    public void deleteProfile() {
+        this.deleted = true;
+    }
+
+    public void updateProfileQR(UUID qr, Date qrExpiresAt) {
+        this.qr = qr;
+        this.qrExpiresAt = qrExpiresAt;
     }
 }

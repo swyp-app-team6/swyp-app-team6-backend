@@ -1,7 +1,10 @@
 package org.swyp.com.backend.profile.service;
 
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,10 +25,10 @@ import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileShortRepository;
 import org.swyp.com.backend.profile.dto.ChoiceTemplate;
-import org.swyp.com.backend.profile.dto.MyProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
 import org.swyp.com.backend.profile.dto.ProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileUpdateRequest;
+import org.swyp.com.backend.profile.dto.QrResponse;
 import org.swyp.com.backend.profile.dto.ShortTemplate;
 import org.swyp.com.backend.question.domain.MultipleChoiceAnswer;
 import org.swyp.com.backend.question.domain.MultipleChoiceQuestion;
@@ -50,30 +53,87 @@ public class ProfileService {
     private final ProfileChoiceRepository profileChoiceRepository;
     private final ProfileShortRepository profileShortRepository;
 
-    public MyProfileResponse getMyProfile(final Long userId) {
+    private static final Long QR_TIMEOUT = Duration.ofMinutes(3).toMillis();
+
+    public Profile getProfileById(Long profileId) {
+        return profileRepository.findByIdAndDeletedFalse(profileId).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
+    }
+
+    public Profile getProfileByUserId(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
 
-        Profile profile = profileRepository.findByUser(user).orElseThrow(() ->
+        return profileRepository.findByUserAndDeletedFalse(user).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
+    }
+
+    public Profile getProfileByUUID(UUID uuid) {
+        Profile profile = profileRepository.findByQrAndDeletedFalse(uuid).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
+
+        Date now = new Date();
+
+        if (profile.getQrExpiresAt().before(now)) {
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "만료된 QR 코드 입니다.");
+        }
+
+        return profile;
+    }
+
+    public List<Interest> getInterestListByProfile(Profile profile) {
+        return profileInterestRepository.findByProfileOrderByInterestId(profile).stream()
+                .map(ProfileInterest::getInterest).toList();
+    }
+
+    public ProfileResponse getProfileResponseById(Long profileId) {
+        Profile profile = profileRepository.findByIdAndDeletedFalse(profileId).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
 
         List<ProfileInterest> ProfileInterestList = profileInterestRepository.findByProfile(profile);
         List<ProfileChoice> profileChoiceList = profileChoiceRepository.findByProfile(profile);
         List<ProfileShort> profileShortList = profileShortRepository.findByProfile(profile);
 
-        return toMyProfileResponseDto(profile, ProfileInterestList, profileChoiceList, profileShortList);
+        return toProfileResponseDto(profile, ProfileInterestList, profileChoiceList, profileShortList);
     }
 
-    public ProfileResponse getUserProfile(final Long uuid) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Transactional
-    public MyProfileResponse createProfile(final Long userId, final ProfileRegisterRequest profileForm) {
+    public ProfileResponse getProfileResponseByUserId(final Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
 
-        if (profileRepository.findByUser(user).isPresent()) {
+        Profile profile = profileRepository.findByUserAndDeletedFalse(user).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
+
+        List<ProfileInterest> ProfileInterestList = profileInterestRepository.findByProfile(profile);
+        List<ProfileChoice> profileChoiceList = profileChoiceRepository.findByProfile(profile);
+        List<ProfileShort> profileShortList = profileShortRepository.findByProfile(profile);
+
+        return toProfileResponseDto(profile, ProfileInterestList, profileChoiceList, profileShortList);
+    }
+
+    public ProfileResponse getProfileResponseByUUID(UUID uuid) {
+        Profile profile = profileRepository.findByQrAndDeletedFalse(uuid).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
+
+        Date now = new Date();
+
+        if (profile.getQrExpiresAt().before(now)) {
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "만료된 QR 코드 입니다.");
+        }
+
+        List<ProfileInterest> ProfileInterestList = profileInterestRepository.findByProfile(profile);
+        List<ProfileChoice> profileChoiceList = profileChoiceRepository.findByProfile(profile);
+        List<ProfileShort> profileShortList = profileShortRepository.findByProfile(profile);
+
+        return toProfileResponseDto(profile, ProfileInterestList, profileChoiceList, profileShortList);
+    }
+
+    @Transactional
+    public ProfileResponse createProfile(final Long userId, final ProfileRegisterRequest profileForm) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
+
+        if (profileRepository.findByUserAndDeletedFalse(user).isPresent()) {
             throw new BusinessException(HttpStatus.CONFLICT, "이미 프로필을 생성하였습니다.");
         }
 
@@ -102,16 +162,16 @@ public class ProfileService {
                     questionService.toProfileShortList(profile, profileForm.shortTemplate()));
         }
 
-        return toMyProfileResponseDto(profile, profileInterestList, profileChoiceList,
+        return toProfileResponseDto(profile, profileInterestList, profileChoiceList,
                 profileShortList);
     }
 
     @Transactional
-    public MyProfileResponse updateProfile(final Long userId, final ProfileUpdateRequest profileForm) {
+    public ProfileResponse updateProfile(final Long userId, final ProfileUpdateRequest profileForm) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
 
-        Profile profile = profileRepository.findByUser(user).orElseThrow(() ->
+        Profile profile = profileRepository.findByUserAndDeletedFalse(user).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
 
         Cosmic cosmic =
@@ -141,7 +201,7 @@ public class ProfileService {
         List<ProfileChoice> profileChoiceList = profileChoiceRepository.findByProfile(profile);
         List<ProfileShort> profileShortList = profileShortRepository.findByProfile(profile);
 
-        return toMyProfileResponseDto(profile, profileInterestList, profileChoiceList,
+        return toProfileResponseDto(profile, profileInterestList, profileChoiceList,
                 profileShortList);
     }
 
@@ -150,18 +210,15 @@ public class ProfileService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
 
-        Profile profile = profileRepository.findByUser(user).orElseThrow(() ->
+        Profile profile = profileRepository.findByUserAndDeletedFalse(user).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
 
-        profileInterestRepository.deleteByProfile(profile);
-        profileChoiceRepository.deleteByProfile(profile);
-        profileShortRepository.deleteByProfile(profile);
-        profileRepository.delete(profile);
+        profile.deleteProfile();
     }
 
-    private MyProfileResponse toMyProfileResponseDto(Profile profile, List<ProfileInterest> interestList,
-                                                     List<ProfileChoice> profileChoiceList,
-                                                     List<ProfileShort> profileShortList) {
+    private ProfileResponse toProfileResponseDto(Profile profile, List<ProfileInterest> interestList,
+                                                 List<ProfileChoice> profileChoiceList,
+                                                 List<ProfileShort> profileShortList) {
 
         List<InterestType> interestTypeList = new ArrayList<>();
         List<ChoiceTemplate> choiceTemplateList = new ArrayList<>();
@@ -185,10 +242,11 @@ public class ProfileService {
         String imageKey = cosmic != null ? cosmic.getImageKey() : null;
         String detail = cosmic != null ? cosmic.getDetail() : null;
 
-        return new MyProfileResponse(profile.getId(), profile.getNickname(),
+        return new ProfileResponse(profile.getId(), profile.getNickname(),
                 profile.getImageKey(), profile.getGender(), profile.getAge(), profile.getRegion(), profile.getJob(),
                 interestTypeList, profile.getBio(), type, imageKey, detail, choiceTemplateList, shortTemplateList);
     }
+
 
     private ChoiceTemplate toChoiceTemplate(MultipleChoiceQuestion question, MultipleChoiceAnswer answer) {
         return new ChoiceTemplate(question.getId(), question.getType(),
@@ -208,5 +266,24 @@ public class ProfileService {
         }
 
         return profileInterestList;
+    }
+
+    @Transactional
+    public QrResponse getQrUUID(final Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
+
+        Profile profile = profileRepository.findByUserAndDeletedFalse(user).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
+
+        Date now = new Date();
+
+        if (profile.getQr() == null
+                || (profile.getQrExpiresAt() != null && profile.getQrExpiresAt().before(now))) {
+
+            profile.updateProfileQR(UUID.randomUUID(), new Date(now.getTime() + QR_TIMEOUT));
+        }
+
+        return new QrResponse(profile.getQr());
     }
 }

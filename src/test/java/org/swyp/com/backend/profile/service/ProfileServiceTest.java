@@ -61,8 +61,8 @@ import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileShortRepository;
 import org.swyp.com.backend.profile.dto.ChoiceTemplate;
-import org.swyp.com.backend.profile.dto.MyProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
+import org.swyp.com.backend.profile.dto.ProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileUpdateRequest;
 import org.swyp.com.backend.profile.dto.ShortTemplate;
 import org.swyp.com.backend.question.domain.MultipleChoiceAnswer;
@@ -129,11 +129,11 @@ class ProfileServiceTest {
                 TEST_REGION, TEST_JOB, interestTypeList, null, null, null, null);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findByUser(user)).thenReturn(Optional.empty());
+        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.empty());
         when(interestRepository.findByTypeInAndDeletedFalse(request.interests())).thenReturn(interestList);
 
         // when
-        MyProfileResponse response = profileService.createProfile(user.getId(), request);
+        ProfileResponse response = profileService.createProfile(user.getId(), request);
 
         // then
         Assertions.assertEquals(response.nickname(), request.nickname());
@@ -178,7 +178,7 @@ class ProfileServiceTest {
                 shortTemplateList);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findByUser(user)).thenReturn(Optional.empty());
+        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.empty());
         when(interestRepository.findByTypeInAndDeletedFalse(request.interests())).thenReturn(interestList);
         when(multipleChoiceQuestionRepository.findByIdAndDeletedFalse(choiceQuestion.getId())).thenReturn(
                 Optional.of(choiceQuestion));
@@ -189,7 +189,7 @@ class ProfileServiceTest {
         when(cosmicRepository.findByType(TEST_COSMIC_TYPE)).thenReturn(Optional.of(cosmic));
 
         // when
-        MyProfileResponse response = profileService.createProfile(user.getId(), request);
+        ProfileResponse response = profileService.createProfile(user.getId(), request);
 
         // then
         Assertions.assertEquals(response.nickname(), request.nickname());
@@ -210,7 +210,7 @@ class ProfileServiceTest {
                 TEST_REGION, TEST_JOB, interestTypeList, null, null, null, null);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findByUser(user)).thenReturn(Optional.of(profile));
+        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.of(profile));
 
         // then
         BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
@@ -279,14 +279,14 @@ class ProfileServiceTest {
                 shortTemplateList);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findByUser(user)).thenReturn(Optional.of(profile));
+        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.of(profile));
         when(profileInterestRepository.findByProfile(profile))
                 .thenReturn(profileInterestList);
         when(profileChoiceRepository.findByProfile(profile)).thenReturn(profileChoiceList);
         when(profileShortRepository.findByProfile(profile)).thenReturn(profileShortList);
 
         // when
-        MyProfileResponse response = profileService.getMyProfile(user.getId());
+        ProfileResponse response = profileService.getProfileResponseByUserId(user.getId());
 
         // then
         Assertions.assertEquals(request.nickname(), response.nickname());
@@ -300,11 +300,11 @@ class ProfileServiceTest {
         User user = createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findByUser(user)).thenReturn(Optional.empty());
+        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.empty());
 
         // then
         BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
-            profileService.getMyProfile(user.getId());
+            profileService.getProfileResponseByUserId(user.getId());
         });
         Assertions.assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
     }
@@ -322,10 +322,10 @@ class ProfileServiceTest {
                 null, null, null, null, null, null, null);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findByUser(user)).thenReturn(Optional.of(profile));
+        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.of(profile));
 
         // when
-        MyProfileResponse response = profileService.updateProfile(user.getId(), request);
+        ProfileResponse response = profileService.updateProfile(user.getId(), request);
 
         // then
         Assertions.assertNotEquals(response.nickname(), TEST_PROFILE_NICKNAME);
@@ -349,11 +349,11 @@ class ProfileServiceTest {
                 null, null, interestTypeList, null, null, null, null);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findByUser(user)).thenReturn(Optional.of(profile));
+        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.of(profile));
         when(interestRepository.findByTypeInAndDeletedFalse(request.interests())).thenReturn(interestList);
 
         // when
-        MyProfileResponse response = profileService.updateProfile(user.getId(), request);
+        ProfileResponse response = profileService.updateProfile(user.getId(), request);
 
         // then
         Assertions.assertNotEquals(response.interests().size(), exInterestTypeList.size());

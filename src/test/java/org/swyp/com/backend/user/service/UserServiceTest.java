@@ -60,7 +60,7 @@ class UserServiceTest {
                 TEST_GENDER, TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findByUser(user)).thenReturn(Optional.of(profile));
+        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.of(profile));
 
         // when
         userService.deleteUser(user.getId());
