@@ -24,6 +24,7 @@ import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.profile.domain.Interest;
 import org.swyp.com.backend.profile.domain.Profile;
+import org.swyp.com.backend.profile.dto.InterestTypeLabel;
 import org.swyp.com.backend.profile.dto.ProfileResponse;
 import org.swyp.com.backend.profile.service.ProfileService;
 
@@ -109,10 +110,12 @@ public class ExchangeService {
         profileExchangeRepository.save(myProfileExchange);
         profileExchangeRepository.save(targetProfileExchange);
 
-        ExchangeResult myExchangeResult = new ExchangeResult(isMatched, matchedInterestTypeList,
+        ExchangeResult myExchangeResult = new ExchangeResult(isMatched,
+                matchedInterestTypeList.stream().map(mi -> new InterestTypeLabel(mi, mi.getLabel())).toList(),
                 myProfileExchange.getMemo(), myProfileExchange.getScore(), exchange.getCreatedAt(),
                 profileService.getProfileResponseById(targetProfile.getId()));
-        ExchangeResult targetExchangeResult = new ExchangeResult(isMatched, matchedInterestTypeList,
+        ExchangeResult targetExchangeResult = new ExchangeResult(isMatched,
+                matchedInterestTypeList.stream().map(mi -> new InterestTypeLabel(mi, mi.getLabel())).toList(),
                 targetProfileExchange.getMemo(), targetProfileExchange.getScore(), exchange.getCreatedAt(),
                 profileService.getProfileResponseByUserId(userId));
 

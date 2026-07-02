@@ -25,6 +25,7 @@ import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileShortRepository;
 import org.swyp.com.backend.profile.dto.ChoiceTemplate;
+import org.swyp.com.backend.profile.dto.InterestTypeLabel;
 import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
 import org.swyp.com.backend.profile.dto.ProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileUpdateRequest;
@@ -220,12 +221,13 @@ public class ProfileService {
                                                  List<ProfileChoice> profileChoiceList,
                                                  List<ProfileShort> profileShortList) {
 
-        List<InterestType> interestTypeList = new ArrayList<>();
+        List<InterestTypeLabel> interestTypeLabelList = new ArrayList<>();
         List<ChoiceTemplate> choiceTemplateList = new ArrayList<>();
         List<ShortTemplate> shortTemplateList = new ArrayList<>();
 
         for (ProfileInterest interest : interestList) {
-            interestTypeList.add(interest.getInterest().getType());
+            interestTypeLabelList.add(new InterestTypeLabel(interest.getInterest().getType(),
+                    interest.getInterest().getType().getLabel()));
         }
 
         for (ProfileChoice profileChoice : profileChoiceList) {
@@ -244,7 +246,7 @@ public class ProfileService {
 
         return new ProfileResponse(profile.getId(), profile.getNickname(),
                 profile.getImageKey(), profile.getGender(), profile.getAge(), profile.getRegion(), profile.getJob(),
-                interestTypeList, profile.getBio(), type, imageKey, detail, choiceTemplateList, shortTemplateList);
+                interestTypeLabelList, profile.getBio(), type, imageKey, detail, choiceTemplateList, shortTemplateList);
     }
 
 

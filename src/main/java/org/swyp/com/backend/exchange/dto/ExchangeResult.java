@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.swyp.com.backend.global.enumeration.InterestType;
+import org.swyp.com.backend.profile.dto.InterestTypeLabel;
 import org.swyp.com.backend.profile.dto.ProfileResponse;
 
 @Schema(description = "교환 상세 정보")
@@ -14,7 +14,7 @@ public record ExchangeResult(
         Boolean isMatched,
         @Schema(description = "매칭된 관심사")
         @JsonProperty("matched_interests")
-        List<InterestType> matchedInterests,
+        List<InterestTypeLabel> matchedInterests,
         @Schema(description = "후기")
         String memo,
         @Schema(description = "점수")
