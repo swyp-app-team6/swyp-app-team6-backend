@@ -1,6 +1,7 @@
 package org.swyp.com.backend.cosmic.controller.api;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,6 +11,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.swyp.com.backend.cosmic.dto.CosmicTestResponse;
+import org.swyp.com.backend.cosmic.dto.CosmicTypeResponse;
+import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 
 @Tag(name = "Cosmic", description = "Cosmic 테스트 관련 API")
 @SecurityRequirement(name = "bearerAuth")
@@ -265,4 +268,114 @@ public interface CosmicControllerApiSpec {
             )
     })
     ResponseEntity<CosmicTestResponse> getCosmicTestResponse();
+
+
+    @Operation(
+            summary = "Cosmic 타입 조회",
+            description = "CosmicDatingType 기반으로 해당 타입의 상세 정보를 조회합니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = CosmicTypeResponse.class,
+                                    example = """
+                                            {
+                                              "cosmicType": {
+                                                "type": "SOLA",
+                                                "label": "솔라 유형"
+                                              },
+                                              "detail": "사랑을 아낌없이 표현하는 열정적인 연애",
+                                              "imageKey": "",
+                                              "features": [
+                                                "둘만의 특별한 추억을 중요하게 생각해요.",
+                                                "감정을 솔직하게 표현해요.",
+                                                "연인에게 시간과 정성을 아끼지 않아요.",
+                                                "깊은 교감과 애정을 원해요."
+                                              ],
+                                              "matches": [
+                                                {
+                                                  "type": "SHOOTING_STAR",
+                                                  "label": "슈팅스타 유형"
+                                                },
+                                                {
+                                                  "type": "LUNA",
+                                                  "label": "루나 유형"
+                                                }
+                                              ],
+                                              "mentions": [
+                                                "'표현을 정말 잘 한다.'",
+                                                "'사랑받는다는 느낌이 들어.'"
+                                              ],
+                                              "tags": [
+                                                "애정표현",
+                                                "열정",
+                                                "직진"
+                                              ]
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "BAD_REQUEST - 요청 파라미터 형식이 잘못되었습니다.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = """
+                                            {
+                                                "title": "BAD_REQUEST",
+                                                "status": 400,
+                                                "detail": "요청 파라미터 형식이 잘못되었습니다.",
+                                                "instance": "/cosmic/SOLAC"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "UNAUTHORIZED - 인증이 필요합니다.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = """
+                                            {
+                                                "title": "UNAUTHORIZED",
+                                                "status": 401,
+                                                "detail": "인증이 필요합니다."
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "NOT_FOUND - 코스믹 타입 정보를 찾을 수 없습니다.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = """
+                                            {
+                                                "title": "NOT_FOUND",
+                                                "status": 404,
+                                                "detail": "코스믹 타입 정보를 찾을 수 없습니다."
+                                            }
+                                            """
+                            )
+                    )
+            )
+    })
+    ResponseEntity<CosmicTypeResponse> getCosmicType(
+            @Parameter(
+                    description = "조회할 Cosmic Dating Type",
+                    required = true,
+                    example = "SOLA"
+            )
+            CosmicDatingType type
+    );
 }

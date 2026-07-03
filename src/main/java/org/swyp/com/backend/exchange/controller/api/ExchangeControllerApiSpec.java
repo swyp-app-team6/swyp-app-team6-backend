@@ -1,6 +1,7 @@
 package org.swyp.com.backend.exchange.controller.api;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -270,6 +271,11 @@ public interface ExchangeControllerApiSpec {
             )
     })
     DeferredResult<ResponseEntity<ExchangeResponse>> waitExchangeResponse(
+            @Parameter(
+                    description = "QR 스캔하여 추출된 UUID 값",
+                    required = true,
+                    example = "78eaffda-af5c-4cea-911a-c2e852ac8da2"
+            )
             UUID uuid,
             UserDetails userDetails
     );
@@ -401,6 +407,11 @@ public interface ExchangeControllerApiSpec {
             )
     })
     ResponseEntity<ExchangeResponse> acceptExchange(
+            @Parameter(
+                    description = "미리보기 프로필 Response에 담긴 프로필 id 값",
+                    required = true,
+                    example = "1"
+            )
             Long profileId,
             UserDetails userDetails
     );
@@ -496,6 +507,11 @@ public interface ExchangeControllerApiSpec {
             )
     })
     ResponseEntity<Void> declineExchange(
+            @Parameter(
+                    description = "미리보기 프로필 Response에 담긴 프로필 id 값",
+                    required = true,
+                    example = "1"
+            )
             Long profileId,
             UserDetails userDetails
     );
@@ -669,6 +685,11 @@ public interface ExchangeControllerApiSpec {
             )
     })
     ResponseEntity<Void> cancelExchangeStart(
+            @Parameter(
+                    description = "미리보기 프로필 Response에 담긴 프로필 id 값",
+                    required = true,
+                    example = "1"
+            )
             Long profileId,
             UserDetails userDetails
     );
