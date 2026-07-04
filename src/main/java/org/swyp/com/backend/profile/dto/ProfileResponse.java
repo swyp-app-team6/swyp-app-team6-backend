@@ -1,4 +1,4 @@
-package org.swyp.com.backend.profile.dto.profile;
+package org.swyp.com.backend.profile.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -6,7 +6,7 @@ import java.util.List;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.enumeration.Gender;
 import org.swyp.com.backend.interest.dto.InterestTypeLabel;
-import org.swyp.com.backend.profile.dto.region.RegionLabel;
+import org.swyp.com.backend.region.dto.RegionLabel;
 
 @Schema(description = "프로필 상세 응답")
 public record ProfileResponse(

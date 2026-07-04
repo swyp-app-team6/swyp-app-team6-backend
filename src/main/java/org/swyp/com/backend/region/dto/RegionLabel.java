@@ -1,4 +1,4 @@
-package org.swyp.com.backend.profile.dto.region;
+package org.swyp.com.backend.region.dto;
 
 import org.swyp.com.backend.global.enumeration.RegionDetail;
 

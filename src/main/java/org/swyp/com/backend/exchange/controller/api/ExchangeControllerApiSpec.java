@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.swyp.com.backend.exchange.dto.ExchangeResponse;
-import org.swyp.com.backend.profile.dto.profile.ProfileResponse;
+import org.swyp.com.backend.profile.dto.ProfileResponse;
 
 @Tag(name = "Exchange", description = "교환 관련 API")
 @SecurityRequirement(name = "bearerAuth")

@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.swyp.com.backend.profile.controller.api.ProfileControllerApiSpec;
-import org.swyp.com.backend.profile.dto.profile.ProfileRegisterRequest;
-import org.swyp.com.backend.profile.dto.profile.ProfileResponse;
-import org.swyp.com.backend.profile.dto.profile.ProfileUpdateRequest;
-import org.swyp.com.backend.profile.dto.qr.QrResponse;
+import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
+import org.swyp.com.backend.profile.dto.ProfileResponse;
+import org.swyp.com.backend.profile.dto.ProfileUpdateRequest;
+import org.swyp.com.backend.profile.dto.QrResponse;
 import org.swyp.com.backend.profile.service.ProfileService;
 
 @RestController

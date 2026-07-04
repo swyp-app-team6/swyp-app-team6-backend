@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Region {
+public enum RegionGroup {
     SEOUL("서울"),
     GYEONGGI("경기"),
     INCHEON("인천"),

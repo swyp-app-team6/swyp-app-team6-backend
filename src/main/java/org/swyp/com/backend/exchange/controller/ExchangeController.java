@@ -17,7 +17,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 import org.swyp.com.backend.exchange.controller.api.ExchangeControllerApiSpec;
 import org.swyp.com.backend.exchange.dto.ExchangeResponse;
 import org.swyp.com.backend.exchange.service.ExchangeService;
-import org.swyp.com.backend.profile.dto.profile.ProfileResponse;
+import org.swyp.com.backend.profile.dto.ProfileResponse;
 
 @RestController
 @RequiredArgsConstructor

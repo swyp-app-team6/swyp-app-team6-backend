@@ -11,10 +11,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.swyp.com.backend.profile.dto.profile.ProfileRegisterRequest;
-import org.swyp.com.backend.profile.dto.profile.ProfileResponse;
-import org.swyp.com.backend.profile.dto.profile.ProfileUpdateRequest;
-import org.swyp.com.backend.profile.dto.qr.QrResponse;
+import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
+import org.swyp.com.backend.profile.dto.ProfileResponse;
+import org.swyp.com.backend.profile.dto.ProfileUpdateRequest;
+import org.swyp.com.backend.profile.dto.QrResponse;
 
 @Tag(name = "Profile", description = "프로필 관련 API")
 @SecurityRequirement(name = "bearerAuth")
