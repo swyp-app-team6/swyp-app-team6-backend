@@ -248,7 +248,8 @@ public class ProfileService {
 
         return new ProfileResponse(profile.getId(), profile.getNickname(),
                 profile.getImageKey(), profile.getGender(), profile.getAge(),
-                new RegionLabel(profile.getRegionDetail(), profile.getRegionDetail().getLabel()),
+                new RegionLabel(profile.getRegionDetail().getRegionGroup().getLabel(), profile.getRegionDetail(),
+                        profile.getRegionDetail().getLabel()),
                 profile.getJob(),
                 interestTypeLabelList, profile.getBio(), type, imageKey, detail, choiceTemplateList, shortTemplateList);
     }

@@ -18,7 +18,8 @@ public class RegionService {
     public RegionResponse getRegionResponse() {
         List<Region> regionList = regionGroupEntityRepository.findAll().stream().map(rg -> {
             List<RegionLabel> labels = rg.getRegionDetailList().stream()
-                    .map(rd -> new RegionLabel(rd.getRegionDetail(), rd.getRegionDetail()
+                    .map(rd -> new RegionLabel(rd.getRegionGroupEntity().getRegionGroup().getLabel(),
+                            rd.getRegionDetail(), rd.getRegionDetail()
                             .getLabel())).toList();
 
             return new Region(rg.getRegionGroup(), rg.getRegionGroup().getLabel(), labels);
