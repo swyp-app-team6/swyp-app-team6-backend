@@ -1,4 +1,4 @@
-package org.swyp.com.backend.profile.dto;
+package org.swyp.com.backend.profile.dto.profile;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;

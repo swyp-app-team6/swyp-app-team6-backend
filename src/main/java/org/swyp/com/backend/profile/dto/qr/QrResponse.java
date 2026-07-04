@@ -1,4 +1,4 @@
-package org.swyp.com.backend.profile.dto;
+package org.swyp.com.backend.profile.dto.qr;
 
 import java.util.UUID;
 

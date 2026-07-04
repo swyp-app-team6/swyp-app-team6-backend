@@ -24,12 +24,13 @@ import org.swyp.com.backend.profile.domain.repository.ProfileChoiceRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileShortRepository;
-import org.swyp.com.backend.profile.dto.ChoiceTemplate;
-import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
-import org.swyp.com.backend.profile.dto.ProfileResponse;
-import org.swyp.com.backend.profile.dto.ProfileUpdateRequest;
-import org.swyp.com.backend.profile.dto.QrResponse;
-import org.swyp.com.backend.profile.dto.ShortTemplate;
+import org.swyp.com.backend.profile.dto.profile.ChoiceTemplate;
+import org.swyp.com.backend.profile.dto.profile.ProfileRegisterRequest;
+import org.swyp.com.backend.profile.dto.profile.ProfileResponse;
+import org.swyp.com.backend.profile.dto.profile.ProfileUpdateRequest;
+import org.swyp.com.backend.profile.dto.qr.QrResponse;
+import org.swyp.com.backend.profile.dto.region.RegionLabel;
+import org.swyp.com.backend.profile.dto.profile.ShortTemplate;
 import org.swyp.com.backend.question.domain.MultipleChoiceAnswer;
 import org.swyp.com.backend.question.domain.MultipleChoiceQuestion;
 import org.swyp.com.backend.question.domain.ShortAnswerQuestion;
@@ -178,7 +179,8 @@ public class ProfileService {
         Cosmic cosmic =
                 profileForm.cosmicType() != null ? cosmicService.getCosmicByCosmicType(profileForm.cosmicType()) : null;
 
-        profile.updateProfile(profileForm.nickname(), profileForm.imageKey(), profileForm.age(), profileForm.region(),
+        profile.updateProfile(profileForm.nickname(), profileForm.imageKey(), profileForm.age(),
+                profileForm.region(),
                 profileForm.job(), profileForm.bio(), cosmic);
 
         if (profileForm.interests() != null) {
@@ -245,7 +247,9 @@ public class ProfileService {
         String detail = cosmic != null ? cosmic.getDetail() : null;
 
         return new ProfileResponse(profile.getId(), profile.getNickname(),
-                profile.getImageKey(), profile.getGender(), profile.getAge(), profile.getRegion(), profile.getJob(),
+                profile.getImageKey(), profile.getGender(), profile.getAge(),
+                new RegionLabel(profile.getRegionDetail(), profile.getRegionDetail().getLabel()),
+                profile.getJob(),
                 interestTypeLabelList, profile.getBio(), type, imageKey, detail, choiceTemplateList, shortTemplateList);
     }
 

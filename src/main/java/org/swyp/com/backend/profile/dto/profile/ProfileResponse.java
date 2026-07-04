@@ -1,12 +1,12 @@
-package org.swyp.com.backend.profile.dto;
+package org.swyp.com.backend.profile.dto.profile;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.enumeration.Gender;
-import org.swyp.com.backend.global.enumeration.Region;
 import org.swyp.com.backend.interest.dto.InterestTypeLabel;
+import org.swyp.com.backend.profile.dto.region.RegionLabel;
 
 @Schema(description = "프로필 상세 응답")
 public record ProfileResponse(
@@ -22,7 +22,7 @@ public record ProfileResponse(
         @Schema(description = "나이")
         Integer age,
         @Schema(description = "거주지")
-        Region region,
+        RegionLabel region,
         @Schema(description = "직업")
         String job,
         @Schema(description = "관심사 목록")

@@ -10,7 +10,7 @@ import static org.swyp.com.backend.support.ProfileTestFixture.TEST_IMAGE_KEY;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_JOB;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_PROFILE_ID;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_PROFILE_NICKNAME;
-import static org.swyp.com.backend.support.ProfileTestFixture.TEST_REGION;
+import static org.swyp.com.backend.support.ProfileTestFixture.TEST_REGION_DETAIL;
 import static org.swyp.com.backend.support.UserTestFixture.TEST_ROLE;
 import static org.swyp.com.backend.support.UserTestFixture.TEST_USER_EMAIL;
 import static org.swyp.com.backend.support.UserTestFixture.TEST_USER_ID;
@@ -57,7 +57,7 @@ class UserServiceTest {
         // given
         User user = UserTestFixture.createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
         Profile profile = ProfileTestFixture.createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY,
-                TEST_GENDER, TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
+                TEST_GENDER, TEST_AGE, TEST_REGION_DETAIL, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.of(profile));

@@ -7,14 +7,14 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.enumeration.Gender;
 import org.swyp.com.backend.global.enumeration.InterestType;
-import org.swyp.com.backend.global.enumeration.Region;
+import org.swyp.com.backend.global.enumeration.RegionDetail;
 import org.swyp.com.backend.interest.domain.Interest;
 import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.domain.ProfileInterest;
-import org.swyp.com.backend.profile.dto.ChoiceTemplate;
-import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
-import org.swyp.com.backend.profile.dto.ProfileUpdateRequest;
-import org.swyp.com.backend.profile.dto.ShortTemplate;
+import org.swyp.com.backend.profile.dto.profile.ChoiceTemplate;
+import org.swyp.com.backend.profile.dto.profile.ProfileRegisterRequest;
+import org.swyp.com.backend.profile.dto.profile.ProfileUpdateRequest;
+import org.swyp.com.backend.profile.dto.profile.ShortTemplate;
 import org.swyp.com.backend.user.domain.User;
 
 public class ProfileTestFixture {
@@ -24,32 +24,32 @@ public class ProfileTestFixture {
     public static final String TEST_IMAGE_KEY = "test/image-key";
     public static final Gender TEST_GENDER = Gender.M;
     public static final Integer TEST_AGE = 25;
-    public static final Region TEST_REGION = Region.SEOUL;
+    public static final RegionDetail TEST_REGION_DETAIL = RegionDetail.SEOUL;
     public static final String TEST_JOB = "testJob";
     public static final String TEST_BIO = "testBio";
     public static final CosmicDatingType TEST_COSMIC_TYPE = CosmicDatingType.SOLA;
 
     public static ProfileRegisterRequest createProfileForm(String nickname, String imageKey, Gender gender, Integer age,
-                                                           Region region, String job,
+                                                           RegionDetail regionDetail, String job,
                                                            List<InterestType> interestTypeList, String bio,
                                                            CosmicDatingType cosmicType,
                                                            List<ChoiceTemplate> choiceTemplateList,
                                                            List<ShortTemplate> shortTemplateList
     ) {
-        return new ProfileRegisterRequest(nickname, imageKey, gender, age, region, job, interestTypeList, bio,
+        return new ProfileRegisterRequest(nickname, imageKey, gender, age, regionDetail, job, interestTypeList, bio,
                 cosmicType,
                 choiceTemplateList, shortTemplateList);
 
     }
 
     public static ProfileUpdateRequest createUpdateProfileForm(String nickname, String imageKey, Integer age,
-                                                               Region region, String job,
+                                                               RegionDetail regionDetail, String job,
                                                                List<InterestType> interestTypeList, String bio,
                                                                CosmicDatingType cosmicType,
                                                                List<ChoiceTemplate> choiceTemplateList,
                                                                List<ShortTemplate> shortTemplateList
     ) {
-        return new ProfileUpdateRequest(nickname, imageKey, age, region, job, interestTypeList, bio,
+        return new ProfileUpdateRequest(nickname, imageKey, age, regionDetail, job, interestTypeList, bio,
                 cosmicType,
                 choiceTemplateList, shortTemplateList);
     }
@@ -85,11 +85,13 @@ public class ProfileTestFixture {
     }
 
     public static Profile createProfile(Long id, User user, String nickname, String imageKey, Gender gender,
-                                        Integer age, Region region, String job, String bio, CosmicDatingType cosmic) {
+                                        Integer age, RegionDetail regionDetail, String job, String bio,
+                                        CosmicDatingType cosmic) {
         Profile profile = new Profile();
         ReflectionTestUtils.setField(profile, "id", id);
         ReflectionTestUtils.setField(profile, "user", user);
         ReflectionTestUtils.setField(profile, "nickname", nickname);
+        ReflectionTestUtils.setField(profile, "regionDetail", regionDetail);
         return profile;
     }
 
