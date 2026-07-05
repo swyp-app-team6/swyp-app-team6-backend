@@ -34,6 +34,7 @@ import org.swyp.com.backend.question.domain.MultipleChoiceAnswer;
 import org.swyp.com.backend.question.domain.MultipleChoiceQuestion;
 import org.swyp.com.backend.question.domain.ShortAnswerQuestion;
 import org.swyp.com.backend.question.service.QuestionService;
+import org.swyp.com.backend.region.dto.RegionLabel;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.repository.UserRepository;
 
@@ -178,7 +179,8 @@ public class ProfileService {
         Cosmic cosmic =
                 profileForm.cosmicType() != null ? cosmicService.getCosmicByCosmicType(profileForm.cosmicType()) : null;
 
-        profile.updateProfile(profileForm.nickname(), profileForm.imageKey(), profileForm.age(), profileForm.region(),
+        profile.updateProfile(profileForm.nickname(), profileForm.imageKey(), profileForm.age(),
+                profileForm.region(),
                 profileForm.job(), profileForm.bio(), cosmic);
 
         if (profileForm.interests() != null) {
@@ -245,7 +247,10 @@ public class ProfileService {
         String detail = cosmic != null ? cosmic.getDetail() : null;
 
         return new ProfileResponse(profile.getId(), profile.getNickname(),
-                profile.getImageKey(), profile.getGender(), profile.getAge(), profile.getRegion(), profile.getJob(),
+                profile.getImageKey(), profile.getGender(), profile.getAge(),
+                new RegionLabel(profile.getRegionDetail().getRegionGroup().getLabel(), profile.getRegionDetail(),
+                        profile.getRegionDetail().getLabel()),
+                profile.getJob(),
                 interestTypeLabelList, profile.getBio(), type, imageKey, detail, choiceTemplateList, shortTemplateList);
     }
 

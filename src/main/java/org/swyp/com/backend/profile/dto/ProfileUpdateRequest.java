@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.enumeration.InterestType;
-import org.swyp.com.backend.global.enumeration.Region;
+import org.swyp.com.backend.global.enumeration.RegionDetail;
 
 @Schema(description = "프로필 수정 요청 (수정하려는 항목만 입력)")
 public record ProfileUpdateRequest(
@@ -19,7 +19,7 @@ public record ProfileUpdateRequest(
         @Schema(description = "나이")
         Integer age,
         @Schema(description = "거주지")
-        Region region,
+        RegionDetail region,
         @Size(max = 10, message = "직무분야는 최대 10자여야 합니다.")
         @Schema(description = "직업")
         String job,

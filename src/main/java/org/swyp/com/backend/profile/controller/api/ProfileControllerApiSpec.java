@@ -40,7 +40,11 @@ public interface ProfileControllerApiSpec {
                                               "image_key": "image-key",
                                               "gender": "M",
                                               "age": 25,
-                                              "region": "SEOUL",
+                                              "region": {
+                                                  "group": "서울",
+                                                  "detail": "SEOUL_GANGNAM",
+                                                  "label": "강남"
+                                              },
                                               "job": "개발자",
                                               "interests": [
                                                 "TRAVEL",
@@ -142,7 +146,11 @@ public interface ProfileControllerApiSpec {
                                               "image_key": "image-key",
                                               "gender": "M",
                                               "age": 25,
-                                              "region": "SEOUL",
+                                              "region": {
+                                                  "group": "서울",
+                                                  "detail": "SEOUL_GANGNAM",
+                                                  "label": "강남"
+                                              },
                                               "job": "개발자",
                                               "interests": [
                                                 "TRAVEL",
@@ -261,7 +269,7 @@ public interface ProfileControllerApiSpec {
                                               "image_key": "image-key",
                                               "gender": "M",
                                               "age": 25,
-                                              "region": "SEOUL",
+                                              "region": "SEOUL_GANGNAM",
                                               "job": "개발자",
                                               "interests": [
                                                 "TRAVEL",
@@ -316,7 +324,11 @@ public interface ProfileControllerApiSpec {
                                               "image_key": "image-key",
                                               "gender": "M",
                                               "age": 26,
-                                              "region": "SEOUL",
+                                              "region": {
+                                                  "group": "서울",
+                                                  "detail": "SEOUL_GANGNAM",
+                                                  "label": "강남"
+                                              },
                                               "job": "백엔드 개발자",
                                               "interests": [
                                                 "TRAVEL",
@@ -601,7 +613,11 @@ public interface ProfileControllerApiSpec {
                                               "image_key": "image-key",
                                               "gender": "M",
                                               "age": 26,
-                                              "region": "SEOUL",
+                                              "region": {
+                                                  "group": "서울",
+                                                  "detail": "SEOUL_GANGNAM",
+                                                  "label": "강남"
+                                              },
                                               "job": "개발자",
                                               "interests": [
                                                 "TRAVEL",

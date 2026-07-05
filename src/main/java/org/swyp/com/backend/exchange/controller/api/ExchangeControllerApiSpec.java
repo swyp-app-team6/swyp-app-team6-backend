@@ -40,7 +40,11 @@ public interface ExchangeControllerApiSpec {
                                               "image_key": "image-key",
                                               "gender": "M",
                                               "age": 26,
-                                              "region": "SEOUL",
+                                              "region": {
+                                                  "group": "서울",
+                                                  "detail": "SEOUL_GANGNAM",
+                                                  "label": "강남"
+                                              },
                                               "job": "개발자",
                                               "interests": ["TRAVEL", "SPORTS", "CAFE"],
                                               "bio": "여행과 운동을 좋아해요",
@@ -143,7 +147,11 @@ public interface ExchangeControllerApiSpec {
                                                           "image_key": "image-key",
                                                           "gender": "M",
                                                           "age": 26,
-                                                          "region": "SEOUL",
+                                                          "region": {
+                                                              "group": "서울",
+                                                              "detail": "SEOUL_GANGNAM",
+                                                              "label": "강남"
+                                                          },
                                                           "job": "개발자",
                                                           "interests": ["TRAVEL", "SPORTS", "CAFE"],
                                                           "bio": "여행과 운동을 좋아해요",
@@ -311,7 +319,11 @@ public interface ExchangeControllerApiSpec {
                                                   "image_key": "image-key",
                                                   "gender": "M",
                                                   "age": 26,
-                                                  "region": "SEOUL",
+                                                  "region": {
+                                                      "group": "서울",
+                                                      "detail": "SEOUL_GANGNAM",
+                                                      "label": "강남"
+                                                  },
                                                   "job": "개발자",
                                                   "interests": ["TRAVEL", "SPORTS", "CAFE"],
                                                   "bio": "여행과 운동을 좋아해요",

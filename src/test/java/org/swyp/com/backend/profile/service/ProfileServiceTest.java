@@ -18,7 +18,7 @@ import static org.swyp.com.backend.support.ProfileTestFixture.TEST_IMAGE_KEY;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_JOB;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_PROFILE_ID;
 import static org.swyp.com.backend.support.ProfileTestFixture.TEST_PROFILE_NICKNAME;
-import static org.swyp.com.backend.support.ProfileTestFixture.TEST_REGION;
+import static org.swyp.com.backend.support.ProfileTestFixture.TEST_REGION_DETAIL;
 import static org.swyp.com.backend.support.ProfileTestFixture.createInterestList;
 import static org.swyp.com.backend.support.ProfileTestFixture.createInterestTypeList;
 import static org.swyp.com.backend.support.ProfileTestFixture.createProfile;
@@ -129,7 +129,7 @@ class ProfileServiceTest {
         List<Interest> interestList = createInterestList(interestTypeList);
 
         ProfileRegisterRequest request = createProfileForm(TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER, TEST_AGE,
-                TEST_REGION, TEST_JOB, interestTypeList, null, null, null, null);
+                TEST_REGION_DETAIL, TEST_JOB, interestTypeList, null, null, null, null);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.empty());
@@ -149,7 +149,7 @@ class ProfileServiceTest {
         // given
         User user = createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
         Profile profile = createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER,
-                TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
+                TEST_AGE, TEST_REGION_DETAIL, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
         Cosmic cosmic = CosmicTestFixture.createCosmic(TEST_COSMIC_ID, TEST_COSMIC_TYPE, TEST_COSMIC_DETAIL,
                 TEST_COSMIC_IMAGE_KEY, TEST_COSMIC_DELETED);
 
@@ -177,7 +177,7 @@ class ProfileServiceTest {
         List<ShortTemplate> shortTemplateList = QuestionTestFixture.createshortTemplateList(shortTemplate);
 
         ProfileRegisterRequest request = createProfileForm(TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER, TEST_AGE,
-                TEST_REGION, TEST_JOB, interestTypeList, TEST_BIO, TEST_COSMIC_TYPE, choiceTemplateList,
+                TEST_REGION_DETAIL, TEST_JOB, interestTypeList, TEST_BIO, TEST_COSMIC_TYPE, choiceTemplateList,
                 shortTemplateList);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
@@ -205,12 +205,12 @@ class ProfileServiceTest {
         // given
         User user = createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
         Profile profile = createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER,
-                TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
+                TEST_AGE, TEST_REGION_DETAIL, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
 
         List<InterestType> interestTypeList = createInterestTypeList(InterestType.TRAVEL);
 
         ProfileRegisterRequest request = createProfileForm(TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER, TEST_AGE,
-                TEST_REGION, TEST_JOB, interestTypeList, null, null, null, null);
+                TEST_REGION_DETAIL, TEST_JOB, interestTypeList, null, null, null, null);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.of(profile));
@@ -230,7 +230,7 @@ class ProfileServiceTest {
         List<InterestType> interestTypeList = createInterestTypeList(InterestType.TRAVEL);
 
         ProfileRegisterRequest request = createProfileForm(TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER, TEST_AGE,
-                TEST_REGION, TEST_JOB, interestTypeList, null, null, null, null);
+                TEST_REGION_DETAIL, TEST_JOB, interestTypeList, null, null, null, null);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
 
@@ -245,7 +245,7 @@ class ProfileServiceTest {
         // given
         User user = createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
         Profile profile = createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER,
-                TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
+                TEST_AGE, TEST_REGION_DETAIL, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
 
         // entity-setup
         List<InterestType> interestTypeList = createInterestTypeList(InterestType.TRAVEL);
@@ -278,7 +278,7 @@ class ProfileServiceTest {
         List<ShortTemplate> shortTemplateList = QuestionTestFixture.createshortTemplateList(shortTemplate);
 
         ProfileRegisterRequest request = createProfileForm(TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER, TEST_AGE,
-                TEST_REGION, TEST_JOB, interestTypeList, TEST_BIO, TEST_COSMIC_TYPE, choiceTemplateList,
+                TEST_REGION_DETAIL, TEST_JOB, interestTypeList, TEST_BIO, TEST_COSMIC_TYPE, choiceTemplateList,
                 shortTemplateList);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
@@ -319,7 +319,7 @@ class ProfileServiceTest {
 
         User user = createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
         Profile profile = createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER,
-                TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
+                TEST_AGE, TEST_REGION_DETAIL, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
 
         ProfileUpdateRequest request = createUpdateProfileForm(updateName, null, null,
                 null, null, null, null, null, null, null);
@@ -343,7 +343,7 @@ class ProfileServiceTest {
 
         User user = createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
         Profile profile = createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER,
-                TEST_AGE, TEST_REGION, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
+                TEST_AGE, TEST_REGION_DETAIL, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
 
         List<InterestType> interestTypeList = updatedInterestTypeList;
         List<Interest> interestList = createInterestList(interestTypeList);

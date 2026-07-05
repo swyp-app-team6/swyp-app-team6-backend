@@ -17,7 +17,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import org.swyp.com.backend.cosmic.domain.Cosmic;
 import org.swyp.com.backend.global.enumeration.Gender;
-import org.swyp.com.backend.global.enumeration.Region;
+import org.swyp.com.backend.global.enumeration.RegionDetail;
 import org.swyp.com.backend.user.domain.User;
 
 @Entity
@@ -40,7 +40,7 @@ public class Profile {
     private Integer age;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Region region;
+    private RegionDetail regionDetail;
     @Column(nullable = false, length = 20)
     private String job;
 
@@ -60,7 +60,7 @@ public class Profile {
     private Boolean deleted;
 
     public static Profile createProfile(User user, String nickname, String imageKey, Gender gender, Integer age,
-                                        Region region, String job,
+                                        RegionDetail regionDetail, String job,
                                         String bio, Cosmic cosmic) {
         Profile profile = new Profile();
         profile.user = user;
@@ -68,7 +68,7 @@ public class Profile {
         profile.imageKey = imageKey;
         profile.gender = gender;
         profile.age = age;
-        profile.region = region;
+        profile.regionDetail = regionDetail;
         profile.job = job;
         profile.bio = bio;
         profile.cosmic = cosmic;
@@ -76,7 +76,8 @@ public class Profile {
         return profile;
     }
 
-    public void updateProfile(String nickname, String imageKey, Integer age, Region region, String job, String bio,
+    public void updateProfile(String nickname, String imageKey, Integer age, RegionDetail regionDetail, String job,
+                              String bio,
                               Cosmic cosmic) {
         if (nickname != null) {
             this.nickname = nickname;
@@ -87,8 +88,8 @@ public class Profile {
         if (age != null) {
             this.age = age;
         }
-        if (region != null) {
-            this.region = region;
+        if (regionDetail != null) {
+            this.regionDetail = regionDetail;
         }
         if (job != null) {
             this.job = job;

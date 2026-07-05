@@ -10,7 +10,7 @@ import java.util.List;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.enumeration.Gender;
 import org.swyp.com.backend.global.enumeration.InterestType;
-import org.swyp.com.backend.global.enumeration.Region;
+import org.swyp.com.backend.global.enumeration.RegionDetail;
 
 @Schema(description = "프로필 등록 요청")
 public record ProfileRegisterRequest(
@@ -30,7 +30,7 @@ public record ProfileRegisterRequest(
         Integer age,
         @NotNull(message = "거주지를 입력해주세요.")
         @Schema(description = "거주지")
-        Region region,
+        RegionDetail region,
         @NotNull(message = "직업을 입력해주세요.")
         @Size(max = 10, message = "직무분야는 최대 10자여야 합니다.")
         @Schema(description = "직업")
