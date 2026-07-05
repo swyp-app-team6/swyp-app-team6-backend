@@ -8,4 +8,6 @@ public interface TokenService {
     TokenResponse issueTokenPair(Long userId, UserRole role);
 
     TokenResponse reissueTokenPair(String refreshToken);
+
+    void logout(Long userId);
 }

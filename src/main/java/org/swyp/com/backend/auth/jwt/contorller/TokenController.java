@@ -2,7 +2,10 @@ package org.swyp.com.backend.auth.jwt.contorller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,5 +27,12 @@ public class TokenController implements TokenApiSpec {
     public ResponseEntity<TokenResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
         TokenResponse response = tokenService.reissueTokenPair(request.refreshToken());
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@AuthenticationPrincipal UserDetails userDetails) {
+        tokenService.logout(Long.valueOf(userDetails.getUsername()));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
