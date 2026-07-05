@@ -141,4 +141,32 @@ class TokenServiceTest {
         assertThrows(BusinessException.class, () ->
                 tokenService.reissueTokenPair(storedToken));
     }
+
+    @Test
+    void logout_storedRefreshTokenExists_deletesIt() {
+        // given
+        RefreshToken stored = new RefreshToken(TEST_USER_ID, UUID.randomUUID().toString(),
+                JwtTestFixture.getExpiresDate());
+        when(refreshTokenRepository.findByUserId(TEST_USER_ID))
+                .thenReturn(Optional.of(stored));
+
+        // when
+        tokenService.logout(TEST_USER_ID);
+
+        // then
+        verify(refreshTokenRepository).delete(stored);
+    }
+
+    @Test
+    void logout_noStoredRefreshToken_doesNothing() {
+        // given
+        when(refreshTokenRepository.findByUserId(TEST_USER_ID))
+                .thenReturn(Optional.empty());
+
+        // when
+        tokenService.logout(TEST_USER_ID);
+
+        // then
+        verify(refreshTokenRepository, never()).delete(any(RefreshToken.class));
+    }
 }

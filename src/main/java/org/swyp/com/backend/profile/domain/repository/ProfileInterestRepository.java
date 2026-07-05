@@ -10,5 +10,7 @@ public interface ProfileInterestRepository extends JpaRepository<ProfileInterest
 
     List<ProfileInterest> findByProfileOrderByInterestId(Profile profile);
 
+    List<ProfileInterest> findByProfileIn(List<Profile> profiles);
+
     void deleteByProfile(Profile profile);
 }

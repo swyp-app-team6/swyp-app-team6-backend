@@ -50,6 +50,13 @@ public class TokenServiceImpl implements TokenService {
         }
     }
 
+    @Override
+    @Transactional
+    public void logout(Long userId) {
+        refreshTokenRepository.findByUserId(userId)
+                .ifPresent(refreshTokenRepository::delete);
+    }
+
     private void verifyRefreshTokenJti(Long userId, String jti) {
         refreshTokenRepository.findByUserId(userId).ifPresent(stored -> {
             if (!stored.getJti().equals(jti)) {

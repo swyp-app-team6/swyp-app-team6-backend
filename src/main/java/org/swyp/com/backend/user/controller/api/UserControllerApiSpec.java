@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.swyp.com.backend.user.dto.UserMeResponse;
+import org.swyp.com.backend.user.dto.UserWithdrawalRequest;
 
 @Tag(name = "User", description = "사용자 관련 API")
 public interface UserControllerApiSpec {
@@ -59,13 +60,30 @@ public interface UserControllerApiSpec {
     @Operation(
             summary = "회원 탈퇴",
             description = "현재 로그인된 사용자의 계정을 삭제합니다."
-                    + "사용자와 연관된 프로필 및 관심사 정보도 함께 삭제됩니다.",
+                    + "사용자와 연관된 프로필 및 관심사 정보도 함께 삭제됩니다."
+                    + "탈퇴 사유는 사용자를 식별할 수 없는 별도의 로그에 익명으로 저장됩니다.",
             operationId = "deleteUser"
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "204",
                     description = "회원 탈퇴 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "탈퇴 사유 검증 실패",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "title": "BAD_REQUEST",
+                                              "status": 400,
+                                              "detail": "기타 사유를 선택한 경우 상세 사유를 입력해주세요."
+                                            }
+                                            """
+                            )
+                    )
             ),
             @ApiResponse(
                     responseCode = "401",
@@ -100,5 +118,5 @@ public interface UserControllerApiSpec {
                     )
             )
     })
-    ResponseEntity<Void> deleteUser(UserDetails userDetails);
+    ResponseEntity<Void> deleteUser(UserDetails userDetails, UserWithdrawalRequest request);
 }
