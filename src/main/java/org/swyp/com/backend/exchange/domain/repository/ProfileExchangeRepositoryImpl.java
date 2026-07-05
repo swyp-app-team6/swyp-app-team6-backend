@@ -3,7 +3,9 @@ package org.swyp.com.backend.exchange.domain.repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -40,7 +42,8 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
                         + "JOIN FETCH pe.exchange ex "
                         + "WHERE pe.user.id = :userId AND p.deleted = false");
 
-        appendFilters(jpql, keyword, regions, types);
+        FilterClause filterClause = buildFilterClause(keyword, regions, types);
+        jpql.append(filterClause.jpql());
 
         if (cursor != null) {
             jpql.append(" AND (ex.createdAt ").append(operator).append(" :cursorCreatedAt")
@@ -52,7 +55,7 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
 
         TypedQuery<ProfileExchange> query = entityManager.createQuery(jpql.toString(), ProfileExchange.class);
         query.setParameter("userId", userId);
-        bindFilters(query, keyword, regions, types);
+        filterClause.parameters().forEach(query::setParameter);
         if (cursor != null) {
             query.setParameter("cursorCreatedAt", cursor.createdAt());
             query.setParameter("cursorId", cursor.profileExchangeId());
@@ -70,11 +73,12 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
                         + "LEFT JOIN p.cosmic c "
                         + "WHERE pe.user.id = :userId AND p.deleted = false");
 
-        appendFilters(jpql, keyword, regions, types);
+        FilterClause filterClause = buildFilterClause(keyword, regions, types);
+        jpql.append(filterClause.jpql());
 
         TypedQuery<Long> query = entityManager.createQuery(jpql.toString(), Long.class);
         query.setParameter("userId", userId);
-        bindFilters(query, keyword, regions, types);
+        filterClause.parameters().forEach(query::setParameter);
 
         return query.getSingleResult();
     }
@@ -113,29 +117,30 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
         profileExchangeJpaRepository.deleteAllInBatch(profileExchanges);
     }
 
-    private void appendFilters(StringBuilder jpql, String keyword, List<RegionDetail> regions,
-                                List<CosmicDatingType> types) {
+    /**
+     * JPQL 조건절과 바인딩할 파라미터를 한 곳에서 함께 만든다.
+     * 조건 추가 여부와 파라미터 바인딩 여부가 서로 다른 메서드에서 따로 판단되면 어긋날 수 있어 하나로 묶는다.
+     */
+    private FilterClause buildFilterClause(String keyword, List<RegionDetail> regions, List<CosmicDatingType> types) {
+        StringBuilder jpql = new StringBuilder();
+        Map<String, Object> parameters = new LinkedHashMap<>();
+
         if (keyword != null && !keyword.isBlank()) {
             jpql.append(" AND p.nickname LIKE CONCAT('%', :keyword, '%')");
+            parameters.put("keyword", keyword);
         }
         if (regions != null && !regions.isEmpty()) {
             jpql.append(" AND p.regionDetail IN :regions");
+            parameters.put("regions", regions);
         }
         if (types != null && !types.isEmpty()) {
             jpql.append(" AND c.type IN :types");
+            parameters.put("types", types);
         }
+
+        return new FilterClause(jpql.toString(), parameters);
     }
 
-    private void bindFilters(TypedQuery<?> query, String keyword, List<RegionDetail> regions,
-                              List<CosmicDatingType> types) {
-        if (keyword != null && !keyword.isBlank()) {
-            query.setParameter("keyword", keyword);
-        }
-        if (regions != null && !regions.isEmpty()) {
-            query.setParameter("regions", regions);
-        }
-        if (types != null && !types.isEmpty()) {
-            query.setParameter("types", types);
-        }
+    private record FilterClause(String jpql, Map<String, Object> parameters) {
     }
 }

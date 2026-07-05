@@ -11,9 +11,10 @@ public record UserWithdrawalRequest(
         @Schema(description = "탈퇴 사유 코드")
         WithdrawalReasonCode reasonCode,
 
-        @Size(max = 300, message = "상세 사유는 300자를 초과할 수 없습니다.")
+        @Size(max = REASON_DETAIL_MAX_LENGTH, message = "상세 사유는 " + REASON_DETAIL_MAX_LENGTH + "자를 초과할 수 없습니다.")
         @Schema(description = "기타 사유 선택 시 입력하는 상세 사유 (최대 300자)")
         String reasonDetail
 ) {
 
+    public static final int REASON_DETAIL_MAX_LENGTH = 300;
 }

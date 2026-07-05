@@ -15,6 +15,7 @@ import org.swyp.com.backend.user.domain.WithdrawalLog;
 import org.swyp.com.backend.user.domain.repository.UserRepository;
 import org.swyp.com.backend.user.domain.repository.WithdrawalLogRepository;
 import org.swyp.com.backend.user.dto.UserMeResponse;
+import org.swyp.com.backend.user.dto.UserWithdrawalRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -63,8 +64,9 @@ public class UserService {
         if (reasonDetail == null || reasonDetail.isBlank()) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "기타 사유를 선택한 경우 상세 사유를 입력해주세요.");
         }
-        if (reasonDetail.length() > 300) {
-            throw new BusinessException(HttpStatus.BAD_REQUEST, "상세 사유는 300자를 초과할 수 없습니다.");
+        if (reasonDetail.length() > UserWithdrawalRequest.REASON_DETAIL_MAX_LENGTH) {
+            throw new BusinessException(HttpStatus.BAD_REQUEST,
+                    "상세 사유는 " + UserWithdrawalRequest.REASON_DETAIL_MAX_LENGTH + "자를 초과할 수 없습니다.");
         }
         return reasonDetail;
     }
