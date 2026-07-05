@@ -38,7 +38,7 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
                         + "JOIN FETCH pe.profile p "
                         + "LEFT JOIN FETCH p.cosmic c "
                         + "JOIN FETCH pe.exchange ex "
-                        + "WHERE pe.user.id = :userId");
+                        + "WHERE pe.user.id = :userId AND p.deleted = false");
 
         appendFilters(jpql, keyword, regions, types);
 
@@ -68,7 +68,7 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
                 "SELECT COUNT(pe) FROM ProfileExchange pe "
                         + "JOIN pe.profile p "
                         + "LEFT JOIN p.cosmic c "
-                        + "WHERE pe.user.id = :userId");
+                        + "WHERE pe.user.id = :userId AND p.deleted = false");
 
         appendFilters(jpql, keyword, regions, types);
 
@@ -87,7 +87,7 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
                                     + "JOIN FETCH pe.profile p "
                                     + "LEFT JOIN FETCH p.cosmic c "
                                     + "JOIN FETCH pe.exchange ex "
-                                    + "WHERE pe.id = :id AND pe.user.id = :userId",
+                                    + "WHERE pe.id = :id AND pe.user.id = :userId AND p.deleted = false",
                             ProfileExchange.class)
                     .setParameter("id", id)
                     .setParameter("userId", userId)

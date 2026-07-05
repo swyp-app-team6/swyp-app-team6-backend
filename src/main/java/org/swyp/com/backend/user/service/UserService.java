@@ -8,7 +8,7 @@ import org.swyp.com.backend.auth.jwt.domain.repository.RefreshTokenRepository;
 import org.swyp.com.backend.auth.oauth.apple.service.AppleAuthService;
 import org.swyp.com.backend.global.enumeration.WithdrawalReasonCode;
 import org.swyp.com.backend.global.exception.BusinessException;
-import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
+import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.WithdrawalLog;
@@ -23,7 +23,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
-    private final ProfileInterestRepository profileInterestRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AppleAuthService appleAuthService;
     private final WithdrawalLogRepository withdrawalLogRepository;
@@ -45,11 +44,7 @@ public class UserService {
 
         appleAuthService.revoke(userId);
 
-        profileRepository.findByUserAndDeletedFalse(user)
-                .ifPresent(profile -> {
-                    profileInterestRepository.deleteByProfile(profile);
-                    profileRepository.delete(profile);
-                });
+        profileRepository.findByUserAndDeletedFalse(user).ifPresent(Profile::deleteProfile);
 
         // 추가적인 데이터 제거
 

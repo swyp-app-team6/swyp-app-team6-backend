@@ -33,7 +33,6 @@ import org.swyp.com.backend.auth.oauth.apple.service.AppleAuthService;
 import org.swyp.com.backend.global.enumeration.WithdrawalReasonCode;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.profile.domain.Profile;
-import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
 import org.swyp.com.backend.support.ProfileTestFixture;
 import org.swyp.com.backend.support.UserTestFixture;
@@ -49,8 +48,6 @@ class UserServiceTest {
     @Mock
     ProfileRepository profileRepository;
     @Mock
-    ProfileInterestRepository profileInterestRepository;
-    @Mock
     RefreshTokenRepository refreshTokenRepository;
     @Mock
     AppleAuthService appleAuthService;
@@ -61,7 +58,7 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        userService = new UserService(userRepository, profileRepository, profileInterestRepository,
+        userService = new UserService(userRepository, profileRepository,
                 refreshTokenRepository, appleAuthService, withdrawalLogRepository);
     }
 
@@ -85,8 +82,7 @@ class UserServiceTest {
         assertThat(captor.getValue().getReasonCode()).isEqualTo(reasonCode);
         assertThat(captor.getValue().getReasonDetail()).isNull();
         verify(appleAuthService).revoke(user.getId());
-        verify(profileRepository).delete(profile);
-        verify(profileInterestRepository).deleteByProfile(profile);
+        assertThat(profile.getDeleted()).isTrue();
         verify(userRepository).delete(user);
     }
 
