@@ -30,8 +30,6 @@ public class ExchangeCursorCodec {
             Long profileExchangeId = Long.parseLong(raw.substring(delimiterIndex + DELIMITER.length()));
 
             return new ExchangeCursor(createdAt, profileExchangeId);
-        } catch (BusinessException e) {
-            throw e;
         } catch (Exception e) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "잘못된 커서 값입니다.");
         }
