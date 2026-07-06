@@ -36,6 +36,8 @@ public class User {
     private OAuthProvider provider;
     @Column
     private String providerUserId;
+    @Column
+    private String password;
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -47,6 +49,15 @@ public class User {
         user.email = email;
         user.provider = provider;
         user.providerUserId = providerUserId;
+        user.role = role;
+        return user;
+    }
+
+    public static User createLocalUser(String email, String encodedPassword, UserRole role) {
+        User user = new User();
+        user.email = email;
+        user.password = encodedPassword;
+        user.provider = OAuthProvider.LOCAL;
         user.role = role;
         return user;
     }
