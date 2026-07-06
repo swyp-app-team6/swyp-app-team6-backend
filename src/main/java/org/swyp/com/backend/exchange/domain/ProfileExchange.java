@@ -28,12 +28,18 @@ public class ProfileExchange {
     private Exchange exchange;
     private String memo;
     private Integer score;
+    private Boolean liked;
 
     public static ProfileExchange createProfileExchange(User user, Profile profile, Exchange exchange) {
         ProfileExchange profileExchange = new ProfileExchange();
         profileExchange.user = user;
         profileExchange.profile = profile;
         profileExchange.exchange = exchange;
+        profileExchange.liked = false;
         return profileExchange;
+    }
+
+    public void updateLiked(boolean liked) {
+        this.liked = liked;
     }
 }

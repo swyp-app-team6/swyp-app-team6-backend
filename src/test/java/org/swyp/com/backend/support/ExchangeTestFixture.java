@@ -20,6 +20,11 @@ public class ExchangeTestFixture {
 
     public static ProfileExchange createProfileExchange(Long id, User user, Profile profile, Exchange exchange,
                                                          String memo, Integer score) {
+        return createProfileExchange(id, user, profile, exchange, memo, score, false);
+    }
+
+    public static ProfileExchange createProfileExchange(Long id, User user, Profile profile, Exchange exchange,
+                                                         String memo, Integer score, Boolean liked) {
         ProfileExchange profileExchange = new ProfileExchange();
         ReflectionTestUtils.setField(profileExchange, "id", id);
         ReflectionTestUtils.setField(profileExchange, "user", user);
@@ -27,6 +32,7 @@ public class ExchangeTestFixture {
         ReflectionTestUtils.setField(profileExchange, "exchange", exchange);
         ReflectionTestUtils.setField(profileExchange, "memo", memo);
         ReflectionTestUtils.setField(profileExchange, "score", score);
+        ReflectionTestUtils.setField(profileExchange, "liked", liked);
         return profileExchange;
     }
 
