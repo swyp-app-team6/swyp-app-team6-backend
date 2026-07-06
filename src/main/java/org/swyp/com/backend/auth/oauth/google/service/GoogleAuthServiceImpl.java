@@ -18,6 +18,7 @@ import org.swyp.com.backend.global.enumeration.OAuthProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.global.exception.ExternalApiConnectionException;
+import org.swyp.com.backend.terms.service.TermsService;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.repository.UserRepository;
 
@@ -27,6 +28,7 @@ import org.swyp.com.backend.user.domain.repository.UserRepository;
 public class GoogleAuthServiceImpl implements GoogleAuthService {
 
     private final UserRepository userRepository;
+    private final TermsService termsService;
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String webClientId;
@@ -50,7 +52,8 @@ public class GoogleAuthServiceImpl implements GoogleAuthService {
                         User.createOAuthUser(email, OAuthProvider.GOOGLE, sub, UserRole.USER)
                 ));
 
-        return new SocialAuthResult(user.getId(), user.getRole());
+        boolean requiresTermsAgreement = !termsService.hasCompletedRequiredAgreements(user);
+        return new SocialAuthResult(user.getId(), user.getRole(), requiresTermsAgreement);
     }
 
     private Payload verifyIdToken(String idToken) {

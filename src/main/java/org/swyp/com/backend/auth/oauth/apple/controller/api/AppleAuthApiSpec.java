@@ -12,8 +12,8 @@ import java.io.IOException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.swyp.com.backend.auth.jwt.dto.TokenResponse;
 import org.swyp.com.backend.auth.oauth.apple.dto.AppleLoginRequest;
+import org.swyp.com.backend.auth.oauth.common.SsoLoginResponse;
 
 @Tag(name = "App Apple SSO", description = "앱(Android/iOS) 전용 Apple 소셜 로그인")
 public interface AppleAuthApiSpec {
@@ -48,6 +48,15 @@ public interface AppleAuthApiSpec {
                     4. 응답의 `accessToken`을 이후 모든 API 요청 헤더에 포함: `Authorization: Bearer <accessToken>`
                     5. `accessToken` 만료 시 `POST /auth/refresh`에 `refreshToken` 전달하여 재발급
 
+                    **약관 동의 처리**
+                    - 응답의 `requires_terms_agreement`가 `true`이면, 다른 화면으로 넘어가기 전에 반드시 약관 동의 화면을 먼저 띄워야 합니다. \
+                    `GET /terms`로 목록을 받아 화면을 그리고, 사용자가 필수 항목에 모두 동의하면 `POST /terms/agreements`를 호출하세요. \
+                    (백엔드는 이 플래그로 다른 API 호출 자체를 막지 않는 소프트 게이트이므로, 화면 전환 제어는 앱이 책임집니다.)
+                    - `requires_terms_agreement`가 `false`이면 이미 필수 약관에 최신 버전으로 동의된 사용자이므로 약관 화면 없이 바로 다음 화면으로 진입하면 됩니다.
+                    - 이 플래그는 "방금 가입했는지"가 아니라 "현재 필수 약관에 전부 최신 버전으로 동의했는지"를 매 로그인마다 다시 계산한 값입니다. \
+                    온보딩 중 약관 동의를 마치지 못하고 앱이 종료된 사용자는 재로그인해도 다시 `true`가 내려오고, \
+                    약관이 개정되면 기존 동의자도 다음 로그인부터 다시 `true`가 내려와 재동의 화면이 노출됩니다.
+
                     **주의사항**
                     - `identityToken`은 발급 후 **5분** 이내에 전달해야 합니다.
                     - 동일한 `identityToken`은 재사용할 수 없습니다 (Apple 정책).
@@ -55,15 +64,15 @@ public interface AppleAuthApiSpec {
                     """,
             responses = {
                     @ApiResponse(responseCode = "200", description = "로그인 성공",
-                            content = @Content(schema = @Schema(implementation = TokenResponse.class))),
+                            content = @Content(schema = @Schema(implementation = SsoLoginResponse.class))),
                     @ApiResponse(responseCode = "401", description = "유효하지 않은 identityToken"),
                     @ApiResponse(responseCode = "503", description = "Apple 서버 연결 실패")
             }
     )
-    ResponseEntity<TokenResponse> appleAppLogin(@Valid @RequestBody AppleLoginRequest request);
+    ResponseEntity<SsoLoginResponse> appleAppLogin(@Valid @RequestBody AppleLoginRequest request);
 
     @Hidden
-    ResponseEntity<TokenResponse> callback(
+    ResponseEntity<SsoLoginResponse> callback(
             @RequestParam String code,
             @RequestParam(required = false) String id_token,
             @RequestParam(required = false) String state);
