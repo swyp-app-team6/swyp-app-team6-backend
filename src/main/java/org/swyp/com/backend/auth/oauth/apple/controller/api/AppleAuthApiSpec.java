@@ -12,8 +12,8 @@ import java.io.IOException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.swyp.com.backend.auth.jwt.dto.TokenResponse;
 import org.swyp.com.backend.auth.oauth.apple.dto.AppleLoginRequest;
+import org.swyp.com.backend.auth.oauth.common.SsoLoginResponse;
 
 @Tag(name = "App Apple SSO", description = "앱(Android/iOS) 전용 Apple 소셜 로그인")
 public interface AppleAuthApiSpec {
@@ -52,18 +52,19 @@ public interface AppleAuthApiSpec {
                     - `identityToken`은 발급 후 **5분** 이내에 전달해야 합니다.
                     - 동일한 `identityToken`은 재사용할 수 없습니다 (Apple 정책).
                     - `authorizationCode`가 없으면 로그인은 정상 처리되지만, 이후 회원탈퇴 시 Apple 서버 쪽 연결 해제(revoke)는 수행되지 않습니다.
+                    - `requires_terms_agreement`가 true이면 필수 약관에 아직 동의하지 않은 상태이므로 `GET /terms`, `POST /terms/agreements`로 동의 화면을 먼저 처리해야 합니다.
                     """,
             responses = {
                     @ApiResponse(responseCode = "200", description = "로그인 성공",
-                            content = @Content(schema = @Schema(implementation = TokenResponse.class))),
+                            content = @Content(schema = @Schema(implementation = SsoLoginResponse.class))),
                     @ApiResponse(responseCode = "401", description = "유효하지 않은 identityToken"),
                     @ApiResponse(responseCode = "503", description = "Apple 서버 연결 실패")
             }
     )
-    ResponseEntity<TokenResponse> appleAppLogin(@Valid @RequestBody AppleLoginRequest request);
+    ResponseEntity<SsoLoginResponse> appleAppLogin(@Valid @RequestBody AppleLoginRequest request);
 
     @Hidden
-    ResponseEntity<TokenResponse> callback(
+    ResponseEntity<SsoLoginResponse> callback(
             @RequestParam String code,
             @RequestParam(required = false) String id_token,
             @RequestParam(required = false) String state);

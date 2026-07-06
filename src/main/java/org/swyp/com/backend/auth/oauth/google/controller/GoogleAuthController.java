@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.swyp.com.backend.auth.jwt.dto.TokenResponse;
 import org.swyp.com.backend.auth.jwt.service.TokenService;
 import org.swyp.com.backend.auth.oauth.common.SocialAuthResult;
+import org.swyp.com.backend.auth.oauth.common.SsoLoginResponse;
 import org.swyp.com.backend.auth.oauth.google.controller.api.GoogleAuthApiSpec;
 import org.swyp.com.backend.auth.oauth.google.dto.GoogleLoginRequest;
 import org.swyp.com.backend.auth.oauth.google.service.GoogleAuthService;
@@ -24,9 +25,11 @@ public class GoogleAuthController implements GoogleAuthApiSpec {
 
     @Override
     @PostMapping("/app")
-    public ResponseEntity<TokenResponse> googleAppLogin(@Valid @RequestBody GoogleLoginRequest request) {
+    public ResponseEntity<SsoLoginResponse> googleAppLogin(@Valid @RequestBody GoogleLoginRequest request) {
         SocialAuthResult result = googleAuthService.authenticate(request.idToken());
         TokenResponse tokenResponse = tokenService.issueTokenPair(result.userId(), result.role());
-        return ResponseEntity.ok(tokenResponse);
+        SsoLoginResponse response = new SsoLoginResponse(tokenResponse.accessToken(), tokenResponse.refreshToken(),
+                result.requiresTermsAgreement());
+        return ResponseEntity.ok(response);
     }
 }

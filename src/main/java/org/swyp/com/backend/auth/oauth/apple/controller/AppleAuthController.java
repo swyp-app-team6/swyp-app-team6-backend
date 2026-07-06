@@ -20,6 +20,7 @@ import org.swyp.com.backend.auth.oauth.apple.controller.api.AppleAuthApiSpec;
 import org.swyp.com.backend.auth.oauth.apple.dto.AppleLoginRequest;
 import org.swyp.com.backend.auth.oauth.apple.service.AppleAuthService;
 import org.swyp.com.backend.auth.oauth.common.SocialAuthResult;
+import org.swyp.com.backend.auth.oauth.common.SsoLoginResponse;
 
 @RestController
 @RequestMapping("/auth/apple")
@@ -32,10 +33,10 @@ public class AppleAuthController implements AppleAuthApiSpec {
 
     @Override
     @PostMapping("/token")
-    public ResponseEntity<TokenResponse> appleAppLogin(@Valid @RequestBody AppleLoginRequest request) {
+    public ResponseEntity<SsoLoginResponse> appleAppLogin(@Valid @RequestBody AppleLoginRequest request) {
         SocialAuthResult result = appleAuthService.loginWithIdentityToken(request.identityToken(), request.authorizationCode());
         TokenResponse tokenResponse = tokenService.issueTokenPair(result.userId(), result.role());
-        return ResponseEntity.ok(tokenResponse);
+        return ResponseEntity.ok(toSsoLoginResponse(tokenResponse, result));
     }
 
     @Override
@@ -54,7 +55,7 @@ public class AppleAuthController implements AppleAuthApiSpec {
 
     @Override
     @PostMapping("/callback")
-    public ResponseEntity<TokenResponse> callback(
+    public ResponseEntity<SsoLoginResponse> callback(
             @RequestParam String code,
             @RequestParam(required = false) String id_token,
             @RequestParam(required = false) String state) {
@@ -67,6 +68,11 @@ public class AppleAuthController implements AppleAuthApiSpec {
         }
 
         TokenResponse tokenResponse = tokenService.issueTokenPair(result.userId(), result.role());
-        return ResponseEntity.ok(tokenResponse);
+        return ResponseEntity.ok(toSsoLoginResponse(tokenResponse, result));
+    }
+
+    private SsoLoginResponse toSsoLoginResponse(TokenResponse tokenResponse, SocialAuthResult result) {
+        return new SsoLoginResponse(tokenResponse.accessToken(), tokenResponse.refreshToken(),
+                result.requiresTermsAgreement());
     }
 }

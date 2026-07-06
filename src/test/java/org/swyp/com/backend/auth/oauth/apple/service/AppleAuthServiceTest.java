@@ -22,6 +22,7 @@ import org.swyp.com.backend.auth.oauth.apple.dto.AppleTokenResponse;
 import org.swyp.com.backend.auth.oauth.common.SocialAuthResult;
 import org.swyp.com.backend.global.enumeration.OAuthProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
+import org.swyp.com.backend.terms.service.TermsService;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.repository.UserRepository;
 
@@ -37,6 +38,8 @@ class AppleAuthServiceTest {
     @Mock
     AppleRefreshTokenRepository appleRefreshTokenRepository;
     @Mock
+    TermsService termsService;
+    @Mock
     Claims claims;
 
     AppleAuthService appleAuthService;
@@ -46,7 +49,8 @@ class AppleAuthServiceTest {
 
     @BeforeEach
     void setup() {
-        appleAuthService = new AppleAuthService(tokenVerifier, tokenClient, userRepository, appleRefreshTokenRepository);
+        appleAuthService = new AppleAuthService(tokenVerifier, tokenClient, userRepository, appleRefreshTokenRepository,
+                termsService);
     }
 
     @Test

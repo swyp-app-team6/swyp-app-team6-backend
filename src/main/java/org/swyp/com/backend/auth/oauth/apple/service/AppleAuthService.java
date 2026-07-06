@@ -11,6 +11,7 @@ import org.swyp.com.backend.auth.oauth.apple.dto.AppleTokenResponse;
 import org.swyp.com.backend.auth.oauth.common.SocialAuthResult;
 import org.swyp.com.backend.global.enumeration.OAuthProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
+import org.swyp.com.backend.terms.service.TermsService;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.repository.UserRepository;
 
@@ -24,13 +25,15 @@ public class AppleAuthService {
     private final AppleTokenClient tokenClient;
     private final UserRepository userRepository;
     private final AppleRefreshTokenRepository appleRefreshTokenRepository;
+    private final TermsService termsService;
 
     @Transactional
     public SocialAuthResult loginWithIdentityToken(String identityToken, String authorizationCode) {
         Claims claims = tokenVerifier.verify(identityToken);
         User user = processAppleUser(claims);
         trySaveRefreshTokenFromCode(user.getId(), authorizationCode);
-        return new SocialAuthResult(user.getId(), user.getRole());
+        boolean requiresTermsAgreement = !termsService.hasCompletedRequiredAgreements(user);
+        return new SocialAuthResult(user.getId(), user.getRole(), requiresTermsAgreement);
     }
 
     @Transactional
@@ -39,7 +42,8 @@ public class AppleAuthService {
         Claims claims = tokenVerifier.verify(appleToken.idToken());
         User user = processAppleUser(claims);
         saveRefreshToken(user.getId(), appleToken.refreshToken());
-        return new SocialAuthResult(user.getId(), user.getRole());
+        boolean requiresTermsAgreement = !termsService.hasCompletedRequiredAgreements(user);
+        return new SocialAuthResult(user.getId(), user.getRole(), requiresTermsAgreement);
     }
 
     private User processAppleUser(Claims claims) {
