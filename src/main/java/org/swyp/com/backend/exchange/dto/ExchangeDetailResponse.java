@@ -25,6 +25,9 @@ public record ExchangeDetailResponse(
         String memo,
         @Schema(description = "내가 남긴 점수")
         Integer score,
+        @JsonProperty("is_liked")
+        @Schema(description = "좋아요 표시 여부")
+        Boolean isLiked,
         @JsonProperty("my_profile")
         @Schema(description = "교환 당시 매칭에 사용한 내 프로필")
         ExchangeMyProfileSummary myProfile,

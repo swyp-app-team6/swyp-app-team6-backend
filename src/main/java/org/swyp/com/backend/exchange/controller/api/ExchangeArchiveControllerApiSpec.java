@@ -15,6 +15,8 @@ import org.swyp.com.backend.exchange.dto.ExchangeCardListResponse;
 import org.swyp.com.backend.exchange.dto.ExchangeDeleteRequest;
 import org.swyp.com.backend.exchange.dto.ExchangeDeleteResponse;
 import org.swyp.com.backend.exchange.dto.ExchangeDetailResponse;
+import org.swyp.com.backend.exchange.dto.ExchangeLikeRequest;
+import org.swyp.com.backend.exchange.dto.ExchangeLikeResponse;
 import org.swyp.com.backend.exchange.dto.ExchangeSortDirection;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.enumeration.RegionDetail;
@@ -26,7 +28,8 @@ public interface ExchangeArchiveControllerApiSpec {
     @Operation(
             summary = "교환한 프로필 목록 조회",
             description = "커서 기반 페이징으로 내가 교환 완료한 상대방 프로필 카드 목록을 조회합니다. "
-                    + "검색어/지역/유형/정렬방향은 모두 선택 파라미터이며 조합 가능합니다.",
+                    + "검색어/지역/유형/좋아요/정렬방향은 모두 선택 파라미터이며 조합 가능합니다. "
+                    + "`liked=true`로 보내면 좋아요 표시한 항목만, 파라미터를 생략하면 전체를 조회합니다.",
             operationId = "getArchiveList"
     )
     @ApiResponses(value = {
@@ -49,6 +52,7 @@ public interface ExchangeArchiveControllerApiSpec {
                                                   "matched_interests": [{"type": "TRAVEL", "label": "여행"}],
                                                   "memo": null,
                                                   "score": null,
+                                                  "is_liked": false,
                                                   "exchanged_at": "2026-07-02T18:30:26.371178"
                                                 }
                                               ],
@@ -97,6 +101,7 @@ public interface ExchangeArchiveControllerApiSpec {
             @Parameter(description = "닉네임 검색어") String keyword,
             @Parameter(description = "지역 필터 (다중 선택)") List<RegionDetail> regions,
             @Parameter(description = "유형 필터 (다중 선택)") List<CosmicDatingType> types,
+            @Parameter(description = "좋아요 표시된 항목만 조회할지 여부. 생략 시 전체 조회") Boolean liked,
             @Parameter(description = "정렬 방향") ExchangeSortDirection sort,
             @Parameter(description = "다음 페이지 커서") String cursor,
             @Parameter(description = "페이지 크기 (1~50)") int size
@@ -149,6 +154,68 @@ public interface ExchangeArchiveControllerApiSpec {
     ResponseEntity<ExchangeDetailResponse> getArchiveDetail(
             UserDetails userDetails,
             @Parameter(description = "보관함 항목 ID", required = true, example = "1") Long exchangeId
+    );
+
+    @Operation(
+            summary = "보관함 항목 좋아요 표시",
+            description = "보관함 항목(exchange_id)에 좋아요 표시를 남기거나 해제합니다. "
+                    + "하트 아이콘을 누를 때마다 현재 상태의 반대값(`liked`)을 명시적으로 전달하세요(토글이 아닌 상태 지정 방식). "
+                    + "목록/상세 조회 응답의 `is_liked`와 동일한 값을 갱신하며, `GET /exchange/archive?liked=true`로 좋아요만 걸러볼 수 있습니다.",
+            operationId = "updateLike"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "좋아요 표시 변경 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "exchange_id": 1,
+                                              "is_liked": true
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "title": "UNAUTHORIZED",
+                                              "status": 401,
+                                              "detail": "인증이 필요합니다."
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "존재하지 않거나 본인 소유가 아닌 교환 정보",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "title": "NOT_FOUND",
+                                              "status": 404,
+                                              "detail": "교환 정보를 찾을 수 없습니다."
+                                            }
+                                            """
+                            )
+                    )
+            )
+    })
+    ResponseEntity<ExchangeLikeResponse> updateLike(
+            UserDetails userDetails,
+            @Parameter(description = "보관함 항목 ID", required = true, example = "1") Long exchangeId,
+            ExchangeLikeRequest request
     );
 
     @Operation(

@@ -37,6 +37,7 @@ import org.swyp.com.backend.exchange.domain.repository.ProfileExchangeRepository
 import org.swyp.com.backend.exchange.dto.ExchangeCardListResponse;
 import org.swyp.com.backend.exchange.dto.ExchangeDeleteResponse;
 import org.swyp.com.backend.exchange.dto.ExchangeDetailResponse;
+import org.swyp.com.backend.exchange.dto.ExchangeLikeResponse;
 import org.swyp.com.backend.exchange.dto.ExchangeSortDirection;
 import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.exception.BusinessException;
@@ -81,19 +82,20 @@ class ExchangeArchiveServiceTest {
     void getArchiveList_필터없이_조회_성공() {
         // given
         ProfileExchange row = buildRow(1L, LocalDateTime.now());
-        when(profileExchangeRepository.searchArchive(eq(TEST_USER_ID), any(), any(), any(), any(), any(), eq(21)))
+        when(profileExchangeRepository.searchArchive(eq(TEST_USER_ID), any(), any(), any(), any(), any(), any(), eq(21)))
                 .thenReturn(List.of(row));
-        when(profileExchangeRepository.countArchive(eq(TEST_USER_ID), any(), any(), any())).thenReturn(1L);
+        when(profileExchangeRepository.countArchive(eq(TEST_USER_ID), any(), any(), any(), any())).thenReturn(1L);
         when(profileInterestRepository.findByProfileIn(anyList())).thenReturn(List.of());
         when(matchedInterestRepository.findByExchangeIn(anyList())).thenReturn(List.of());
 
         // when
-        ExchangeCardListResponse response = exchangeArchiveService.getArchiveList(TEST_USER_ID, null, null, null,
+        ExchangeCardListResponse response = exchangeArchiveService.getArchiveList(TEST_USER_ID, null, null, null, null,
                 ExchangeSortDirection.RECENT, null, 20);
 
         // then
         assertThat(response.exchanges()).hasSize(1);
         assertThat(response.exchanges().get(0).exchangeId()).isEqualTo(1L);
+        assertThat(response.exchanges().get(0).isLiked()).isFalse();
         assertThat(response.totalCount()).isEqualTo(1L);
         assertThat(response.nextCursor()).isNull();
     }
@@ -103,14 +105,14 @@ class ExchangeArchiveServiceTest {
         // given: size=1 요청, repository가 size+1(=2)건을 돌려주는 상황을 흉내
         ProfileExchange row1 = buildRow(1L, LocalDateTime.now().minusMinutes(1));
         ProfileExchange row2 = buildRow(2L, LocalDateTime.now());
-        when(profileExchangeRepository.searchArchive(eq(TEST_USER_ID), any(), any(), any(), any(), any(), eq(2)))
+        when(profileExchangeRepository.searchArchive(eq(TEST_USER_ID), any(), any(), any(), any(), any(), any(), eq(2)))
                 .thenReturn(List.of(row2, row1));
-        when(profileExchangeRepository.countArchive(eq(TEST_USER_ID), any(), any(), any())).thenReturn(2L);
+        when(profileExchangeRepository.countArchive(eq(TEST_USER_ID), any(), any(), any(), any())).thenReturn(2L);
         when(profileInterestRepository.findByProfileIn(anyList())).thenReturn(List.of());
         when(matchedInterestRepository.findByExchangeIn(anyList())).thenReturn(List.of());
 
         // when
-        ExchangeCardListResponse response = exchangeArchiveService.getArchiveList(TEST_USER_ID, null, null, null,
+        ExchangeCardListResponse response = exchangeArchiveService.getArchiveList(TEST_USER_ID, null, null, null, null,
                 ExchangeSortDirection.RECENT, null, 1);
 
         // then
@@ -122,14 +124,14 @@ class ExchangeArchiveServiceTest {
     void getArchiveList_마지막페이지_nextCursor_null() {
         // given
         ProfileExchange row = buildRow(1L, LocalDateTime.now());
-        when(profileExchangeRepository.searchArchive(eq(TEST_USER_ID), any(), any(), any(), any(), any(), eq(2)))
+        when(profileExchangeRepository.searchArchive(eq(TEST_USER_ID), any(), any(), any(), any(), any(), any(), eq(2)))
                 .thenReturn(List.of(row));
-        when(profileExchangeRepository.countArchive(eq(TEST_USER_ID), any(), any(), any())).thenReturn(1L);
+        when(profileExchangeRepository.countArchive(eq(TEST_USER_ID), any(), any(), any(), any())).thenReturn(1L);
         when(profileInterestRepository.findByProfileIn(anyList())).thenReturn(List.of());
         when(matchedInterestRepository.findByExchangeIn(anyList())).thenReturn(List.of());
 
         // when
-        ExchangeCardListResponse response = exchangeArchiveService.getArchiveList(TEST_USER_ID, null, null, null,
+        ExchangeCardListResponse response = exchangeArchiveService.getArchiveList(TEST_USER_ID, null, null, null, null,
                 ExchangeSortDirection.RECENT, null, 1);
 
         // then
@@ -139,12 +141,12 @@ class ExchangeArchiveServiceTest {
     @Test
     void getArchiveList_빈목록() {
         // given
-        when(profileExchangeRepository.searchArchive(eq(TEST_USER_ID), any(), any(), any(), any(), any(), eq(21)))
+        when(profileExchangeRepository.searchArchive(eq(TEST_USER_ID), any(), any(), any(), any(), any(), any(), eq(21)))
                 .thenReturn(List.of());
-        when(profileExchangeRepository.countArchive(eq(TEST_USER_ID), any(), any(), any())).thenReturn(0L);
+        when(profileExchangeRepository.countArchive(eq(TEST_USER_ID), any(), any(), any(), any())).thenReturn(0L);
 
         // when
-        ExchangeCardListResponse response = exchangeArchiveService.getArchiveList(TEST_USER_ID, null, null, null,
+        ExchangeCardListResponse response = exchangeArchiveService.getArchiveList(TEST_USER_ID, null, null, null, null,
                 ExchangeSortDirection.RECENT, null, 20);
 
         // then
@@ -155,18 +157,35 @@ class ExchangeArchiveServiceTest {
     @Test
     void getArchiveList_잘못된커서_BusinessException() {
         assertThrows(BusinessException.class, () ->
-                exchangeArchiveService.getArchiveList(TEST_USER_ID, null, null, null, ExchangeSortDirection.RECENT,
-                        "invalid-cursor", 20));
+                exchangeArchiveService.getArchiveList(TEST_USER_ID, null, null, null, null,
+                        ExchangeSortDirection.RECENT, "invalid-cursor", 20));
     }
 
     @Test
     void getArchiveList_size범위밖_BusinessException() {
         assertThrows(BusinessException.class, () ->
-                exchangeArchiveService.getArchiveList(TEST_USER_ID, null, null, null, ExchangeSortDirection.RECENT,
-                        null, 0));
+                exchangeArchiveService.getArchiveList(TEST_USER_ID, null, null, null, null,
+                        ExchangeSortDirection.RECENT, null, 0));
         assertThrows(BusinessException.class, () ->
-                exchangeArchiveService.getArchiveList(TEST_USER_ID, null, null, null, ExchangeSortDirection.RECENT,
-                        null, 51));
+                exchangeArchiveService.getArchiveList(TEST_USER_ID, null, null, null, null,
+                        ExchangeSortDirection.RECENT, null, 51));
+    }
+
+    @Test
+    void getArchiveList_liked필터_repository에그대로전달() {
+        // given
+        when(profileExchangeRepository.searchArchive(eq(TEST_USER_ID), any(), any(), any(), eq(true), any(), any(),
+                eq(21))).thenReturn(List.of());
+        when(profileExchangeRepository.countArchive(eq(TEST_USER_ID), any(), any(), any(), eq(true))).thenReturn(0L);
+
+        // when
+        exchangeArchiveService.getArchiveList(TEST_USER_ID, null, null, null, true, ExchangeSortDirection.RECENT,
+                null, 20);
+
+        // then
+        verify(profileExchangeRepository).searchArchive(eq(TEST_USER_ID), any(), any(), any(), eq(true), any(),
+                any(), eq(21));
+        verify(profileExchangeRepository).countArchive(eq(TEST_USER_ID), any(), any(), any(), eq(true));
     }
 
     @Test
@@ -197,6 +216,7 @@ class ExchangeArchiveServiceTest {
         assertThat(response.exchangeId()).isEqualTo(1L);
         assertThat(response.isMatched()).isTrue();
         assertThat(response.matchedInterests()).hasSize(1);
+        assertThat(response.isLiked()).isFalse();
         assertThat(response.myProfile().nickname()).isEqualTo("나");
         assertThat(response.profile()).isEqualTo(fakeProfileResponse);
     }
@@ -208,6 +228,43 @@ class ExchangeArchiveServiceTest {
 
         // when & then
         assertThrows(BusinessException.class, () -> exchangeArchiveService.getArchiveDetail(TEST_USER_ID, 999L));
+    }
+
+    @Test
+    void updateLiked_true로_설정_성공() {
+        // given
+        ProfileExchange row = buildRow(1L, LocalDateTime.now());
+        when(profileExchangeRepository.findByIdAndUserId(1L, TEST_USER_ID)).thenReturn(Optional.of(row));
+
+        // when
+        ExchangeLikeResponse response = exchangeArchiveService.updateLiked(TEST_USER_ID, 1L, true);
+
+        // then
+        assertThat(response.exchangeId()).isEqualTo(1L);
+        assertThat(response.isLiked()).isTrue();
+    }
+
+    @Test
+    void updateLiked_false로_설정_성공() {
+        // given
+        ProfileExchange row = buildRow(1L, LocalDateTime.now());
+        ReflectionTestUtils.setField(row, "liked", true);
+        when(profileExchangeRepository.findByIdAndUserId(1L, TEST_USER_ID)).thenReturn(Optional.of(row));
+
+        // when
+        ExchangeLikeResponse response = exchangeArchiveService.updateLiked(TEST_USER_ID, 1L, false);
+
+        // then
+        assertThat(response.isLiked()).isFalse();
+    }
+
+    @Test
+    void updateLiked_존재하지않는id_BusinessException() {
+        // given
+        when(profileExchangeRepository.findByIdAndUserId(999L, TEST_USER_ID)).thenReturn(Optional.empty());
+
+        // when & then
+        assertThrows(BusinessException.class, () -> exchangeArchiveService.updateLiked(TEST_USER_ID, 999L, true));
     }
 
     @Test

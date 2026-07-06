@@ -13,10 +13,11 @@ public interface ProfileExchangeRepository {
     ProfileExchange save(ProfileExchange profileExchange);
 
     List<ProfileExchange> searchArchive(Long userId, String keyword, List<RegionDetail> regions,
-                                        List<CosmicDatingType> types, ExchangeSortDirection direction,
+                                        List<CosmicDatingType> types, Boolean liked, ExchangeSortDirection direction,
                                         ExchangeCursor cursor, int limit);
 
-    long countArchive(Long userId, String keyword, List<RegionDetail> regions, List<CosmicDatingType> types);
+    long countArchive(Long userId, String keyword, List<RegionDetail> regions, List<CosmicDatingType> types,
+                       Boolean liked);
 
     Optional<ProfileExchange> findByIdAndUserId(Long id, Long userId);
 

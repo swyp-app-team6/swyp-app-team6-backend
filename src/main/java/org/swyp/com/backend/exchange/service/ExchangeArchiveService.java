@@ -18,6 +18,7 @@ import org.swyp.com.backend.exchange.dto.ExchangeCardListResponse;
 import org.swyp.com.backend.exchange.dto.ExchangeCardResponse;
 import org.swyp.com.backend.exchange.dto.ExchangeDeleteResponse;
 import org.swyp.com.backend.exchange.dto.ExchangeDetailResponse;
+import org.swyp.com.backend.exchange.dto.ExchangeLikeResponse;
 import org.swyp.com.backend.exchange.dto.ExchangeMyProfileSummary;
 import org.swyp.com.backend.exchange.dto.ExchangeSortDirection;
 import org.swyp.com.backend.exchange.dto.cursor.ExchangeCursor;
@@ -46,7 +47,8 @@ public class ExchangeArchiveService {
     private final ProfileService profileService;
 
     public ExchangeCardListResponse getArchiveList(Long userId, String keyword, List<RegionDetail> regions,
-                                                    List<CosmicDatingType> types, ExchangeSortDirection direction,
+                                                    List<CosmicDatingType> types, Boolean liked,
+                                                    ExchangeSortDirection direction,
                                                     String cursor, int size) {
         if (size < MIN_SIZE || size > MAX_SIZE) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "size는 " + MIN_SIZE + "~" + MAX_SIZE + " 사이여야 합니다.");
@@ -54,13 +56,13 @@ public class ExchangeArchiveService {
 
         ExchangeCursor decodedCursor = cursor != null ? ExchangeCursorCodec.decode(cursor) : null;
 
-        List<ProfileExchange> rows = profileExchangeRepository.searchArchive(userId, keyword, regions, types,
+        List<ProfileExchange> rows = profileExchangeRepository.searchArchive(userId, keyword, regions, types, liked,
                 direction, decodedCursor, size + 1);
 
         boolean hasNext = rows.size() > size;
         List<ProfileExchange> pageRows = hasNext ? rows.subList(0, size) : rows;
 
-        long totalCount = profileExchangeRepository.countArchive(userId, keyword, regions, types);
+        long totalCount = profileExchangeRepository.countArchive(userId, keyword, regions, types, liked);
 
         Map<Long, List<InterestTypeLabel>> interestsByProfileId = findInterestsByProfileId(pageRows);
         Map<Long, List<InterestTypeLabel>> matchedInterestsByExchangeId = findMatchedInterestsByExchangeId(pageRows);
@@ -93,7 +95,17 @@ public class ExchangeArchiveService {
 
         return new ExchangeDetailResponse(profileExchange.getId(), profileExchange.getExchange().getCreatedAt(),
                 isMatched, matchedInterestLabels, profileExchange.getMemo(), profileExchange.getScore(),
-                myProfile, profileResponse);
+                profileExchange.getLiked(), myProfile, profileResponse);
+    }
+
+    @Transactional
+    public ExchangeLikeResponse updateLiked(Long userId, Long exchangeId, boolean liked) {
+        ProfileExchange profileExchange = profileExchangeRepository.findByIdAndUserId(exchangeId, userId)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "교환 정보를 찾을 수 없습니다."));
+
+        profileExchange.updateLiked(liked);
+
+        return new ExchangeLikeResponse(profileExchange.getId(), profileExchange.getLiked());
     }
 
     @Transactional
@@ -150,6 +162,7 @@ public class ExchangeArchiveService {
                 matchedInterestsByExchangeId.getOrDefault(pe.getExchange().getId(), new ArrayList<>()),
                 pe.getMemo(),
                 pe.getScore(),
+                pe.getLiked(),
                 pe.getExchange().getCreatedAt());
     }
 
