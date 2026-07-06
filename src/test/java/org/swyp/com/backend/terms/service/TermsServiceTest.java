@@ -23,6 +23,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.swyp.com.backend.global.enumeration.TermsType;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.support.UserTestFixture;
+import org.swyp.com.backend.terms.config.TermsProperties;
 import org.swyp.com.backend.terms.domain.TermsAgreement;
 import org.swyp.com.backend.terms.domain.repository.TermsAgreementRepository;
 import org.swyp.com.backend.terms.dto.TermsAgreementResponse;
@@ -42,7 +43,7 @@ class TermsServiceTest {
 
     @BeforeEach
     void setUp() {
-        termsService = new TermsService(termsAgreementRepository, userRepository);
+        termsService = new TermsService(termsAgreementRepository, userRepository, new TermsProperties());
     }
 
     @Test

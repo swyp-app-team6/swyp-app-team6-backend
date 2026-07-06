@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.swyp.com.backend.global.enumeration.TermsType;
 import org.swyp.com.backend.global.exception.BusinessException;
+import org.swyp.com.backend.terms.config.TermsProperties;
 import org.swyp.com.backend.terms.domain.TermsAgreement;
 import org.swyp.com.backend.terms.domain.repository.TermsAgreementRepository;
 import org.swyp.com.backend.terms.dto.TermsAgreementResponse;
@@ -28,10 +29,11 @@ public class TermsService {
 
     private final TermsAgreementRepository termsAgreementRepository;
     private final UserRepository userRepository;
+    private final TermsProperties termsProperties;
 
     public TermsListResponse getTermsList() {
         List<TermsItemResponse> terms = Arrays.stream(TermsType.values())
-                .map(TermsItemResponse::from)
+                .map(type -> TermsItemResponse.from(type, termsProperties.getContentUrl(type)))
                 .toList();
         return new TermsListResponse(terms);
     }

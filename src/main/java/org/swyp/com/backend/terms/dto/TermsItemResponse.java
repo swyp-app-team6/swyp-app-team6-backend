@@ -19,8 +19,8 @@ public record TermsItemResponse(
         String contentUrl
 ) {
 
-    public static TermsItemResponse from(TermsType termsType) {
+    public static TermsItemResponse from(TermsType termsType, String contentUrl) {
         return new TermsItemResponse(termsType, termsType.isRequired(), termsType.getCurrentVersion(),
-                termsType.getLabel(), termsType.getContentUrl());
+                termsType.getLabel(), contentUrl);
     }
 }
