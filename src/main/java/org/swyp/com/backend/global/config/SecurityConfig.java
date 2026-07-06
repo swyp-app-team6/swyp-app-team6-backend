@@ -57,6 +57,7 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
                                 "/auth/login",
+                                "/auth/signup",
                                 "/auth/refresh",
                                 "/auth/google/app",
                                 "/auth/apple/**",
