@@ -30,6 +30,9 @@ public record ExchangeCardResponse(
         String memo,
         @Schema(description = "내가 남긴 점수")
         Integer score,
+        @JsonProperty("is_liked")
+        @Schema(description = "좋아요 표시 여부")
+        Boolean isLiked,
         @JsonProperty("exchanged_at")
         @Schema(description = "교환 완료 시각")
         LocalDateTime exchangedAt
