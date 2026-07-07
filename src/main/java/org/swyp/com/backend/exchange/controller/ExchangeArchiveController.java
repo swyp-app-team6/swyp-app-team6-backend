@@ -22,6 +22,7 @@ import org.swyp.com.backend.exchange.dto.ExchangeDeleteResponse;
 import org.swyp.com.backend.exchange.dto.ExchangeDetailResponse;
 import org.swyp.com.backend.exchange.dto.ExchangeLikeRequest;
 import org.swyp.com.backend.exchange.dto.ExchangeLikeResponse;
+import org.swyp.com.backend.exchange.dto.ExchangeReviewRequest;
 import org.swyp.com.backend.exchange.dto.ExchangeSortDirection;
 import org.swyp.com.backend.exchange.service.ExchangeArchiveService;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
@@ -59,6 +60,17 @@ public class ExchangeArchiveController implements ExchangeArchiveControllerApiSp
 
         Long userId = Long.valueOf(userDetails.getUsername());
         ExchangeDetailResponse response = exchangeArchiveService.getArchiveDetail(userId, exchangeId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{exchangeId}/review")
+    public ResponseEntity<ExchangeDetailResponse> updateReview(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long exchangeId,
+            @Valid @RequestBody ExchangeReviewRequest request) {
+
+        Long userId = Long.valueOf(userDetails.getUsername());
+        ExchangeDetailResponse response = exchangeArchiveService.updateReview(userId, exchangeId, request);
         return ResponseEntity.ok(response);
     }
 

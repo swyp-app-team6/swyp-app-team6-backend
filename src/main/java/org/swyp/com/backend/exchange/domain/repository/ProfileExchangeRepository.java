@@ -17,11 +17,13 @@ public interface ProfileExchangeRepository {
                                         ExchangeCursor cursor, int limit);
 
     long countArchive(Long userId, String keyword, List<RegionDetail> regions, List<CosmicDatingType> types,
-                       Boolean liked);
+                      Boolean liked);
 
     Optional<ProfileExchange> findByIdAndUserId(Long id, Long userId);
 
     List<ProfileExchange> findAllByIdInAndUserId(List<Long> ids, Long userId);
 
     void deleteAll(List<ProfileExchange> profileExchanges);
+
+    Optional<ProfileExchange> findById(Long Id);
 }
