@@ -20,6 +20,7 @@ import org.swyp.com.backend.exchange.dto.ExchangeDeleteResponse;
 import org.swyp.com.backend.exchange.dto.ExchangeDetailResponse;
 import org.swyp.com.backend.exchange.dto.ExchangeLikeResponse;
 import org.swyp.com.backend.exchange.dto.ExchangeMyProfileSummary;
+import org.swyp.com.backend.exchange.dto.ExchangeReviewRequest;
 import org.swyp.com.backend.exchange.dto.ExchangeSortDirection;
 import org.swyp.com.backend.exchange.dto.cursor.ExchangeCursor;
 import org.swyp.com.backend.exchange.dto.cursor.ExchangeCursorCodec;
@@ -47,9 +48,9 @@ public class ExchangeArchiveService {
     private final ProfileService profileService;
 
     public ExchangeCardListResponse getArchiveList(Long userId, String keyword, List<RegionDetail> regions,
-                                                    List<CosmicDatingType> types, Boolean liked,
-                                                    ExchangeSortDirection direction,
-                                                    String cursor, int size) {
+                                                   List<CosmicDatingType> types, Boolean liked,
+                                                   ExchangeSortDirection direction,
+                                                   String cursor, int size) {
         if (size < MIN_SIZE || size > MAX_SIZE) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "size는 " + MIN_SIZE + "~" + MAX_SIZE + " 사이여야 합니다.");
         }
@@ -74,7 +75,8 @@ public class ExchangeArchiveService {
         String nextCursor = null;
         if (hasNext) {
             ProfileExchange last = pageRows.get(pageRows.size() - 1);
-            nextCursor = ExchangeCursorCodec.encode(new ExchangeCursor(last.getExchange().getCreatedAt(), last.getId()));
+            nextCursor = ExchangeCursorCodec.encode(
+                    new ExchangeCursor(last.getExchange().getCreatedAt(), last.getId()));
         }
 
         return new ExchangeCardListResponse(cards, totalCount, nextCursor);
@@ -84,7 +86,8 @@ public class ExchangeArchiveService {
         ProfileExchange profileExchange = profileExchangeRepository.findByIdAndUserId(exchangeId, userId)
                 .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "교환 정보를 찾을 수 없습니다."));
 
-        List<MatchedInterest> matchedInterests = matchedInterestRepository.findByExchange(profileExchange.getExchange());
+        List<MatchedInterest> matchedInterests = matchedInterestRepository.findByExchange(
+                profileExchange.getExchange());
         boolean isMatched = !matchedInterests.isEmpty();
         List<InterestTypeLabel> matchedInterestLabels = matchedInterests.stream()
                 .map(mi -> new InterestTypeLabel(mi.getType(), mi.getType().getLabel()))
@@ -129,7 +132,8 @@ public class ExchangeArchiveService {
                 .collect(Collectors.groupingBy(
                         pi -> pi.getProfile().getId(),
                         Collectors.mapping(
-                                pi -> new InterestTypeLabel(pi.getInterest().getType(), pi.getInterest().getType().getLabel()),
+                                pi -> new InterestTypeLabel(pi.getInterest().getType(),
+                                        pi.getInterest().getType().getLabel()),
                                 Collectors.toList())));
     }
 
@@ -147,8 +151,9 @@ public class ExchangeArchiveService {
                                 Collectors.toList())));
     }
 
-    private ExchangeCardResponse toCardResponse(ProfileExchange pe, Map<Long, List<InterestTypeLabel>> interestsByProfileId,
-                                                 Map<Long, List<InterestTypeLabel>> matchedInterestsByExchangeId) {
+    private ExchangeCardResponse toCardResponse(ProfileExchange pe,
+                                                Map<Long, List<InterestTypeLabel>> interestsByProfileId,
+                                                Map<Long, List<InterestTypeLabel>> matchedInterestsByExchangeId) {
         Profile profile = pe.getProfile();
         Cosmic cosmic = profile.getCosmic();
 
@@ -170,5 +175,15 @@ public class ExchangeArchiveService {
         Cosmic cosmic = myProfile.getCosmic();
         return new ExchangeMyProfileSummary(myProfile.getNickname(), cosmic != null ? cosmic.getType() : null,
                 cosmic != null ? cosmic.getImageKey() : null);
+    }
+
+    @Transactional
+    public ExchangeDetailResponse updateReview(Long userId, Long exchangeId, ExchangeReviewRequest request) {
+        ProfileExchange profileExchange = profileExchangeRepository.findById(exchangeId)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "교환 정보를 찾을 수 없습니다."));
+
+        profileExchange.updateReview(request.review(), request.score());
+
+        return getArchiveDetail(userId, exchangeId);
     }
 }

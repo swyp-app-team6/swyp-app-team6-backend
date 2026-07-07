@@ -110,13 +110,15 @@ public class ExchangeService {
         profileExchangeRepository.save(myProfileExchange);
         profileExchangeRepository.save(targetProfileExchange);
 
-        ExchangeResult myExchangeResult = new ExchangeResult(isMatched,
+        ExchangeResult myExchangeResult = new ExchangeResult(myProfileExchange.getId(), exchange.getCreatedAt(),
+                isMatched,
                 matchedInterestTypeList.stream().map(mi -> new InterestTypeLabel(mi, mi.getLabel())).toList(),
-                myProfileExchange.getMemo(), myProfileExchange.getScore(), exchange.getCreatedAt(),
+                myProfileExchange.getMemo(), myProfileExchange.getScore(), myProfileExchange.getLiked(),
                 profileService.getProfileResponseById(targetProfile.getId()));
-        ExchangeResult targetExchangeResult = new ExchangeResult(isMatched,
+        ExchangeResult targetExchangeResult = new ExchangeResult(targetProfileExchange.getId(), exchange.getCreatedAt(),
+                isMatched,
                 matchedInterestTypeList.stream().map(mi -> new InterestTypeLabel(mi, mi.getLabel())).toList(),
-                targetProfileExchange.getMemo(), targetProfileExchange.getScore(), exchange.getCreatedAt(),
+                targetProfileExchange.getMemo(), targetProfileExchange.getScore(), targetProfileExchange.getLiked(),
                 profileService.getProfileResponseByUserId(userId));
 
         ExchangeResponse myResponse = new ExchangeResponse(ExchangeStatus.ACCEPTED, myExchangeResult);

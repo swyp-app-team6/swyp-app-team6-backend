@@ -39,6 +39,11 @@ public class ProfileExchange {
         return profileExchange;
     }
 
+    public void updateReview(String memo, Integer score) {
+        this.memo = memo;
+        this.score = score;
+    }
+
     public void updateLiked(boolean liked) {
         this.liked = liked;
     }

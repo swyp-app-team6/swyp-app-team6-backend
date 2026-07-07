@@ -29,9 +29,9 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
 
     @Override
     public List<ProfileExchange> searchArchive(Long userId, String keyword, List<RegionDetail> regions,
-                                                List<CosmicDatingType> types, Boolean liked,
-                                                ExchangeSortDirection direction,
-                                                ExchangeCursor cursor, int limit) {
+                                               List<CosmicDatingType> types, Boolean liked,
+                                               ExchangeSortDirection direction,
+                                               ExchangeCursor cursor, int limit) {
         boolean recent = direction != ExchangeSortDirection.OLDEST;
         String operator = recent ? "<" : ">";
         String order = recent ? "DESC" : "ASC";
@@ -68,7 +68,7 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
 
     @Override
     public long countArchive(Long userId, String keyword, List<RegionDetail> regions, List<CosmicDatingType> types,
-                              Boolean liked) {
+                             Boolean liked) {
         StringBuilder jpql = new StringBuilder(
                 "SELECT COUNT(pe) FROM ProfileExchange pe "
                         + "JOIN pe.profile p "
@@ -119,12 +119,16 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
         profileExchangeJpaRepository.deleteAllInBatch(profileExchanges);
     }
 
+    @Override
+    public Optional<ProfileExchange> findById(Long id) {
+        return profileExchangeJpaRepository.findById(id);
+    }
+
     /**
-     * JPQL 조건절과 바인딩할 파라미터를 한 곳에서 함께 만든다.
-     * 조건 추가 여부와 파라미터 바인딩 여부가 서로 다른 메서드에서 따로 판단되면 어긋날 수 있어 하나로 묶는다.
+     * JPQL 조건절과 바인딩할 파라미터를 한 곳에서 함께 만든다. 조건 추가 여부와 파라미터 바인딩 여부가 서로 다른 메서드에서 따로 판단되면 어긋날 수 있어 하나로 묶는다.
      */
     private FilterClause buildFilterClause(String keyword, List<RegionDetail> regions, List<CosmicDatingType> types,
-                                            Boolean liked) {
+                                           Boolean liked) {
         StringBuilder jpql = new StringBuilder();
         Map<String, Object> parameters = new LinkedHashMap<>();
 
