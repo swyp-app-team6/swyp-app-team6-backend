@@ -9,6 +9,9 @@ import org.swyp.com.backend.profile.dto.ProfileResponse;
 
 @Schema(description = "교환 상세 정보")
 public record ExchangeResult(
+        @JsonProperty("exchange_id")
+        @Schema(description = "보관함 항목 ID (상세 조회/삭제에 사용)")
+        Long exchangeId,
         @Schema(description = "관심사 매칭 여부")
         @JsonProperty("is_matched")
         Boolean isMatched,
