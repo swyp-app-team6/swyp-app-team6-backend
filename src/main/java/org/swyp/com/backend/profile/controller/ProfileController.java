@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.swyp.com.backend.profile.controller.api.ProfileControllerApiSpec;
+import org.swyp.com.backend.profile.dto.ProfileCosmicUpdateRequest;
 import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
 import org.swyp.com.backend.profile.dto.ProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileUpdateRequest;
@@ -50,6 +51,14 @@ public class ProfileController implements ProfileControllerApiSpec {
         ProfileResponse response = profileService.updateProfile(Long.valueOf(userDetails.getUsername()),
                 profileUpdateRequest);
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/cosmic")
+    public ResponseEntity<Void> updateProfileCosmic(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @Valid @RequestBody ProfileCosmicUpdateRequest profileCosmicUpdateRequest) {
+        profileService.updateProfileCosmic(Long.valueOf(userDetails.getUsername()), profileCosmicUpdateRequest);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @DeleteMapping

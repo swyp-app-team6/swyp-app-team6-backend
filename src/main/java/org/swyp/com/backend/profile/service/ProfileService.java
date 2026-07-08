@@ -25,6 +25,7 @@ import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
 import org.swyp.com.backend.profile.domain.repository.ProfileShortRepository;
 import org.swyp.com.backend.profile.dto.ChoiceTemplate;
+import org.swyp.com.backend.profile.dto.ProfileCosmicUpdateRequest;
 import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
 import org.swyp.com.backend.profile.dto.ProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileUpdateRequest;
@@ -206,6 +207,20 @@ public class ProfileService {
 
         return toProfileResponseDto(profile, profileInterestList, profileChoiceList,
                 profileShortList);
+    }
+
+    @Transactional
+    public void updateProfileCosmic(Long userId,
+                                    ProfileCosmicUpdateRequest profileCosmicUpdateRequest) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
+
+        Profile profile = profileRepository.findByUserAndDeletedFalse(user).orElseThrow(() ->
+                new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
+
+        Cosmic cosmic = cosmicService.getCosmicByCosmicType(profileCosmicUpdateRequest.cosmicType());
+
+        profile.updateProfile(null, null, null, null, null, null, cosmic);
     }
 
     @Transactional

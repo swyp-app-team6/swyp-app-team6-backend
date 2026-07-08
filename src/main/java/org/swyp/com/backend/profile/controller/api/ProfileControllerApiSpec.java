@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.swyp.com.backend.profile.dto.ProfileCosmicUpdateRequest;
 import org.swyp.com.backend.profile.dto.ProfileRegisterRequest;
 import org.swyp.com.backend.profile.dto.ProfileResponse;
 import org.swyp.com.backend.profile.dto.ProfileUpdateRequest;
@@ -458,6 +459,100 @@ public interface ProfileControllerApiSpec {
                     )
             )
             ProfileUpdateRequest profileUpdateRequest
+    );
+
+    @Operation(
+            summary = "프로필 코스믹 유형 수정",
+            description = "현재 로그인된 사용자의 코스믹 유형을 수정합니다.",
+            operationId = "updateProfileCosmic"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "코스믹 유형 수정 성공",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "잘못된 요청 데이터",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "title": "BAD_REQUEST",
+                                              "status": 400,
+                                              "detail": "유효하지 않은 코스믹 유형입니다."
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "title": "UNAUTHORIZED",
+                                              "status": 401,
+                                              "detail": "인증이 필요합니다."
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "사용자 또는 프로필 정보 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            name = "USER_NOT_FOUND",
+                                            value = """
+                                                    {
+                                                      "title": "NOT_FOUND",
+                                                      "status": 404,
+                                                      "detail": "사용자 정보를 찾을 수 없습니다."
+                                                    }
+                                                    """
+                                    ),
+                                    @ExampleObject(
+                                            name = "PROFILE_NOT_FOUND",
+                                            value = """
+                                                    {
+                                                      "title": "NOT_FOUND",
+                                                      "status": 404,
+                                                      "detail": "프로필 정보를 찾을 수 없습니다."
+                                                    }
+                                                    """
+                                    )
+                            }
+                    )
+            )
+    })
+    ResponseEntity<Void> updateProfileCosmic(
+            UserDetails userDetails,
+
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "프로필 코스믹 유형 수정 요청",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ProfileCosmicUpdateRequest.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "cosmic_type": "GALAXY"
+                                            }
+                                            """
+                            )
+                    )
+            )
+            ProfileCosmicUpdateRequest profileCosmicUpdateRequest
     );
 
     @Operation(
