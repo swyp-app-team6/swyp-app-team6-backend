@@ -19,6 +19,11 @@ import org.swyp.com.backend.global.enumeration.RegionDetail;
 @RequiredArgsConstructor
 public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository {
 
+    private static final String BLOCK_EXCLUSION_CLAUSE =
+            " AND NOT EXISTS (SELECT 1 FROM Block b "
+                    + "WHERE (b.blockerUser.id = :userId AND b.blockedUser.id = p.user.id) "
+                    + "OR (b.blockerUser.id = p.user.id AND b.blockedUser.id = :userId))";
+
     private final ProfileExchangeJpaRepository profileExchangeJpaRepository;
     private final EntityManager entityManager;
 
@@ -41,7 +46,8 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
                         + "JOIN FETCH pe.profile p "
                         + "LEFT JOIN FETCH p.cosmic c "
                         + "JOIN FETCH pe.exchange ex "
-                        + "WHERE pe.user.id = :userId AND p.deleted = false");
+                        + "WHERE pe.user.id = :userId AND p.deleted = false"
+                        + BLOCK_EXCLUSION_CLAUSE);
 
         FilterClause filterClause = buildFilterClause(keyword, regions, types, liked);
         jpql.append(filterClause.jpql());
@@ -73,7 +79,8 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
                 "SELECT COUNT(pe) FROM ProfileExchange pe "
                         + "JOIN pe.profile p "
                         + "LEFT JOIN p.cosmic c "
-                        + "WHERE pe.user.id = :userId AND p.deleted = false");
+                        + "WHERE pe.user.id = :userId AND p.deleted = false"
+                        + BLOCK_EXCLUSION_CLAUSE);
 
         FilterClause filterClause = buildFilterClause(keyword, regions, types, liked);
         jpql.append(filterClause.jpql());
@@ -153,5 +160,6 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
     }
 
     private record FilterClause(String jpql, Map<String, Object> parameters) {
+
     }
 }
