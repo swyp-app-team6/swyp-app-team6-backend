@@ -8,4 +8,6 @@ import org.swyp.com.backend.user.domain.User;
 public interface TermsAgreementRepository extends JpaRepository<TermsAgreement, Long> {
 
     List<TermsAgreement> findByUser(User user);
+
+    void deleteAllByUser(User user);
 }
