@@ -14,6 +14,8 @@ import org.swyp.com.backend.exchange.dto.ExchangeSortDirection;
 import org.swyp.com.backend.exchange.dto.cursor.ExchangeCursor;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.enumeration.RegionDetail;
+import org.swyp.com.backend.profile.domain.Profile;
+import org.swyp.com.backend.user.domain.User;
 
 @Repository
 @RequiredArgsConstructor
@@ -43,10 +45,10 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
 
         StringBuilder jpql = new StringBuilder(
                 "SELECT pe FROM ProfileExchange pe "
-                        + "JOIN FETCH pe.profile p "
+                        + "LEFT JOIN FETCH pe.profile p "
                         + "LEFT JOIN FETCH p.cosmic c "
                         + "JOIN FETCH pe.exchange ex "
-                        + "WHERE pe.user.id = :userId AND p.deleted = false"
+                        + "WHERE pe.user.id = :userId"
                         + BLOCK_EXCLUSION_CLAUSE);
 
         FilterClause filterClause = buildFilterClause(keyword, regions, types, liked);
@@ -77,9 +79,9 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
                              Boolean liked) {
         StringBuilder jpql = new StringBuilder(
                 "SELECT COUNT(pe) FROM ProfileExchange pe "
-                        + "JOIN pe.profile p "
+                        + "LEFT JOIN pe.profile p "
                         + "LEFT JOIN p.cosmic c "
-                        + "WHERE pe.user.id = :userId AND p.deleted = false"
+                        + "WHERE pe.user.id = :userId"
                         + BLOCK_EXCLUSION_CLAUSE);
 
         FilterClause filterClause = buildFilterClause(keyword, regions, types, liked);
@@ -97,10 +99,10 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
         try {
             ProfileExchange result = entityManager.createQuery(
                             "SELECT pe FROM ProfileExchange pe "
-                                    + "JOIN FETCH pe.profile p "
+                                    + "LEFT JOIN FETCH pe.profile p "
                                     + "LEFT JOIN FETCH p.cosmic c "
                                     + "JOIN FETCH pe.exchange ex "
-                                    + "WHERE pe.id = :id AND pe.user.id = :userId AND p.deleted = false",
+                                    + "WHERE pe.id = :id AND pe.user.id = :userId",
                             ProfileExchange.class)
                     .setParameter("id", id)
                     .setParameter("userId", userId)
@@ -129,6 +131,16 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
     @Override
     public Optional<ProfileExchange> findById(Long id) {
         return profileExchangeJpaRepository.findById(id);
+    }
+
+    @Override
+    public void deleteByUser(User user) {
+        profileExchangeJpaRepository.deleteByUser(user);
+    }
+
+    @Override
+    public List<ProfileExchange> findByProfile(Profile profile) {
+        return profileExchangeJpaRepository.findByProfile(profile);
     }
 
     /**

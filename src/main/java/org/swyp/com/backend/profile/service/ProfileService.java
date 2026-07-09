@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.swyp.com.backend.cosmic.domain.Cosmic;
 import org.swyp.com.backend.cosmic.service.CosmicService;
+import org.swyp.com.backend.exchange.domain.ProfileExchange;
+import org.swyp.com.backend.exchange.domain.repository.ProfileExchangeRepository;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.interest.domain.Interest;
@@ -54,6 +56,8 @@ public class ProfileService {
 
     private final ProfileChoiceRepository profileChoiceRepository;
     private final ProfileShortRepository profileShortRepository;
+
+    private final ProfileExchangeRepository profileExchangeRepository;
 
     private static final Long QR_TIMEOUT = Duration.ofMinutes(3).toMillis();
 
@@ -232,6 +236,20 @@ public class ProfileService {
                 new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
 
         profile.deleteProfile();
+    }
+
+    public void deleteUserProfile(final User user) {
+        List<Profile> profileList = profileRepository.findByUser(user);
+
+        for (Profile profile : profileList) {
+            // 프로필 이미지 삭제 - 예외 처리 (발생해도 무시)
+            profileInterestRepository.deleteByProfile(profile);
+            profileChoiceRepository.deleteByProfile(profile);
+            profileShortRepository.deleteByProfile(profile);
+            profileExchangeRepository.deleteByUser(user);
+            profileExchangeRepository.findByProfile(profile).forEach(ProfileExchange::DeleteProfile);
+            profileRepository.delete(profile);
+        }
     }
 
     private ProfileResponse toProfileResponseDto(Profile profile, List<ProfileInterest> interestList,

@@ -7,6 +7,8 @@ import org.swyp.com.backend.exchange.dto.ExchangeSortDirection;
 import org.swyp.com.backend.exchange.dto.cursor.ExchangeCursor;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.enumeration.RegionDetail;
+import org.swyp.com.backend.profile.domain.Profile;
+import org.swyp.com.backend.user.domain.User;
 
 public interface ProfileExchangeRepository {
 
@@ -26,4 +28,8 @@ public interface ProfileExchangeRepository {
     void deleteAll(List<ProfileExchange> profileExchanges);
 
     Optional<ProfileExchange> findById(Long Id);
+
+    void deleteByUser(User user);
+
+    List<ProfileExchange> findByProfile(Profile profile);
 }

@@ -34,10 +34,10 @@ public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @JoinColumn(name = "reporter_user_id", nullable = false)
+    @JoinColumn(name = "reporter_user_id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User reporterUser;
-    @JoinColumn(name = "reported_user_id", nullable = false)
+    @JoinColumn(name = "reported_user_id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User reportedUser;
     @JoinColumn(name = "profile_exchange_id")
@@ -55,7 +55,7 @@ public class Report {
     private LocalDateTime createdAt;
 
     public static Report createReport(User reporterUser, User reportedUser, ProfileExchange profileExchange,
-                                       List<ReportReasonCode> reasonCodes, String etcDetail) {
+                                      List<ReportReasonCode> reasonCodes, String etcDetail) {
         Report report = new Report();
         report.reporterUser = reporterUser;
         report.reportedUser = reportedUser;
@@ -66,5 +66,13 @@ public class Report {
                 .map(reasonCode -> ReportReason.create(report, reasonCode))
                 .toList();
         return report;
+    }
+
+    public void deleteReporterUser() {
+        reporterUser = null;
+    }
+
+    public void deleteReportedUser() {
+        reportedUser = null;
     }
 }

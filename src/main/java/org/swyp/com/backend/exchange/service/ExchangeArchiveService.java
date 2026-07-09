@@ -69,7 +69,13 @@ public class ExchangeArchiveService {
         Map<Long, List<InterestTypeLabel>> matchedInterestsByExchangeId = findMatchedInterestsByExchangeId(pageRows);
 
         List<ExchangeCardResponse> cards = pageRows.stream()
-                .map(pe -> toCardResponse(pe, interestsByProfileId, matchedInterestsByExchangeId))
+                .map(pe -> {
+                    if (pe.getProfile() != null) {
+                        return toCardResponse(pe, interestsByProfileId, matchedInterestsByExchangeId);
+                    } else {
+                        return toCardResponse_profileDeleted(pe, matchedInterestsByExchangeId);
+                    }
+                })
                 .toList();
 
         String nextCursor = null;
@@ -93,12 +99,12 @@ public class ExchangeArchiveService {
                 .map(mi -> new InterestTypeLabel(mi.getType(), mi.getType().getLabel()))
                 .toList();
 
-        ProfileResponse profileResponse = profileService.getProfileResponseById(profileExchange.getProfile().getId());
-        ExchangeMyProfileSummary myProfile = toMyProfileSummary(profileService.getProfileByUserId(userId));
+        ProfileResponse profileResponse = profileExchange.getProfile() != null ? profileService.getProfileResponseById(
+                profileExchange.getProfile().getId()) : null;
 
         return new ExchangeDetailResponse(profileExchange.getId(), profileExchange.getExchange().getCreatedAt(),
                 isMatched, matchedInterestLabels, profileExchange.getMemo(), profileExchange.getScore(),
-                profileExchange.getLiked(), myProfile, profileResponse);
+                profileExchange.getLiked(), profileResponse);
     }
 
     @Transactional
@@ -172,6 +178,23 @@ public class ExchangeArchiveService {
                 pe.getExchange().getCreatedAt());
     }
 
+    private ExchangeCardResponse toCardResponse_profileDeleted(ProfileExchange pe,
+                                                               Map<Long, List<InterestTypeLabel>> matchedInterestsByExchangeId) {
+        return new ExchangeCardResponse(
+                pe.getId(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                matchedInterestsByExchangeId.getOrDefault(pe.getExchange().getId(), new ArrayList<>()),
+                pe.getMemo(),
+                pe.getScore(),
+                pe.getLiked(),
+                pe.getExchange().getCreatedAt());
+    }
+
     private ExchangeMyProfileSummary toMyProfileSummary(Profile myProfile) {
         Cosmic cosmic = myProfile.getCosmic();
         return new ExchangeMyProfileSummary(myProfile.getNickname(), cosmic != null ? cosmic.getType() : null,
@@ -180,7 +203,7 @@ public class ExchangeArchiveService {
 
     @Transactional
     public ExchangeDetailResponse updateReview(Long userId, Long exchangeId, ExchangeReviewRequest request) {
-        ProfileExchange profileExchange = profileExchangeRepository.findById(exchangeId)
+        ProfileExchange profileExchange = profileExchangeRepository.findByIdAndUserId(exchangeId, userId)
                 .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "교환 정보를 찾을 수 없습니다."));
 
         profileExchange.updateReview(request.review(), request.score());

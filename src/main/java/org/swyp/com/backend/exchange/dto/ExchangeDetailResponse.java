@@ -28,9 +28,6 @@ public record ExchangeDetailResponse(
         @JsonProperty("is_liked")
         @Schema(description = "좋아요 표시 여부")
         Boolean isLiked,
-        @JsonProperty("my_profile")
-        @Schema(description = "교환 당시 매칭에 사용한 내 프로필")
-        ExchangeMyProfileSummary myProfile,
         @Schema(description = "상대방 프로필 상세 (TMI, 키워드 등 전체 정보 포함)")
         ProfileResponse profile
 ) {

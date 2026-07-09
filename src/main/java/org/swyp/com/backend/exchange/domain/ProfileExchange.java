@@ -20,7 +20,7 @@ public class ProfileExchange {
     @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
-    @JoinColumn(name = "profile_id", nullable = false)
+    @JoinColumn(name = "profile_id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Profile profile;
     @JoinColumn(name = "exchange_id", nullable = false)
@@ -46,5 +46,9 @@ public class ProfileExchange {
 
     public void updateLiked(boolean liked) {
         this.liked = liked;
+    }
+
+    public void DeleteProfile() {
+        this.profile = null;
     }
 }

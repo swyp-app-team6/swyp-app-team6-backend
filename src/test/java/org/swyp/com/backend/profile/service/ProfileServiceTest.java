@@ -48,6 +48,7 @@ import org.swyp.com.backend.cosmic.domain.Cosmic;
 import org.swyp.com.backend.cosmic.domain.repository.CosmicRepository;
 import org.swyp.com.backend.cosmic.domain.repository.CosmicTypeTestRepository;
 import org.swyp.com.backend.cosmic.service.CosmicService;
+import org.swyp.com.backend.exchange.domain.repository.ProfileExchangeRepository;
 import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.exception.BusinessException;
 import org.swyp.com.backend.interest.domain.Interest;
@@ -103,6 +104,8 @@ class ProfileServiceTest {
     CosmicRepository cosmicRepository;
     @Mock
     CosmicTypeTestRepository cosmicTypeTestRepository;
+    @Mock
+    ProfileExchangeRepository profileExchangeRepository;
 
     ProfileService profileService;
     QuestionService questionService;
@@ -117,7 +120,7 @@ class ProfileServiceTest {
         interestService = new InterestService(interestRepository);
         profileService = new ProfileService(questionService, cosmicService, interestService, userRepository,
                 profileRepository,
-                profileInterestRepository, profileChoiceRepository, profileShortRepository);
+                profileInterestRepository, profileChoiceRepository, profileShortRepository, profileExchangeRepository);
     }
 
     @Test
