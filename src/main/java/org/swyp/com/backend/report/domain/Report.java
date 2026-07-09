@@ -35,10 +35,10 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @JoinColumn(name = "reporter_user_id")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private User reporterUser;
     @JoinColumn(name = "reported_user_id")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private User reportedUser;
     @JoinColumn(name = "profile_exchange_id")
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
@@ -69,6 +69,7 @@ public class Report {
     }
 
     public void deleteReporterUser() {
+        profileExchange = null;
         reporterUser = null;
     }
 
