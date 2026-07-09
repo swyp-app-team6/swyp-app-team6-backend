@@ -91,7 +91,12 @@ public class ProfileTestFixture {
         ReflectionTestUtils.setField(profile, "id", id);
         ReflectionTestUtils.setField(profile, "user", user);
         ReflectionTestUtils.setField(profile, "nickname", nickname);
+        ReflectionTestUtils.setField(profile, "imageKey", imageKey);
+        ReflectionTestUtils.setField(profile, "gender", gender);
+        ReflectionTestUtils.setField(profile, "age", age);
         ReflectionTestUtils.setField(profile, "regionDetail", regionDetail);
+        ReflectionTestUtils.setField(profile, "job", job);
+        ReflectionTestUtils.setField(profile, "bio", bio);
         return profile;
     }
 

@@ -160,6 +160,7 @@ public class ExchangeArchiveService {
         return new ExchangeCardResponse(
                 pe.getId(),
                 profile.getNickname(),
+                profile.getImageKey(),
                 cosmic != null ? cosmic.getType() : null,
                 cosmic != null ? cosmic.getImageKey() : null,
                 interestsByProfileId.getOrDefault(profile.getId(), new ArrayList<>()),
