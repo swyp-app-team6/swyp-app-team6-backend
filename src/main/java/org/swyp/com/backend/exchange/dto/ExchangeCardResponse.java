@@ -14,6 +14,9 @@ public record ExchangeCardResponse(
         Long exchangeId,
         @Schema(description = "상대방 닉네임")
         String nickname,
+        @JsonProperty("image_key")
+        @Schema(description = "상대방 프로필 이미지 키")
+        String imageKey,
         @JsonProperty("cosmic_type")
         @Schema(description = "상대방 코스믹 유형")
         CosmicDatingType cosmicType,

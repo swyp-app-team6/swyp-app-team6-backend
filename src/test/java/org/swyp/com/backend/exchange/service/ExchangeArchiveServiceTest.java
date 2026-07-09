@@ -95,6 +95,7 @@ class ExchangeArchiveServiceTest {
         // then
         assertThat(response.exchanges()).hasSize(1);
         assertThat(response.exchanges().get(0).exchangeId()).isEqualTo(1L);
+        assertThat(response.exchanges().get(0).imageKey()).isEqualTo(TEST_IMAGE_KEY);
         assertThat(response.exchanges().get(0).isLiked()).isFalse();
         assertThat(response.totalCount()).isEqualTo(1L);
         assertThat(response.nextCursor()).isNull();
