@@ -13,6 +13,7 @@ import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
 import org.swyp.com.backend.profile.service.ProfileService;
 import org.swyp.com.backend.report.domain.Report;
 import org.swyp.com.backend.report.domain.repository.ReportRepository;
+import org.swyp.com.backend.terms.domain.repository.TermsAgreementRepository;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.WithdrawalLog;
 import org.swyp.com.backend.user.domain.repository.UserRepository;
@@ -33,6 +34,7 @@ public class UserService {
     private final WithdrawalLogRepository withdrawalLogRepository;
     private final BlockRepository blockRepository;
     private final ReportRepository reportRepository;
+    private final TermsAgreementRepository termsAgreementRepository;
 
     public UserMeResponse getMe(Long userId) {
         return userRepository.findById(userId)
@@ -58,6 +60,8 @@ public class UserService {
 
         refreshTokenRepository.findByUserId(userId)
                 .ifPresent(refreshTokenRepository::delete);
+
+        termsAgreementRepository.deleteAllByUser(user);
 
         userRepository.delete(user);
     }

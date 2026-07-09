@@ -28,6 +28,7 @@ import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
 import org.swyp.com.backend.profile.service.ProfileService;
 import org.swyp.com.backend.report.domain.repository.ReportRepository;
 import org.swyp.com.backend.support.UserTestFixture;
+import org.swyp.com.backend.terms.domain.repository.TermsAgreementRepository;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.WithdrawalLog;
 import org.swyp.com.backend.user.domain.repository.UserRepository;
@@ -51,13 +52,15 @@ class UserServiceTest {
     ProfileService profileService;
     @Mock
     ReportRepository ReportRepository;
+    @Mock
+    TermsAgreementRepository termsAgreementRepository;
 
     UserService userService;
 
     @BeforeEach
     void setUp() {
         userService = new UserService(userRepository, profileRepository, refreshTokenRepository, appleAuthService,
-                profileService, withdrawalLogRepository, blockRepository, ReportRepository);
+                profileService, withdrawalLogRepository, blockRepository, ReportRepository, termsAgreementRepository);
     }
 
     @ParameterizedTest
