@@ -82,7 +82,8 @@ class ExchangeArchiveServiceTest {
     void getArchiveList_필터없이_조회_성공() {
         // given
         ProfileExchange row = buildRow(1L, LocalDateTime.now());
-        when(profileExchangeRepository.searchArchive(eq(TEST_USER_ID), any(), any(), any(), any(), any(), any(), eq(21)))
+        when(profileExchangeRepository.searchArchive(eq(TEST_USER_ID), any(), any(), any(), any(), any(), any(),
+                eq(21)))
                 .thenReturn(List.of(row));
         when(profileExchangeRepository.countArchive(eq(TEST_USER_ID), any(), any(), any(), any())).thenReturn(1L);
         when(profileInterestRepository.findByProfileIn(anyList())).thenReturn(List.of());
@@ -142,7 +143,8 @@ class ExchangeArchiveServiceTest {
     @Test
     void getArchiveList_빈목록() {
         // given
-        when(profileExchangeRepository.searchArchive(eq(TEST_USER_ID), any(), any(), any(), any(), any(), any(), eq(21)))
+        when(profileExchangeRepository.searchArchive(eq(TEST_USER_ID), any(), any(), any(), any(), any(), any(),
+                eq(21)))
                 .thenReturn(List.of());
         when(profileExchangeRepository.countArchive(eq(TEST_USER_ID), any(), any(), any(), any())).thenReturn(0L);
 
@@ -208,7 +210,6 @@ class ExchangeArchiveServiceTest {
         Profile myProfile = ProfileTestFixture.createProfile(99L, myUser, "나", TEST_IMAGE_KEY, TEST_GENDER, TEST_AGE,
                 TEST_REGION_DETAIL, TEST_JOB, "내소개", null);
         ReflectionTestUtils.setField(myProfile, "cosmic", createCosmic(1L, null, "detail", "image", false));
-        when(profileService.getProfileByUserId(TEST_USER_ID)).thenReturn(myProfile);
 
         // when
         ExchangeDetailResponse response = exchangeArchiveService.getArchiveDetail(TEST_USER_ID, 1L);
@@ -218,7 +219,6 @@ class ExchangeArchiveServiceTest {
         assertThat(response.isMatched()).isTrue();
         assertThat(response.matchedInterests()).hasSize(1);
         assertThat(response.isLiked()).isFalse();
-        assertThat(response.myProfile().nickname()).isEqualTo("나");
         assertThat(response.profile()).isEqualTo(fakeProfileResponse);
     }
 

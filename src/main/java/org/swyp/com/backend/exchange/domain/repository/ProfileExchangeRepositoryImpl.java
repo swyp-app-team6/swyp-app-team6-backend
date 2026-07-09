@@ -45,7 +45,7 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
 
         StringBuilder jpql = new StringBuilder(
                 "SELECT pe FROM ProfileExchange pe "
-                        + "JOIN FETCH pe.profile p "
+                        + "LEFT JOIN FETCH pe.profile p "
                         + "LEFT JOIN FETCH p.cosmic c "
                         + "JOIN FETCH pe.exchange ex "
                         + "WHERE pe.user.id = :userId"
@@ -79,7 +79,7 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
                              Boolean liked) {
         StringBuilder jpql = new StringBuilder(
                 "SELECT COUNT(pe) FROM ProfileExchange pe "
-                        + "JOIN pe.profile p "
+                        + "LEFT JOIN pe.profile p "
                         + "LEFT JOIN p.cosmic c "
                         + "WHERE pe.user.id = :userId"
                         + BLOCK_EXCLUSION_CLAUSE);
@@ -99,7 +99,7 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
         try {
             ProfileExchange result = entityManager.createQuery(
                             "SELECT pe FROM ProfileExchange pe "
-                                    + "JOIN FETCH pe.profile p "
+                                    + "LEFT JOIN FETCH pe.profile p "
                                     + "LEFT JOIN FETCH p.cosmic c "
                                     + "JOIN FETCH pe.exchange ex "
                                     + "WHERE pe.id = :id AND pe.user.id = :userId",
