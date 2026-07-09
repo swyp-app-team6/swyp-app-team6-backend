@@ -6,15 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.swyp.com.backend.support.ProfileTestFixture.TEST_AGE;
-import static org.swyp.com.backend.support.ProfileTestFixture.TEST_BIO;
-import static org.swyp.com.backend.support.ProfileTestFixture.TEST_COSMIC_TYPE;
-import static org.swyp.com.backend.support.ProfileTestFixture.TEST_GENDER;
-import static org.swyp.com.backend.support.ProfileTestFixture.TEST_IMAGE_KEY;
-import static org.swyp.com.backend.support.ProfileTestFixture.TEST_JOB;
-import static org.swyp.com.backend.support.ProfileTestFixture.TEST_PROFILE_ID;
-import static org.swyp.com.backend.support.ProfileTestFixture.TEST_PROFILE_NICKNAME;
-import static org.swyp.com.backend.support.ProfileTestFixture.TEST_REGION_DETAIL;
 import static org.swyp.com.backend.support.UserTestFixture.TEST_ROLE;
 import static org.swyp.com.backend.support.UserTestFixture.TEST_USER_EMAIL;
 import static org.swyp.com.backend.support.UserTestFixture.TEST_USER_ID;
@@ -30,11 +21,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.swyp.com.backend.auth.jwt.domain.repository.RefreshTokenRepository;
 import org.swyp.com.backend.auth.oauth.apple.service.AppleAuthService;
+import org.swyp.com.backend.block.domain.repository.BlockRepository;
 import org.swyp.com.backend.global.enumeration.WithdrawalReasonCode;
 import org.swyp.com.backend.global.exception.BusinessException;
-import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
-import org.swyp.com.backend.support.ProfileTestFixture;
+import org.swyp.com.backend.profile.service.ProfileService;
+import org.swyp.com.backend.report.domain.repository.ReportRepository;
 import org.swyp.com.backend.support.UserTestFixture;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.WithdrawalLog;
@@ -44,22 +36,28 @@ import org.swyp.com.backend.user.domain.repository.WithdrawalLogRepository;
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
     @Mock
+    RefreshTokenRepository refreshTokenRepository;
+    @Mock
     UserRepository userRepository;
     @Mock
     ProfileRepository profileRepository;
     @Mock
-    RefreshTokenRepository refreshTokenRepository;
-    @Mock
     AppleAuthService appleAuthService;
     @Mock
     WithdrawalLogRepository withdrawalLogRepository;
+    @Mock
+    BlockRepository blockRepository;
+    @Mock
+    ProfileService profileService;
+    @Mock
+    ReportRepository ReportRepository;
 
     UserService userService;
 
     @BeforeEach
     void setUp() {
-        userService = new UserService(userRepository, profileRepository,
-                refreshTokenRepository, appleAuthService, withdrawalLogRepository);
+        userService = new UserService(userRepository, profileRepository, refreshTokenRepository, appleAuthService,
+                profileService, withdrawalLogRepository, blockRepository, ReportRepository);
     }
 
     @ParameterizedTest
@@ -67,11 +65,8 @@ class UserServiceTest {
     void deleteUserSuccessTest(WithdrawalReasonCode reasonCode) {
         // given
         User user = UserTestFixture.createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
-        Profile profile = ProfileTestFixture.createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY,
-                TEST_GENDER, TEST_AGE, TEST_REGION_DETAIL, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.of(profile));
 
         // when
         userService.deleteUser(user.getId(), reasonCode, null);
@@ -82,7 +77,6 @@ class UserServiceTest {
         assertThat(captor.getValue().getReasonCode()).isEqualTo(reasonCode);
         assertThat(captor.getValue().getReasonDetail()).isNull();
         verify(appleAuthService).revoke(user.getId());
-        assertThat(profile.getDeleted()).isTrue();
         verify(userRepository).delete(user);
     }
 
@@ -90,11 +84,8 @@ class UserServiceTest {
     void deleteUserWithEtcReason_savesReasonDetail() {
         // given
         User user = UserTestFixture.createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
-        Profile profile = ProfileTestFixture.createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY,
-                TEST_GENDER, TEST_AGE, TEST_REGION_DETAIL, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
 
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.of(profile));
 
         // when
         userService.deleteUser(user.getId(), WithdrawalReasonCode.ETC, "다른 이유가 있어요");

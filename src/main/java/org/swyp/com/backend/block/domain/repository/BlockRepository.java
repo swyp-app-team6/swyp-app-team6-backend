@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.swyp.com.backend.block.domain.Block;
+import org.swyp.com.backend.user.domain.User;
 
 public interface BlockRepository extends JpaRepository<Block, Long> {
 
@@ -12,4 +13,8 @@ public interface BlockRepository extends JpaRepository<Block, Long> {
     List<Block> findAllByBlockerUserIdOrderByCreatedAtDesc(Long blockerUserId);
 
     Optional<Block> findByIdAndBlockerUserId(Long id, Long blockerUserId);
+
+    void deleteAllByBlockerUser(User user);
+
+    void deleteAllByBlockedUser(User user);
 }

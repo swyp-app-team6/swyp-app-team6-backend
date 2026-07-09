@@ -6,10 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.swyp.com.backend.auth.jwt.domain.repository.RefreshTokenRepository;
 import org.swyp.com.backend.auth.oauth.apple.service.AppleAuthService;
+import org.swyp.com.backend.block.domain.repository.BlockRepository;
 import org.swyp.com.backend.global.enumeration.WithdrawalReasonCode;
 import org.swyp.com.backend.global.exception.BusinessException;
-import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
+import org.swyp.com.backend.profile.service.ProfileService;
+import org.swyp.com.backend.report.domain.Report;
+import org.swyp.com.backend.report.domain.repository.ReportRepository;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.WithdrawalLog;
 import org.swyp.com.backend.user.domain.repository.UserRepository;
@@ -26,7 +29,10 @@ public class UserService {
     private final ProfileRepository profileRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AppleAuthService appleAuthService;
+    private final ProfileService profileService;
     private final WithdrawalLogRepository withdrawalLogRepository;
+    private final BlockRepository blockRepository;
+    private final ReportRepository reportRepository;
 
     public UserMeResponse getMe(Long userId) {
         return userRepository.findById(userId)
@@ -42,17 +48,16 @@ public class UserService {
                 new BusinessException(HttpStatus.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
 
         withdrawalLogRepository.save(WithdrawalLog.create(reasonCode, normalizedReasonDetail));
-
         appleAuthService.revoke(userId);
 
-        profileRepository.findByUserAndDeletedFalse(user).ifPresent(Profile::deleteProfile);
-
-        // 추가적인 데이터 제거
+        profileService.deleteUserProfile(user);
+        reportRepository.findByReporterUser(user).forEach(Report::deleteReportedUser);
+        reportRepository.findByReportedUser(user).forEach(Report::deleteReporterUser);
+        blockRepository.deleteAllByBlockerUser(user);
+        blockRepository.deleteAllByBlockedUser(user);
 
         refreshTokenRepository.findByUserId(userId)
-                .ifPresent(refreshToken -> {
-                    refreshTokenRepository.delete(refreshToken);
-                });
+                .ifPresent(refreshTokenRepository::delete);
 
         userRepository.delete(user);
     }
