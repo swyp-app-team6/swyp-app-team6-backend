@@ -52,9 +52,9 @@ public class UserService {
         withdrawalLogRepository.save(WithdrawalLog.create(reasonCode, normalizedReasonDetail));
         appleAuthService.revoke(userId);
 
+        reportRepository.findByReporterUser(user).forEach(Report::deleteReporterUser);
+        reportRepository.findByReportedUser(user).forEach(Report::deleteReportedUser);
         profileService.deleteUserProfile(user);
-        reportRepository.findByReporterUser(user).forEach(Report::deleteReportedUser);
-        reportRepository.findByReportedUser(user).forEach(Report::deleteReporterUser);
         blockRepository.deleteAllByBlockerUser(user);
         blockRepository.deleteAllByBlockedUser(user);
 
