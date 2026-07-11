@@ -182,11 +182,9 @@ public class ExchangeService {
         );
     }
 
-    public void removeProfileResponse(Long userId) {
+    public void removeProfileResponse(Long userId, DeferredResult<ResponseEntity<ProfileResponse>> result) {
         Profile profile = profileService.getProfileByUserId(userId);
-
-        DeferredResult<ResponseEntity<ProfileResponse>> removed =
-                exchangeStartPending.remove(profile.getId());
+        exchangeStartPending.remove(profile.getId(), result);
     }
 
     public void removeExchangeResponse(Long userId, UUID targetUUID) {
