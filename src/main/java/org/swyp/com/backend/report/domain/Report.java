@@ -68,6 +68,10 @@ public class Report {
         return report;
     }
 
+    public void deleteProfileExchange() {
+        profileExchange = null;
+    }
+
     public void deleteReporterUser() {
         profileExchange = null;
         reporterUser = null;
