@@ -29,6 +29,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.swyp.com.backend.block.domain.Block;
+import org.swyp.com.backend.block.domain.repository.BlockRepository;
 import org.swyp.com.backend.exchange.domain.Exchange;
 import org.swyp.com.backend.exchange.domain.MatchedInterest;
 import org.swyp.com.backend.exchange.domain.ProfileExchange;
@@ -63,13 +65,15 @@ class ExchangeArchiveServiceTest {
     ProfileService profileService;
     @Mock
     ReportService reportService;
+    @Mock
+    BlockRepository blockRepository;
 
     ExchangeArchiveService exchangeArchiveService;
 
     @BeforeEach
     void setUp() {
         exchangeArchiveService = new ExchangeArchiveService(profileExchangeRepository, profileInterestRepository,
-                matchedInterestRepository, profileService, reportService);
+                matchedInterestRepository, profileService, reportService, blockRepository);
     }
 
     private ProfileExchange buildRow(Long id, LocalDateTime createdAt) {
@@ -101,8 +105,38 @@ class ExchangeArchiveServiceTest {
         assertThat(response.exchanges().get(0).exchangeId()).isEqualTo(1L);
         assertThat(response.exchanges().get(0).imageKey()).isEqualTo(TEST_IMAGE_KEY);
         assertThat(response.exchanges().get(0).isLiked()).isFalse();
+        assertThat(response.exchanges().get(0).isBlocked()).isFalse();
+        assertThat(response.exchanges().get(0).blockId()).isNull();
         assertThat(response.totalCount()).isEqualTo(1L);
         assertThat(response.nextCursor()).isNull();
+    }
+
+    @Test
+    void getArchiveList_차단한상대는_is_blocked_true와_block_id_포함되어_노출() {
+        // given: 차단해도 보관함 목록에서 사라지지 않고 차단 정보만 함께 내려옴
+        ProfileExchange row = buildRow(1L, LocalDateTime.now());
+        Long counterpartUserId = row.getProfile().getUser().getId();
+        User blocker = createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
+        Block block = Block.createBlock(blocker, row.getProfile().getUser());
+        ReflectionTestUtils.setField(block, "id", 10L);
+
+        when(profileExchangeRepository.searchArchive(eq(TEST_USER_ID), any(), any(), any(), any(), any(), any(),
+                eq(21)))
+                .thenReturn(List.of(row));
+        when(profileExchangeRepository.countArchive(eq(TEST_USER_ID), any(), any(), any(), any())).thenReturn(1L);
+        when(profileInterestRepository.findByProfileIn(anyList())).thenReturn(List.of());
+        when(matchedInterestRepository.findByExchangeIn(anyList())).thenReturn(List.of());
+        when(blockRepository.findAllByBlockerUserIdAndBlockedUserIdIn(TEST_USER_ID, List.of(counterpartUserId)))
+                .thenReturn(List.of(block));
+
+        // when
+        ExchangeCardListResponse response = exchangeArchiveService.getArchiveList(TEST_USER_ID, null, null, null, null,
+                ExchangeSortDirection.RECENT, null, 20);
+
+        // then
+        assertThat(response.exchanges()).hasSize(1);
+        assertThat(response.exchanges().get(0).isBlocked()).isTrue();
+        assertThat(response.exchanges().get(0).blockId()).isEqualTo(10L);
     }
 
     @Test

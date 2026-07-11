@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.swyp.com.backend.block.domain.Block;
+import org.swyp.com.backend.block.domain.repository.BlockRepository;
 import org.swyp.com.backend.cosmic.domain.Cosmic;
 import org.swyp.com.backend.exchange.domain.Exchange;
 import org.swyp.com.backend.exchange.domain.MatchedInterest;
@@ -49,6 +51,7 @@ public class ExchangeArchiveService {
     private final MatchedInterestRepository matchedInterestRepository;
     private final ProfileService profileService;
     private final ReportService reportService;
+    private final BlockRepository blockRepository;
 
     public ExchangeCardListResponse getArchiveList(Long userId, String keyword, List<RegionDetail> regions,
                                                    List<CosmicDatingType> types, Boolean liked,
@@ -70,11 +73,13 @@ public class ExchangeArchiveService {
 
         Map<Long, List<InterestTypeLabel>> interestsByProfileId = findInterestsByProfileId(pageRows);
         Map<Long, List<InterestTypeLabel>> matchedInterestsByExchangeId = findMatchedInterestsByExchangeId(pageRows);
+        Map<Long, Block> blockByCounterpartUserId = findBlocksByCounterpartUserId(userId, pageRows);
 
         List<ExchangeCardResponse> cards = pageRows.stream()
                 .map(pe -> {
                     if (pe.getProfile() != null) {
-                        return toCardResponse(pe, interestsByProfileId, matchedInterestsByExchangeId);
+                        return toCardResponse(pe, interestsByProfileId, matchedInterestsByExchangeId,
+                                blockByCounterpartUserId);
                     } else {
                         return toCardResponse_profileDeleted(pe, matchedInterestsByExchangeId);
                     }
@@ -166,9 +171,11 @@ public class ExchangeArchiveService {
 
     private ExchangeCardResponse toCardResponse(ProfileExchange pe,
                                                 Map<Long, List<InterestTypeLabel>> interestsByProfileId,
-                                                Map<Long, List<InterestTypeLabel>> matchedInterestsByExchangeId) {
+                                                Map<Long, List<InterestTypeLabel>> matchedInterestsByExchangeId,
+                                                Map<Long, Block> blockByCounterpartUserId) {
         Profile profile = pe.getProfile();
         Cosmic cosmic = profile.getCosmic();
+        Block block = blockByCounterpartUserId.get(profile.getUser().getId());
 
         return new ExchangeCardResponse(
                 pe.getId(),
@@ -186,7 +193,9 @@ public class ExchangeArchiveService {
                 pe.getMemo(),
                 pe.getScore(),
                 pe.getLiked(),
-                pe.getExchange().getCreatedAt());
+                pe.getExchange().getCreatedAt(),
+                block != null,
+                block != null ? block.getId() : null);
     }
 
     private ExchangeCardResponse toCardResponse_profileDeleted(ProfileExchange pe,
@@ -206,7 +215,24 @@ public class ExchangeArchiveService {
                 pe.getMemo(),
                 pe.getScore(),
                 pe.getLiked(),
-                pe.getExchange().getCreatedAt());
+                pe.getExchange().getCreatedAt(),
+                false,
+                null);
+    }
+
+    private Map<Long, Block> findBlocksByCounterpartUserId(Long userId, List<ProfileExchange> pageRows) {
+        List<Long> counterpartUserIds = pageRows.stream()
+                .map(ProfileExchange::getProfile)
+                .filter(profile -> profile != null)
+                .map(profile -> profile.getUser().getId())
+                .distinct()
+                .toList();
+        if (counterpartUserIds.isEmpty()) {
+            return Map.of();
+        }
+
+        List<Block> blocks = blockRepository.findAllByBlockerUserIdAndBlockedUserIdIn(userId, counterpartUserIds);
+        return blocks.stream().collect(Collectors.toMap(b -> b.getBlockedUser().getId(), b -> b));
     }
 
     private ExchangeMyProfileSummary toMyProfileSummary(Profile myProfile) {
