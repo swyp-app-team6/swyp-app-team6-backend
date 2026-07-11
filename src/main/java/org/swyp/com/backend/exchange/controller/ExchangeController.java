@@ -41,7 +41,7 @@ public class ExchangeController implements ExchangeControllerApiSpec {
         });
 
         result.onCompletion(() -> {
-            exchangeService.removeProfileResponse(Long.valueOf(userDetails.getUsername()));
+            exchangeService.removeProfileResponse(Long.valueOf(userDetails.getUsername()), result);
         });
 
         return result;
