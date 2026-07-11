@@ -45,6 +45,7 @@ import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
 import org.swyp.com.backend.profile.dto.ProfileResponse;
 import org.swyp.com.backend.profile.service.ProfileService;
+import org.swyp.com.backend.report.service.ReportService;
 import org.swyp.com.backend.support.ExchangeTestFixture;
 import org.swyp.com.backend.support.ProfileTestFixture;
 import org.swyp.com.backend.user.domain.User;
@@ -60,13 +61,15 @@ class ExchangeArchiveServiceTest {
     MatchedInterestRepository matchedInterestRepository;
     @Mock
     ProfileService profileService;
+    @Mock
+    ReportService reportService;
 
     ExchangeArchiveService exchangeArchiveService;
 
     @BeforeEach
     void setUp() {
         exchangeArchiveService = new ExchangeArchiveService(profileExchangeRepository, profileInterestRepository,
-                matchedInterestRepository, profileService);
+                matchedInterestRepository, profileService, reportService);
     }
 
     private ProfileExchange buildRow(Long id, LocalDateTime createdAt) {

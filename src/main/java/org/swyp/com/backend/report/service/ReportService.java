@@ -41,6 +41,10 @@ public class ReportService {
         return new ReportResponse(saved.getId(), saved.getStatus(), saved.getCreatedAt());
     }
 
+    public void removeReportProfileExchangeInfo(ProfileExchange profileExchange) {
+        reportRepository.findByProfileExchange(profileExchange).forEach(Report::deleteProfileExchange);
+    }
+
     private String normalizeEtcDetail(List<ReportReasonCode> reasonCodes, String etcDetail) {
         if (!reasonCodes.contains(ReportReasonCode.ETC)) {
             return null;

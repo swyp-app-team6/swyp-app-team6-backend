@@ -33,6 +33,7 @@ import org.swyp.com.backend.profile.domain.ProfileInterest;
 import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
 import org.swyp.com.backend.profile.dto.ProfileResponse;
 import org.swyp.com.backend.profile.service.ProfileService;
+import org.swyp.com.backend.report.service.ReportService;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +47,7 @@ public class ExchangeArchiveService {
     private final ProfileInterestRepository profileInterestRepository;
     private final MatchedInterestRepository matchedInterestRepository;
     private final ProfileService profileService;
+    private final ReportService reportService;
 
     public ExchangeCardListResponse getArchiveList(Long userId, String keyword, List<RegionDetail> regions,
                                                    List<CosmicDatingType> types, Boolean liked,
@@ -120,6 +122,10 @@ public class ExchangeArchiveService {
     @Transactional
     public ExchangeDeleteResponse deleteArchives(Long userId, List<Long> exchangeIds) {
         List<ProfileExchange> owned = profileExchangeRepository.findAllByIdInAndUserId(exchangeIds, userId);
+
+        for (ProfileExchange profileExchange : owned) {
+            reportService.removeReportProfileExchangeInfo(profileExchange);
+        }
 
         profileExchangeRepository.deleteAll(owned);
 
