@@ -38,6 +38,8 @@ import org.swyp.com.backend.question.domain.MultipleChoiceQuestion;
 import org.swyp.com.backend.question.domain.ShortAnswerQuestion;
 import org.swyp.com.backend.question.service.QuestionService;
 import org.swyp.com.backend.region.dto.RegionLabel;
+import org.swyp.com.backend.upload.domain.DeletedImage;
+import org.swyp.com.backend.upload.domain.repository.DeletedImageRepository;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.repository.UserRepository;
 
@@ -58,6 +60,7 @@ public class ProfileService {
     private final ProfileShortRepository profileShortRepository;
 
     private final ProfileExchangeRepository profileExchangeRepository;
+    private final DeletedImageRepository deletedImageRepository;
 
     private static final Long QR_TIMEOUT = Duration.ofMinutes(3).toMillis();
 
@@ -188,6 +191,10 @@ public class ProfileService {
                 profileForm.region(),
                 profileForm.job(), profileForm.bio(), cosmic);
 
+        if (profileForm.imageKey() != null) {
+            deletedImageRepository.save(DeletedImage.toDeleteSchedule(profile.getImageKey()));
+        }
+
         if (profileForm.interests() != null) {
             profileInterestRepository.deleteByProfile(profile);
             profileInterestRepository.saveAll(interestService.toProfileInterestList(profile, profileForm.interests()));
@@ -235,6 +242,8 @@ public class ProfileService {
         Profile profile = profileRepository.findByUserAndDeletedFalse(user).orElseThrow(() ->
                 new BusinessException(HttpStatus.NOT_FOUND, "프로필 정보를 찾을 수 없습니다."));
 
+        deletedImageRepository.save(DeletedImage.toDeleteSchedule(profile.getImageKey()));
+
         profile.deleteProfile();
     }
 
@@ -242,7 +251,7 @@ public class ProfileService {
         List<Profile> profileList = profileRepository.findByUser(user);
 
         for (Profile profile : profileList) {
-            // 프로필 이미지 삭제 - 예외 처리 (발생해도 무시)
+            deletedImageRepository.save(DeletedImage.toDeleteSchedule(profile.getImageKey()));
             profileInterestRepository.deleteByProfile(profile);
             profileChoiceRepository.deleteByProfile(profile);
             profileShortRepository.deleteByProfile(profile);

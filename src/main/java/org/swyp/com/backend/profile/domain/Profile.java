@@ -29,7 +29,7 @@ public class Profile {
     @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false)
     private String nickname;
     @Column(nullable = false, name = "image_key")
     private String imageKey;
@@ -41,10 +41,9 @@ public class Profile {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private RegionDetail regionDetail;
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String job;
-
-    @Column(length = 20)
+    
     private String bio;
     @ManyToOne
     @JoinColumn(name = "cosmic_id")
