@@ -13,4 +13,4 @@ ENV JAVA_OPTS="-XX:InitialRAMPercentage=70.0 \
            -XX:+UseG1GC \
            -XX:+UseContainerSupport"
 
-ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS:-} -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE:-local} -jar /app/app.jar"]
+ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS:-} -Duser.timezone=Asia/Seoul -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE:-local} -jar /app/app.jar"]
