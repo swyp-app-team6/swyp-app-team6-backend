@@ -7,10 +7,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
+@Getter
 @EntityListeners(AuditingEntityListener.class)
 public class DeletedImage {
     @Id
@@ -28,5 +30,9 @@ public class DeletedImage {
         DeletedImage image = new DeletedImage();
         image.imageKey = imageKey;
         return image;
+    }
+
+    public void completeDelete() {
+        deleted = true;
     }
 }
