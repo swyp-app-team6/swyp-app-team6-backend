@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.interest.dto.InterestTypeLabel;
+import org.swyp.com.backend.region.dto.RegionLabel;
 
 @Schema(description = "교환한 프로필 카드")
 public record ExchangeCardResponse(
@@ -17,6 +18,12 @@ public record ExchangeCardResponse(
         @JsonProperty("image_key")
         @Schema(description = "상대방 프로필 이미지 키")
         String imageKey,
+        @Schema(description = "나이")
+        Integer age,
+        @Schema(description = "거주지")
+        RegionLabel region,
+        @Schema(description = "직업")
+        String job,
         @JsonProperty("cosmic_type")
         @Schema(description = "상대방 코스믹 유형")
         CosmicDatingType cosmicType,

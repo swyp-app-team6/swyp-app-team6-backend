@@ -33,6 +33,7 @@ import org.swyp.com.backend.profile.domain.ProfileInterest;
 import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
 import org.swyp.com.backend.profile.dto.ProfileResponse;
 import org.swyp.com.backend.profile.service.ProfileService;
+import org.swyp.com.backend.region.dto.RegionLabel;
 import org.swyp.com.backend.report.service.ReportService;
 
 @Service
@@ -173,6 +174,10 @@ public class ExchangeArchiveService {
                 pe.getId(),
                 profile.getNickname(),
                 profile.getImageKey(),
+                profile.getAge(),
+                new RegionLabel(profile.getRegionDetail().getRegionGroup().getLabel(), profile.getRegionDetail(),
+                        profile.getRegionDetail().getLabel()),
+                profile.getJob(),
                 cosmic != null ? cosmic.getType() : null,
                 cosmic != null ? cosmic.getImageKey() : null,
                 interestsByProfileId.getOrDefault(profile.getId(), new ArrayList<>()),
@@ -188,6 +193,9 @@ public class ExchangeArchiveService {
                                                                Map<Long, List<InterestTypeLabel>> matchedInterestsByExchangeId) {
         return new ExchangeCardResponse(
                 pe.getId(),
+                null,
+                null,
+                null,
                 null,
                 null,
                 null,
