@@ -76,6 +76,7 @@ import org.swyp.com.backend.question.domain.repository.ShortAnswerQuestionReposi
 import org.swyp.com.backend.question.service.QuestionService;
 import org.swyp.com.backend.support.CosmicTestFixture;
 import org.swyp.com.backend.support.QuestionTestFixture;
+import org.swyp.com.backend.upload.domain.repository.DeletedImageRepository;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.repository.UserRepository;
 
@@ -106,6 +107,8 @@ class ProfileServiceTest {
     CosmicTypeTestRepository cosmicTypeTestRepository;
     @Mock
     ProfileExchangeRepository profileExchangeRepository;
+    @Mock
+    DeletedImageRepository deletedImageRepository;
 
     ProfileService profileService;
     QuestionService questionService;
@@ -119,8 +122,8 @@ class ProfileServiceTest {
                 shortAnswerQuestionRepository);
         interestService = new InterestService(interestRepository);
         profileService = new ProfileService(questionService, cosmicService, interestService, userRepository,
-                profileRepository,
-                profileInterestRepository, profileChoiceRepository, profileShortRepository, profileExchangeRepository);
+                profileRepository, profileInterestRepository, profileChoiceRepository, profileShortRepository,
+                profileExchangeRepository, deletedImageRepository);
     }
 
     @Test
