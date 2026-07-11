@@ -29,7 +29,9 @@ public interface ExchangeArchiveControllerApiSpec {
             summary = "교환한 프로필 목록 조회",
             description = "커서 기반 페이징으로 내가 교환 완료한 상대방 프로필 카드 목록을 조회합니다. "
                     + "검색어/지역/유형/좋아요/정렬방향은 모두 선택 파라미터이며 조합 가능합니다. "
-                    + "`liked=true`로 보내면 좋아요 표시한 항목만, 파라미터를 생략하면 전체를 조회합니다.",
+                    + "`liked=true`로 보내면 좋아요 표시한 항목만, 파라미터를 생략하면 전체를 조회합니다. "
+                    + "내가 차단한 상대방의 항목도 목록에 그대로 포함되며, `is_blocked=true`와 함께 차단 해제에 쓸 `block_id`가 내려갑니다("
+                    + "`DELETE /blocks/{blockId}`). 반대로 상대방이 나를 차단한 경우는 이 목록에서 보이지 않습니다.",
             operationId = "getArchiveList"
     )
     @ApiResponses(value = {
@@ -61,7 +63,9 @@ public interface ExchangeArchiveControllerApiSpec {
                                                   "memo": null,
                                                   "score": null,
                                                   "is_liked": false,
-                                                  "exchanged_at": "2026-07-02T18:30:26.371178"
+                                                  "exchanged_at": "2026-07-02T18:30:26.371178",
+                                                  "is_blocked": false,
+                                                  "block_id": null
                                                 }
                                               ],
                                               "total_count": 1,

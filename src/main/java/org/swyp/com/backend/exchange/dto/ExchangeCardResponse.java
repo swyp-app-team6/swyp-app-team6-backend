@@ -45,6 +45,12 @@ public record ExchangeCardResponse(
         Boolean isLiked,
         @JsonProperty("exchanged_at")
         @Schema(description = "교환 완료 시각")
-        LocalDateTime exchangedAt
+        LocalDateTime exchangedAt,
+        @JsonProperty("is_blocked")
+        @Schema(description = "내가 이 상대를 차단했는지 여부")
+        boolean isBlocked,
+        @JsonProperty("block_id")
+        @Schema(description = "차단 항목 ID. 차단 해제(`DELETE /blocks/{blockId}`)에 사용. 차단하지 않았으면 null")
+        Long blockId
 ) {
 }

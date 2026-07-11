@@ -23,8 +23,7 @@ public class ProfileExchangeRepositoryImpl implements ProfileExchangeRepository 
 
     private static final String BLOCK_EXCLUSION_CLAUSE =
             " AND NOT EXISTS (SELECT 1 FROM Block b "
-                    + "WHERE (b.blockerUser.id = :userId AND b.blockedUser.id = p.user.id) "
-                    + "OR (b.blockerUser.id = p.user.id AND b.blockedUser.id = :userId))";
+                    + "WHERE b.blockerUser.id = p.user.id AND b.blockedUser.id = :userId)";
 
     private final ProfileExchangeJpaRepository profileExchangeJpaRepository;
     private final EntityManager entityManager;
