@@ -46,6 +46,13 @@ public interface ExchangeArchiveControllerApiSpec {
                                                   "exchange_id": 1,
                                                   "nickname": "홍길동",
                                                   "image_key": "profile/hong.png",
+                                                  "age":20,
+                                                  "region":{
+                                                    "group":"서울",
+                                                    "detail":"SEOUL_GANGNAM",
+                                                    "label":"강남"
+                                                  },
+                                                  "job":"개발자",
                                                   "cosmic_type": "GALAXY",
                                                   "cosmic_type_image_key": "cosmic/galaxy.png",
                                                   "interests": [{"type": "TRAVEL", "label": "여행"}],
