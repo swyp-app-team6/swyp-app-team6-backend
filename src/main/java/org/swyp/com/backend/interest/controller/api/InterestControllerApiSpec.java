@@ -30,18 +30,18 @@ public interface InterestControllerApiSpec {
                                     value = """
                                             {
                                               "interests": [
-                                                { "type": "TRAVEL", "label": "여행" },
-                                                { "type": "SPORTS", "label": "운동" },
-                                                { "type": "MUSIC", "label": "음악" },
-                                                { "type": "VIDEO", "label": "유튜브" },
-                                                { "type": "RESTAURANT", "label": "맛집탐방" },
-                                                { "type": "CAFE", "label": "카페투어" },
-                                                { "type": "CULTURE", "label": "문화생활" },
-                                                { "type": "READING", "label": "독서" },
-                                                { "type": "GAME", "label": "게임" },
-                                                { "type": "SELF_DEVELOPMENT", "label": "자기계발" },
-                                                { "type": "INVESTING", "label": "재테크" },
-                                                { "type": "MOVIE", "label": "영화감상" }
+                                                { "type": "TRAVEL", "label": "✈️여행" },
+                                                { "type": "SPORTS", "label": "⚽운동" },
+                                                { "type": "MUSIC", "label": "🎵음악" },
+                                                { "type": "VIDEO", "label": "📱유튜브" },
+                                                { "type": "RESTAURANT", "label": "🍽️맛집탐방" },
+                                                { "type": "CAFE", "label": "☕️카페투어" },
+                                                { "type": "CULTURE", "label": "🎭문화생활" },
+                                                { "type": "READING", "label": "📚독서" },
+                                                { "type": "GAME", "label": "🎮게임" },
+                                                { "type": "SELF_DEVELOPMENT", "label": "✏️자기계발" },
+                                                { "type": "INVESTING", "label": "💰재테크" },
+                                                { "type": "MOVIE", "label": "🍿영화감상" }
                                               ]
                                             }
                                             """

@@ -22,7 +22,8 @@ public class InterestService {
     public InterestResponse getInterestResponse() {
         List<Interest> interestList = interestRepository.findByDeletedFalse();
         return new InterestResponse(interestList.stream()
-                .map(i -> new InterestTypeLabel(i.getType(), i.getType().getLabel())).toList());
+                .map(i -> new InterestTypeLabel(i.getType(), i.getType().getEmoji() + i.getType().getLabel()))
+                .toList());
     }
 
     public List<ProfileInterest> toProfileInterestList(Profile profile, List<InterestType> interestTypeList) {
