@@ -6,10 +6,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum CosmicDatingType {
-    GALAXY("갤럭시 유형"),
-    SHOOTING_STAR("슈팅스타 유형"),
-    LUNA("루나 유형"),
-    SOLA("솔라 유형");
+    GALAXY("갤럭시 형"),
+    SHOOTING_STAR("슈팅스타 형"),
+    LUNA("루나 형"),
+    SOLA("솔라 형");
 
     private final String label;
 }

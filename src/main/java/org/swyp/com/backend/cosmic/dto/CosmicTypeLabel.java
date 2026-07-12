@@ -7,7 +7,7 @@ import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 public record CosmicTypeLabel(
         @Schema(description = "코스믹 타입 유형", example = "SOLA")
         CosmicDatingType type,
-        @Schema(description = "타입 라벨", example = "솔라 유형")
+        @Schema(description = "타입 라벨", example = "솔라 형")
         String label
 ) {
 }
