@@ -46,13 +46,23 @@ public class AppleTokenVerifier {
                 throw new BusinessException(HttpStatus.UNAUTHORIZED, "유효하지 않은 Apple identityToken입니다.");
             }
 
-            return Jwts.parser()
+            Claims claims = Jwts.parser()
                     .verifyWith(publicKey)
                     .requireIssuer("https://appleid.apple.com")
-                    .requireAudience(appleProperties.getClientId())
                     .build()
                     .parseSignedClaims(identityToken)
                     .getPayload();
+
+            if (!appleProperties.getAllowedClientIds()
+                    .contains(claims.getAudience())) {
+
+                throw new BusinessException(
+                        HttpStatus.UNAUTHORIZED,
+                        "유효하지 않은 Apple identityToken입니다."
+                );
+            }
+
+            return claims;
 
         } catch (BusinessException e) {
             throw e;
@@ -61,7 +71,9 @@ public class AppleTokenVerifier {
         } catch (io.jsonwebtoken.JwtException e) {
             throw new BusinessException(HttpStatus.UNAUTHORIZED, "유효하지 않은 Apple identityToken입니다.: " + e.getMessage());
         } catch (Exception e) {
-            throw new ExternalApiConnectionException("Apple 공개키 서버와의 연결에 실패했습니다. (" + e.getClass().getSimpleName() + ": " + e.getMessage() + ")", "APPLE");
+            throw new ExternalApiConnectionException(
+                    "Apple 공개키 서버와의 연결에 실패했습니다. (" + e.getClass().getSimpleName() + ": " + e.getMessage() + ")",
+                    "APPLE");
         }
     }
 
