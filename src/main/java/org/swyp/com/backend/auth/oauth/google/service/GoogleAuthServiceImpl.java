@@ -48,9 +48,10 @@ public class GoogleAuthServiceImpl implements GoogleAuthService {
         String email = payload.getEmail();
 
         User user = userRepository.findByProviderAndProviderUserId(OAuthProvider.GOOGLE, sub)
-                .orElseGet(() -> userRepository.save(
-                        User.createOAuthUser(email, OAuthProvider.GOOGLE, sub, UserRole.USER)
-                ));
+                .orElseGet(() -> userRepository.findByEmail(email)
+                        .orElseGet(() -> userRepository.save(
+                                User.createOAuthUser(email, OAuthProvider.GOOGLE, sub, UserRole.USER)
+                        )));
 
         boolean requiresTermsAgreement = !termsService.hasCompletedRequiredAgreements(user);
         return new SocialAuthResult(user.getId(), user.getRole(), requiresTermsAgreement);
