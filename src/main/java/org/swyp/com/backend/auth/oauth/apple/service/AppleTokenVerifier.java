@@ -10,6 +10,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -53,8 +54,9 @@ public class AppleTokenVerifier {
                     .parseSignedClaims(identityToken)
                     .getPayload();
 
-            if (!appleProperties.getAllowedClientIds()
-                    .contains(claims.getAudience())) {
+            Set<String> audiences = claims.getAudience();
+            if (audiences == null
+                    || appleProperties.getAllowedClientIds().stream().noneMatch(audiences::contains)) {
 
                 throw new BusinessException(
                         HttpStatus.UNAUTHORIZED,
