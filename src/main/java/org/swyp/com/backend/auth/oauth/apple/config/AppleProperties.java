@@ -15,4 +15,8 @@ public class AppleProperties {
     private String clientId;
     private String redirectUri;
     private String privateKey;
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId.replace(".signin", "");
+    }
 }
