@@ -94,6 +94,32 @@ class CustomOidcUserServiceTest {
         verify(userRepository, never()).save(any(User.class));
     }
 
+    @Test
+    void processOidcUser_existingUserWithDifferentProvider_reusesUserInsteadOfDuplicateInsert() {
+        //given
+        OidcUserRequest oidcUserRequest = createOidcUserRequest(sub, email);
+        OidcUser oidcUser = createOidcUser(sub, email);
+
+        String registrationId = oidcUserRequest.getClientRegistration().getRegistrationId();
+        OAuthProvider provider = OAuthProvider.valueOf(registrationId.toUpperCase());
+
+        // 같은 이메일로 다른 provider(Apple 등)에 이미 가입된 유저가 존재하는 상황
+        User existingUser = User.createOAuthUser(email, OAuthProvider.APPLE, "apple-sub", UserRole.USER);
+        setUserId(existingUser, TEST_USER_ID);
+
+        when(userRepository.findByProviderAndProviderUserId(provider, sub))
+                .thenReturn(Optional.empty());
+        when(userRepository.findByEmail(email))
+                .thenReturn(Optional.of(existingUser));
+
+        //when
+        CustomOidcUser actual = (CustomOidcUser) customOidcUserService.processOidcUser(oidcUserRequest, oidcUser);
+
+        //then
+        assertThat(actual.userId()).isEqualTo(TEST_USER_ID);
+        verify(userRepository, never()).save(any(User.class));
+    }
+
     private OidcUserRequest createOidcUserRequest(String sub, String email) {
         ClientRegistration clientRegistration = ClientRegistration.withRegistrationId("google")
                 .clientId("test-client-id")

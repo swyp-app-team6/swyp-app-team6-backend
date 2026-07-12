@@ -33,9 +33,10 @@ public class CustomOidcUserService extends OidcUserService {
         String email = oidcUser.getEmail();
 
         User user = userRepository.findByProviderAndProviderUserId(provider, sub)
-                .orElseGet(() -> userRepository.save(
-                        User.createOAuthUser(email, provider, sub, UserRole.USER)
-                ));
+                .orElseGet(() -> userRepository.findByEmail(email)
+                        .orElseGet(() -> userRepository.save(
+                                User.createOAuthUser(email, provider, sub, UserRole.USER)
+                        )));
 
         return new CustomOidcUser(oidcUser, user.getId(), user.getRole());
     }
