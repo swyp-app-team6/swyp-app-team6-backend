@@ -286,7 +286,7 @@ public interface CosmicControllerApiSpec {
                                             {
                                               "cosmicType": {
                                                 "type": "SOLA",
-                                                "label": "솔라 유형"
+                                                "label": "솔라 형"
                                               },
                                               "detail": "사랑을 아낌없이 표현하는 열정적인 연애",
                                               "imageKey": "",
@@ -299,11 +299,11 @@ public interface CosmicControllerApiSpec {
                                               "matches": [
                                                 {
                                                   "type": "SHOOTING_STAR",
-                                                  "label": "슈팅스타 유형"
+                                                  "label": "슈팅스타 형"
                                                 },
                                                 {
                                                   "type": "LUNA",
-                                                  "label": "루나 유형"
+                                                  "label": "루나 형"
                                                 }
                                               ],
                                               "mentions": [
