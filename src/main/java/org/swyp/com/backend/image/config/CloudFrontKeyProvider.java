@@ -1,8 +1,6 @@
 package org.swyp.com.backend.image.config;
 
 import jakarta.annotation.PostConstruct;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -13,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
- * private key 조달 방식(로컬 파일 / env var)을 이 클래스 안에 격리해두어,
+ * private key 조달 방식(현재는 env var 문자열)을 이 클래스 안에 격리해두어,
  * 추후 Secrets Manager로 교체할 때 이 클래스만 바꾸면 되도록 한다.
  */
 @Slf4j
@@ -45,12 +43,8 @@ public class CloudFrontKeyProvider {
     }
 
     private PrivateKey loadPrivateKey() throws Exception {
-        String pem;
-        if (StringUtils.hasText(cloudFrontProperties.getPrivateKeyPath())) {
-            pem = Files.readString(Path.of(cloudFrontProperties.getPrivateKeyPath()));
-        } else if (StringUtils.hasText(cloudFrontProperties.getPrivateKey())) {
-            pem = cloudFrontProperties.getPrivateKey();
-        } else {
+        String pem = cloudFrontProperties.getPrivateKey();
+        if (!StringUtils.hasText(pem)) {
             return null;
         }
 
