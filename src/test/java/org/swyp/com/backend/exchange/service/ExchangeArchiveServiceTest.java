@@ -73,7 +73,17 @@ class ExchangeArchiveServiceTest {
 
     @BeforeEach
     void setUp() {
-        ImageUrlService imageUrlService = imageKey -> imageKey;
+        ImageUrlService imageUrlService = new ImageUrlService() {
+            @Override
+            public String toSignedUrl(String imageKey) {
+                return imageKey;
+            }
+
+            @Override
+            public String toSignedThumbnailUrl(String imageKey) {
+                return imageKey;
+            }
+        };
         exchangeArchiveService = new ExchangeArchiveService(profileExchangeRepository, profileInterestRepository,
                 matchedInterestRepository, profileService, reportService, blockRepository, imageUrlService);
     }

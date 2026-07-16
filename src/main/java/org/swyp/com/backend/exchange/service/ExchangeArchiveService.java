@@ -182,7 +182,7 @@ public class ExchangeArchiveService {
         return new ExchangeCardResponse(
                 pe.getId(),
                 profile.getNickname(),
-                imageUrlService.toSignedUrl(profile.getImageKey()),
+                imageUrlService.toSignedThumbnailUrl(profile.getImageKey()),
                 profile.getAge(),
                 new RegionLabel(profile.getRegionDetail().getRegionGroup().getLabel(), profile.getRegionDetail(),
                         profile.getRegionDetail().getLabel()),

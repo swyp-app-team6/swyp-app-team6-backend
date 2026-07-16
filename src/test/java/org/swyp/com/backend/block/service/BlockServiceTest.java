@@ -60,7 +60,17 @@ class BlockServiceTest {
 
     @BeforeEach
     void setUp() {
-        ImageUrlService imageUrlService = imageKey -> imageKey;
+        ImageUrlService imageUrlService = new ImageUrlService() {
+            @Override
+            public String toSignedUrl(String imageKey) {
+                return imageKey;
+            }
+
+            @Override
+            public String toSignedThumbnailUrl(String imageKey) {
+                return imageKey;
+            }
+        };
         blockService = new BlockService(blockRepository, profileExchangeRepository, profileRepository,
                 imageUrlService);
     }

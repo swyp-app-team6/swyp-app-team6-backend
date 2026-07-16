@@ -41,7 +41,7 @@ public class BlockService {
 
         Profile blockedProfile = profileExchange.getProfile();
         return new BlockResponse(block.getId(), blockedProfile.getNickname(),
-                imageUrlService.toSignedUrl(blockedProfile.getImageKey()), block.getCreatedAt());
+                imageUrlService.toSignedThumbnailUrl(blockedProfile.getImageKey()), block.getCreatedAt());
     }
 
     public List<BlockResponse> getBlockList(Long blockerId) {
@@ -60,7 +60,8 @@ public class BlockService {
     private BlockResponse toResponse(Block block) {
         Profile blockedProfile = profileRepository.findByUserAndDeletedFalse(block.getBlockedUser()).orElse(null);
         String nickname = blockedProfile != null ? blockedProfile.getNickname() : null;
-        String imageUrl = blockedProfile != null ? imageUrlService.toSignedUrl(blockedProfile.getImageKey()) : null;
+        String imageUrl = blockedProfile != null ? imageUrlService.toSignedThumbnailUrl(blockedProfile.getImageKey())
+                : null;
         return new BlockResponse(block.getId(), nickname, imageUrl, block.getCreatedAt());
     }
 }

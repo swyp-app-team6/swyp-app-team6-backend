@@ -119,7 +119,17 @@ class ProfileServiceTest {
 
     @BeforeEach
     void setUp() {
-        imageUrlService = imageKey -> imageKey;
+        imageUrlService = new ImageUrlService() {
+            @Override
+            public String toSignedUrl(String imageKey) {
+                return imageKey;
+            }
+
+            @Override
+            public String toSignedThumbnailUrl(String imageKey) {
+                return imageKey;
+            }
+        };
         cosmicService = new CosmicService(cosmicRepository, cosmicTypeTestRepository, imageUrlService);
         questionService = new QuestionService(multipleChoiceQuestionRepository, multipleChoiceAnswerRepository,
                 shortAnswerQuestionRepository);
