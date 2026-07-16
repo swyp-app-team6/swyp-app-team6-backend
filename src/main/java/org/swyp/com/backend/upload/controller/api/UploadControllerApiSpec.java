@@ -20,7 +20,8 @@ public interface UploadControllerApiSpec {
     @Operation(
             summary = "S3 Presigned URL 발급",
             description = "파일 업로드를 위한 S3 Presigned URL을 발급합니다. 발급된 URL은 10분간 유효하며, PUT 방식으로 파일을 직접 업로드할 수 있습니다."
-                    + "또한, 응답값으로 포함된 imageKey 값을 프로필 생성 API에 사용합니다.",
+                    + "또한, 응답값으로 포함된 imageKey 값을 프로필 생성 API에 사용합니다. imageKey는 prefix가 없는 순수 식별자이며, "
+                    + "실제 조회 가능한 이미지 URL은 조회 API 응답의 image_url 필드로 별도 제공됩니다.",
             operationId = "presignUpload"
     )
     @ApiResponses(value = {
@@ -32,8 +33,8 @@ public interface UploadControllerApiSpec {
                             examples = @ExampleObject(
                                     value = """
                                             {
-                                              "uploadUrl": "https://bucket.s3.amazonaws.com/profile/user-uuid?X-Amz-Signature=...",
-                                              "imageKey": "profile/user-uuid"
+                                              "uploadUrl": "https://bucket.s3.amazonaws.com/original/user-uuid?X-Amz-Signature=...",
+                                              "imageKey": "user-uuid"
                                             }
                                             """
                             )
