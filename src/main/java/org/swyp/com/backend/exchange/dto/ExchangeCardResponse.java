@@ -15,9 +15,9 @@ public record ExchangeCardResponse(
         Long exchangeId,
         @Schema(description = "상대방 닉네임")
         String nickname,
-        @JsonProperty("image_key")
-        @Schema(description = "상대방 프로필 이미지 키")
-        String imageKey,
+        @JsonProperty("image_url")
+        @Schema(description = "상대방 프로필 이미지 URL (CloudFront Signed URL)")
+        String imageUrl,
         @Schema(description = "나이")
         Integer age,
         @Schema(description = "거주지")
@@ -27,8 +27,8 @@ public record ExchangeCardResponse(
         @JsonProperty("cosmic_type")
         @Schema(description = "상대방 코스믹 유형")
         CosmicDatingType cosmicType,
-        @JsonProperty("cosmic_type_image_key")
-        String cosmicTypeImageKey,
+        @JsonProperty("cosmic_type_image_url")
+        String cosmicTypeImageUrl,
         @Schema(description = "상대방 관심사 목록")
         List<InterestTypeLabel> interests,
         @Schema(description = "상대방 한줄 자기소개")

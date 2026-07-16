@@ -12,6 +12,7 @@ import org.swyp.com.backend.block.dto.BlockResponse;
 import org.swyp.com.backend.exchange.domain.ProfileExchange;
 import org.swyp.com.backend.exchange.domain.repository.ProfileExchangeRepository;
 import org.swyp.com.backend.global.exception.BusinessException;
+import org.swyp.com.backend.image.service.ImageUrlService;
 import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
 import org.swyp.com.backend.user.domain.User;
@@ -24,6 +25,7 @@ public class BlockService {
     private final BlockRepository blockRepository;
     private final ProfileExchangeRepository profileExchangeRepository;
     private final ProfileRepository profileRepository;
+    private final ImageUrlService imageUrlService;
 
     @Transactional
     public BlockResponse createBlock(Long blockerId, BlockCreateRequest request) {
@@ -38,8 +40,8 @@ public class BlockService {
                 .orElseGet(() -> blockRepository.save(Block.createBlock(blockerUser, blockedUser)));
 
         Profile blockedProfile = profileExchange.getProfile();
-        return new BlockResponse(block.getId(), blockedProfile.getNickname(), blockedProfile.getImageKey(),
-                block.getCreatedAt());
+        return new BlockResponse(block.getId(), blockedProfile.getNickname(),
+                imageUrlService.toSignedUrl(blockedProfile.getImageKey()), block.getCreatedAt());
     }
 
     public List<BlockResponse> getBlockList(Long blockerId) {
@@ -58,7 +60,7 @@ public class BlockService {
     private BlockResponse toResponse(Block block) {
         Profile blockedProfile = profileRepository.findByUserAndDeletedFalse(block.getBlockedUser()).orElse(null);
         String nickname = blockedProfile != null ? blockedProfile.getNickname() : null;
-        String imageKey = blockedProfile != null ? blockedProfile.getImageKey() : null;
-        return new BlockResponse(block.getId(), nickname, imageKey, block.getCreatedAt());
+        String imageUrl = blockedProfile != null ? imageUrlService.toSignedUrl(blockedProfile.getImageKey()) : null;
+        return new BlockResponse(block.getId(), nickname, imageUrl, block.getCreatedAt());
     }
 }

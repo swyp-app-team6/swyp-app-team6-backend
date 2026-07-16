@@ -29,6 +29,7 @@ import org.swyp.com.backend.exchange.dto.cursor.ExchangeCursorCodec;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.enumeration.RegionDetail;
 import org.swyp.com.backend.global.exception.BusinessException;
+import org.swyp.com.backend.image.service.ImageUrlService;
 import org.swyp.com.backend.interest.dto.InterestTypeLabel;
 import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.domain.ProfileInterest;
@@ -52,6 +53,7 @@ public class ExchangeArchiveService {
     private final ProfileService profileService;
     private final ReportService reportService;
     private final BlockRepository blockRepository;
+    private final ImageUrlService imageUrlService;
 
     public ExchangeCardListResponse getArchiveList(Long userId, String keyword, List<RegionDetail> regions,
                                                    List<CosmicDatingType> types, Boolean liked,
@@ -180,13 +182,13 @@ public class ExchangeArchiveService {
         return new ExchangeCardResponse(
                 pe.getId(),
                 profile.getNickname(),
-                profile.getImageKey(),
+                imageUrlService.toSignedUrl(profile.getImageKey()),
                 profile.getAge(),
                 new RegionLabel(profile.getRegionDetail().getRegionGroup().getLabel(), profile.getRegionDetail(),
                         profile.getRegionDetail().getLabel()),
                 profile.getJob(),
                 cosmic != null ? cosmic.getType() : null,
-                cosmic != null ? cosmic.getImageKey() : null,
+                cosmic != null ? imageUrlService.toSignedUrl(cosmic.getImageKey()) : null,
                 interestsByProfileId.getOrDefault(profile.getId(), new ArrayList<>()),
                 profile.getBio(),
                 matchedInterestsByExchangeId.getOrDefault(pe.getExchange().getId(), new ArrayList<>()),

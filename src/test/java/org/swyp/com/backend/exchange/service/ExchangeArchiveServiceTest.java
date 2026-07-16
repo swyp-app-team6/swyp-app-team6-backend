@@ -43,6 +43,7 @@ import org.swyp.com.backend.exchange.dto.ExchangeLikeResponse;
 import org.swyp.com.backend.exchange.dto.ExchangeSortDirection;
 import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.exception.BusinessException;
+import org.swyp.com.backend.image.service.ImageUrlService;
 import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.domain.repository.ProfileInterestRepository;
 import org.swyp.com.backend.profile.dto.ProfileResponse;
@@ -72,8 +73,9 @@ class ExchangeArchiveServiceTest {
 
     @BeforeEach
     void setUp() {
+        ImageUrlService imageUrlService = imageKey -> imageKey;
         exchangeArchiveService = new ExchangeArchiveService(profileExchangeRepository, profileInterestRepository,
-                matchedInterestRepository, profileService, reportService, blockRepository);
+                matchedInterestRepository, profileService, reportService, blockRepository, imageUrlService);
     }
 
     private ProfileExchange buildRow(Long id, LocalDateTime createdAt) {
@@ -103,7 +105,7 @@ class ExchangeArchiveServiceTest {
         // then
         assertThat(response.exchanges()).hasSize(1);
         assertThat(response.exchanges().get(0).exchangeId()).isEqualTo(1L);
-        assertThat(response.exchanges().get(0).imageKey()).isEqualTo(TEST_IMAGE_KEY);
+        assertThat(response.exchanges().get(0).imageUrl()).isEqualTo(TEST_IMAGE_KEY);
         assertThat(response.exchanges().get(0).isLiked()).isFalse();
         assertThat(response.exchanges().get(0).isBlocked()).isFalse();
         assertThat(response.exchanges().get(0).blockId()).isNull();
