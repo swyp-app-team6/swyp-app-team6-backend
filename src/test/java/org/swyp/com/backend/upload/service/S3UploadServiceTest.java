@@ -32,7 +32,7 @@ class S3UploadServiceTest {
     void setUp() {
         s3UploadService = new S3UploadService(s3Presigner);
         ReflectionTestUtils.setField(s3UploadService, "bucketName", "test-bucket");
-        ReflectionTestUtils.setField(s3UploadService, "packageName", "profile/");
+        ReflectionTestUtils.setField(s3UploadService, "originalPackagePrefix", "original/");
     }
 
     @Test
@@ -51,7 +51,7 @@ class S3UploadServiceTest {
 
         // then
         assertThat(response.uploadUrl()).isEqualTo(fakeUrl.toString());
-        assertThat(response.imageKey()).startsWith("profile/" + filename + "-");
+        assertThat(response.imageKey()).startsWith(filename + "-");
     }
 
     @Test

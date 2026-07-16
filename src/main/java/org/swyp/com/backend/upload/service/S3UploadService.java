@@ -19,16 +19,17 @@ public class S3UploadService implements UploadService {
 
     @Value("${aws.s3.bucket}")
     private String bucketName;
-    @Value("${aws.s3.bucket.package}")
-    private String packageName;
+    @Value("${aws.s3.bucket.package.original}")
+    private String originalPackagePrefix;
 
 
     public PresignedUploadResponse createPresignedUploadUrl(String originalFilename, String contentType) {
-        String key = packageName + originalFilename + "-" + UUID.randomUUID(); // Todo.프로필에 저장필요
+        String imageKey = originalFilename + "-" + UUID.randomUUID();
+        String rawKey = originalPackagePrefix + imageKey;
 
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
-                .key(key)
+                .key(rawKey)
                 .contentType(contentType)
                 .build();
 
@@ -39,6 +40,6 @@ public class S3UploadService implements UploadService {
 
         PresignedPutObjectRequest presigned = s3Presigner.presignPutObject(presignRequest);
 
-        return new PresignedUploadResponse(presigned.url().toString(), key);
+        return new PresignedUploadResponse(presigned.url().toString(), imageKey);
     }
 }
