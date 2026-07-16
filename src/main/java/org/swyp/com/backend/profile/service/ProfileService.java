@@ -291,7 +291,7 @@ public class ProfileService {
         String detail = cosmic != null ? cosmic.getDetail() : null;
 
         return new ProfileResponse(profile.getId(), profile.getNickname(),
-                imageUrlService.toSignedUrl(profile.getImageKey()), profile.getGender(), profile.getAge(),
+                imageUrlService.toSignedMainUrl(profile.getImageKey()), profile.getGender(), profile.getAge(),
                 new RegionLabel(profile.getRegionDetail().getRegionGroup().getLabel(), profile.getRegionDetail(),
                         profile.getRegionDetail().getLabel()),
                 profile.getJob(),

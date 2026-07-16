@@ -17,18 +17,27 @@ public class CloudFrontImageUrlService implements ImageUrlService {
     private final CloudFrontProperties cloudFrontProperties;
     private final CloudFrontKeyProvider cloudFrontKeyProvider;
 
-    @Value("${aws.s3.bucket.package}")
+    @Value("${aws.s3.bucket.package.main}")
     private String mainPackagePrefix;
     @Value("${aws.s3.bucket.package.thumbnail}")
     private String thumbnailPackagePrefix;
 
     @Override
-    public String toSignedUrl(String imageKey) {
+    public String toSignedUrl(String key) {
+        if (key == null) {
+            return null;
+        }
+
+        return sign(key);
+    }
+
+    @Override
+    public String toSignedMainUrl(String imageKey) {
         if (imageKey == null) {
             return null;
         }
 
-        return sign(imageKey);
+        return sign(mainPackagePrefix + imageKey);
     }
 
     @Override
@@ -37,11 +46,7 @@ public class CloudFrontImageUrlService implements ImageUrlService {
             return null;
         }
 
-        String thumbnailKey = imageKey.startsWith(mainPackagePrefix)
-                ? thumbnailPackagePrefix + imageKey.substring(mainPackagePrefix.length())
-                : imageKey;
-
-        return sign(thumbnailKey);
+        return sign(thumbnailPackagePrefix + imageKey);
     }
 
     private String sign(String key) {

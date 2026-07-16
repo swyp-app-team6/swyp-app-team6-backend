@@ -121,7 +121,12 @@ class ProfileServiceTest {
     void setUp() {
         imageUrlService = new ImageUrlService() {
             @Override
-            public String toSignedUrl(String imageKey) {
+            public String toSignedUrl(String key) {
+                return key;
+            }
+
+            @Override
+            public String toSignedMainUrl(String imageKey) {
                 return imageKey;
             }
 
