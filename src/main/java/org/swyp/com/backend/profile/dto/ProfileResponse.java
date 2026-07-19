@@ -14,9 +14,9 @@ public record ProfileResponse(
         Long id,
         @Schema(description = "닉네임")
         String nickname,
-        @JsonProperty("image_url")
-        @Schema(description = "프로필 이미지 URL (CloudFront Signed URL)")
-        String imageUrl,
+        @JsonProperty("image_key")
+        @Schema(description = "프로필 이미지 URL (CloudFront Signed URL, 필드명은 image_key 유지)")
+        String imageKey,
         @Schema(description = "성별")
         Gender gender,
         @Schema(description = "나이")
@@ -32,8 +32,8 @@ public record ProfileResponse(
         @JsonProperty("cosmic_type")
         @Schema(description = "Cosmic 테스트 결과로 산출된 코스믹 유형")
         CosmicDatingType cosmicType,
-        @JsonProperty("cosmic_type_image_url")
-        String cosmicTypeImageUrl,
+        @JsonProperty("cosmic_type_image_key")
+        String cosmicTypeImageKey,
         @JsonProperty("cosmic_type_detail")
         String cosmicTypeDetail,
         @JsonProperty("choice_template")

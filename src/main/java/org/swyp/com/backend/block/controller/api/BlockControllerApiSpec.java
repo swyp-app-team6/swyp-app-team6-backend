@@ -46,7 +46,7 @@ public interface BlockControllerApiSpec {
                                             {
                                               "block_id": 1,
                                               "nickname": "달빛여우",
-                                              "image_url": "https://cdn.orbitss.xyz/cosmic/fox.png?...",
+                                              "image_key": "https://cdn.orbitss.xyz/cosmic/fox.png?...",
                                               "created_at": "2026-07-09T18:30:26.371178"
                                             }
                                             """
@@ -75,7 +75,7 @@ public interface BlockControllerApiSpec {
 
     @Operation(
             summary = "차단 목록 조회",
-            description = "내가 차단한 사용자 목록을 차단한 순서(최신순)로 조회합니다. 상대방 프로필이 이미 삭제된 경우 `nickname`/`image_url`은 `null`로 내려갑니다.",
+            description = "내가 차단한 사용자 목록을 차단한 순서(최신순)로 조회합니다. 상대방 프로필이 이미 삭제된 경우 `nickname`/`image_key`는 `null`로 내려갑니다.",
             operationId = "getBlockList"
     )
     @ApiResponses(value = {

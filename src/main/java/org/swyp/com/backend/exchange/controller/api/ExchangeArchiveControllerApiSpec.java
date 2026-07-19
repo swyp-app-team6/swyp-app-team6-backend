@@ -47,7 +47,7 @@ public interface ExchangeArchiveControllerApiSpec {
                                                 {
                                                   "exchange_id": 1,
                                                   "nickname": "홍길동",
-                                                  "image_url": "https://cdn.orbitss.xyz/profile/hong.png?...",
+                                                  "image_key": "https://cdn.orbitss.xyz/profile/hong.png?...",
                                                   "age":20,
                                                   "region":{
                                                     "group":"서울",
@@ -56,7 +56,7 @@ public interface ExchangeArchiveControllerApiSpec {
                                                   },
                                                   "job":"개발자",
                                                   "cosmic_type": "GALAXY",
-                                                  "cosmic_type_image_url": "https://cdn.orbitss.xyz/cosmic/galaxy.png?...",
+                                                  "cosmic_type_image_key": "https://cdn.orbitss.xyz/cosmic/galaxy.png?...",
                                                   "interests": [{"type": "TRAVEL", "label": "여행"}],
                                                   "bio": "여행과 운동을 좋아해요",
                                                   "matched_interests": [{"type": "TRAVEL", "label": "여행"}],

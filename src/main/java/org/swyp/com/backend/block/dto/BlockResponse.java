@@ -11,9 +11,9 @@ public record BlockResponse(
         Long blockId,
         @Schema(description = "차단한 상대방 닉네임")
         String nickname,
-        @JsonProperty("image_url")
-        @Schema(description = "차단한 상대방 프로필 이미지 URL (CloudFront Signed URL)")
-        String imageUrl,
+        @JsonProperty("image_key")
+        @Schema(description = "차단한 상대방 프로필 이미지 URL (CloudFront Signed URL, 필드명은 image_key 유지)")
+        String imageKey,
         @JsonProperty("created_at")
         @Schema(description = "차단 시각")
         LocalDateTime createdAt

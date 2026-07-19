@@ -287,7 +287,7 @@ public class ProfileService {
 
         Cosmic cosmic = profile.getCosmic();
         CosmicDatingType type = cosmic != null ? cosmic.getType() : null;
-        String cosmicTypeImageUrl = cosmic != null ? imageUrlService.toSignedUrl(cosmic.getImageKey()) : null;
+        String cosmicTypeImageKey = cosmic != null ? imageUrlService.toSignedUrl(cosmic.getImageKey()) : null;
         String detail = cosmic != null ? cosmic.getDetail() : null;
 
         return new ProfileResponse(profile.getId(), profile.getNickname(),
@@ -295,7 +295,7 @@ public class ProfileService {
                 new RegionLabel(profile.getRegionDetail().getRegionGroup().getLabel(), profile.getRegionDetail(),
                         profile.getRegionDetail().getLabel()),
                 profile.getJob(),
-                interestTypeLabelList, profile.getBio(), type, cosmicTypeImageUrl, detail, choiceTemplateList,
+                interestTypeLabelList, profile.getBio(), type, cosmicTypeImageKey, detail, choiceTemplateList,
                 shortTemplateList);
     }
 
