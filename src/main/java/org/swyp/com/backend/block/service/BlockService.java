@@ -60,8 +60,8 @@ public class BlockService {
     private BlockResponse toResponse(Block block) {
         Profile blockedProfile = profileRepository.findByUserAndDeletedFalse(block.getBlockedUser()).orElse(null);
         String nickname = blockedProfile != null ? blockedProfile.getNickname() : null;
-        String imageUrl = blockedProfile != null ? imageUrlService.toSignedThumbnailUrl(blockedProfile.getImageKey())
+        String imageKey = blockedProfile != null ? imageUrlService.toSignedThumbnailUrl(blockedProfile.getImageKey())
                 : null;
-        return new BlockResponse(block.getId(), nickname, imageUrl, block.getCreatedAt());
+        return new BlockResponse(block.getId(), nickname, imageKey, block.getCreatedAt());
     }
 }

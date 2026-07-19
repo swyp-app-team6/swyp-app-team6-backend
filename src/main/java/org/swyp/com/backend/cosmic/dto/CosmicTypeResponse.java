@@ -11,9 +11,9 @@ public record CosmicTypeResponse(
         CosmicTypeLabel cosmicType,
         @Schema(description = "타입 상세 설명", example = "사랑을 아낌없이 표현하는 열정적인 연애")
         String detail,
-        @Schema(description = "이미지 URL (CloudFront Signed URL)", example = "https://cdn.orbitss.xyz/cosmic/sola.png?...")
-        @JsonProperty("image_url")
-        String imageUrl,
+        @Schema(description = "이미지 URL (CloudFront Signed URL, 필드명은 image_key 유지)", example = "https://cdn.orbitss.xyz/cosmic/sola.png?...")
+        @JsonProperty("image_key")
+        String imageKey,
         @Schema(description = "타입 특징 리스트", example = "[\"감정을 솔직하게 표현해요.\"]")
         List<String> features,
         @Schema(description = "궁합이 좋은 타입 목록")

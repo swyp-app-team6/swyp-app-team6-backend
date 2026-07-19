@@ -289,7 +289,7 @@ public interface CosmicControllerApiSpec {
                                                 "label": "솔라 형"
                                               },
                                               "detail": "사랑을 아낌없이 표현하는 열정적인 연애",
-                                              "imageUrl": "",
+                                              "imageKey": "",
                                               "features": [
                                                 "둘만의 특별한 추억을 중요하게 생각해요.",
                                                 "감정을 솔직하게 표현해요.",
