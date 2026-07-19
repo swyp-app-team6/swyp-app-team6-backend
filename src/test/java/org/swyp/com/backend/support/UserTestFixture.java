@@ -15,6 +15,9 @@ public class UserTestFixture {
         ReflectionTestUtils.setField(user, "id", id);
         ReflectionTestUtils.setField(user, "email", email);
         ReflectionTestUtils.setField(user, "role", role);
+        ReflectionTestUtils.setField(user, "profileRegistered", false);
+        ReflectionTestUtils.setField(user, "profileExchanged", false);
+        ReflectionTestUtils.setField(user, "reviewRegistered", false);
         return user;
     }
 }

@@ -249,6 +249,7 @@ public class ExchangeArchiveService {
                 .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "교환 정보를 찾을 수 없습니다."));
 
         profileExchange.updateReview(request.review(), request.score());
+        profileExchange.getUser().markReviewRegistered();
 
         return getArchiveDetail(userId, exchangeId);
     }

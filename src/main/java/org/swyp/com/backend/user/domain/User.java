@@ -38,6 +38,12 @@ public class User {
     private String providerUserId;
     @Column
     private String password;
+    @Column(nullable = false)
+    private Boolean profileRegistered;
+    @Column(nullable = false)
+    private Boolean profileExchanged;
+    @Column(nullable = false)
+    private Boolean reviewRegistered;
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -50,6 +56,9 @@ public class User {
         user.provider = provider;
         user.providerUserId = providerUserId;
         user.role = role;
+        user.profileRegistered = false;
+        user.profileExchanged = false;
+        user.reviewRegistered = false;
         return user;
     }
 
@@ -59,6 +68,21 @@ public class User {
         user.password = encodedPassword;
         user.provider = OAuthProvider.LOCAL;
         user.role = role;
+        user.profileRegistered = false;
+        user.profileExchanged = false;
+        user.reviewRegistered = false;
         return user;
+    }
+
+    public void markProfileRegistered() {
+        this.profileRegistered = true;
+    }
+
+    public void markProfileExchanged() {
+        this.profileExchanged = true;
+    }
+
+    public void markReviewRegistered() {
+        this.reviewRegistered = true;
     }
 }

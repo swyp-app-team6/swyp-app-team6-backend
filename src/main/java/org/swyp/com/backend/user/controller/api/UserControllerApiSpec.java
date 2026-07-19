@@ -16,7 +16,8 @@ public interface UserControllerApiSpec {
 
     @Operation(
             summary = "내 정보 조회",
-            description = "현재 로그인된 사용자의 기본 정보(ID, 이메일, 역할, OAuth 제공자)를 반환합니다."
+            description = "현재 로그인된 사용자의 기본 정보(ID, 이메일, 역할, OAuth 제공자)와 "
+                    + "프로필 등록/교환/후기 등록을 1번이라도 수행했는지 여부를 반환합니다."
                     + "구글 로그인 주소 참고는 /oauth2/authorization/google",
             operationId = "getMe"
     )
@@ -32,7 +33,10 @@ public interface UserControllerApiSpec {
                                               "id": 1,
                                               "email": "user@example.com",
                                               "role": "USER",
-                                              "provider": "GOOGLE"
+                                              "provider": "GOOGLE",
+                                              "profile_registered": true,
+                                              "profile_exchanged": false,
+                                              "review_registered": false
                                             }
                                             """
                             )

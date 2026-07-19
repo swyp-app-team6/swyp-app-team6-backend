@@ -160,6 +160,7 @@ public class ProfileService {
 
         profileRepository.save(profile);
         profileInterestRepository.saveAll(profileInterestList);
+        user.markProfileRegistered();
 
         List<ProfileChoice> profileChoiceList = new ArrayList<>();
         List<ProfileShort> profileShortList = new ArrayList<>();
