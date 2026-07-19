@@ -20,6 +20,7 @@ import org.swyp.com.backend.cosmic.dto.CosmicTypeLabel;
 import org.swyp.com.backend.cosmic.dto.CosmicTypeResponse;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.exception.BusinessException;
+import org.swyp.com.backend.image.service.ImageUrlService;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +28,7 @@ import org.swyp.com.backend.global.exception.BusinessException;
 public class CosmicService {
     private final CosmicRepository cosmicRepository;
     private final CosmicTypeTestRepository cosmicTypeTestRepository;
+    private final ImageUrlService imageUrlService;
 
     public CosmicTypeResponse getCosmicTypeResponse(CosmicDatingType type) {
         Cosmic cosmic = cosmicRepository.findByType(type).orElseThrow(() ->
@@ -40,7 +42,7 @@ public class CosmicService {
 
         return new CosmicTypeResponse(
                 new CosmicTypeLabel(cosmic.getType(), cosmic.getType().getLabel()), cosmic.getDetail(),
-                cosmic.getImageKey(),
+                imageUrlService.toSignedUrl(cosmic.getImageKey()),
                 featureList, matchList, mentionList, tagList);
     }
 

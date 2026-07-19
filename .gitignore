@@ -37,3 +37,7 @@ out/
 
 settings.local.json
 /docker/volumes
+
+### Secrets ###
+*.pem
+*.key

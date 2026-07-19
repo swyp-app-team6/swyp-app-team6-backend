@@ -15,6 +15,7 @@ import org.swyp.com.backend.exchange.domain.ProfileExchange;
 import org.swyp.com.backend.exchange.domain.repository.ProfileExchangeRepository;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
 import org.swyp.com.backend.global.exception.BusinessException;
+import org.swyp.com.backend.image.service.ImageUrlService;
 import org.swyp.com.backend.interest.domain.Interest;
 import org.swyp.com.backend.interest.dto.InterestTypeLabel;
 import org.swyp.com.backend.interest.service.InterestService;
@@ -50,6 +51,7 @@ public class ProfileService {
     private final QuestionService questionService;
     private final CosmicService cosmicService;
     private final InterestService interestService;
+    private final ImageUrlService imageUrlService;
 
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
@@ -285,15 +287,16 @@ public class ProfileService {
 
         Cosmic cosmic = profile.getCosmic();
         CosmicDatingType type = cosmic != null ? cosmic.getType() : null;
-        String imageKey = cosmic != null ? cosmic.getImageKey() : null;
+        String cosmicTypeImageUrl = cosmic != null ? imageUrlService.toSignedUrl(cosmic.getImageKey()) : null;
         String detail = cosmic != null ? cosmic.getDetail() : null;
 
         return new ProfileResponse(profile.getId(), profile.getNickname(),
-                profile.getImageKey(), profile.getGender(), profile.getAge(),
+                imageUrlService.toSignedMainUrl(profile.getImageKey()), profile.getGender(), profile.getAge(),
                 new RegionLabel(profile.getRegionDetail().getRegionGroup().getLabel(), profile.getRegionDetail(),
                         profile.getRegionDetail().getLabel()),
                 profile.getJob(),
-                interestTypeLabelList, profile.getBio(), type, imageKey, detail, choiceTemplateList, shortTemplateList);
+                interestTypeLabelList, profile.getBio(), type, cosmicTypeImageUrl, detail, choiceTemplateList,
+                shortTemplateList);
     }
 
 

@@ -51,6 +51,7 @@ import org.swyp.com.backend.cosmic.service.CosmicService;
 import org.swyp.com.backend.exchange.domain.repository.ProfileExchangeRepository;
 import org.swyp.com.backend.global.enumeration.InterestType;
 import org.swyp.com.backend.global.exception.BusinessException;
+import org.swyp.com.backend.image.service.ImageUrlService;
 import org.swyp.com.backend.interest.domain.Interest;
 import org.swyp.com.backend.interest.domain.repository.InterestRepository;
 import org.swyp.com.backend.interest.service.InterestService;
@@ -114,16 +115,33 @@ class ProfileServiceTest {
     QuestionService questionService;
     CosmicService cosmicService;
     InterestService interestService;
+    ImageUrlService imageUrlService;
 
     @BeforeEach
     void setUp() {
-        cosmicService = new CosmicService(cosmicRepository, cosmicTypeTestRepository);
+        imageUrlService = new ImageUrlService() {
+            @Override
+            public String toSignedUrl(String key) {
+                return key;
+            }
+
+            @Override
+            public String toSignedMainUrl(String imageKey) {
+                return imageKey;
+            }
+
+            @Override
+            public String toSignedThumbnailUrl(String imageKey) {
+                return imageKey;
+            }
+        };
+        cosmicService = new CosmicService(cosmicRepository, cosmicTypeTestRepository, imageUrlService);
         questionService = new QuestionService(multipleChoiceQuestionRepository, multipleChoiceAnswerRepository,
                 shortAnswerQuestionRepository);
         interestService = new InterestService(interestRepository);
-        profileService = new ProfileService(questionService, cosmicService, interestService, userRepository,
-                profileRepository, profileInterestRepository, profileChoiceRepository, profileShortRepository,
-                profileExchangeRepository, deletedImageRepository);
+        profileService = new ProfileService(questionService, cosmicService, interestService, imageUrlService,
+                userRepository, profileRepository, profileInterestRepository, profileChoiceRepository,
+                profileShortRepository, profileExchangeRepository, deletedImageRepository);
     }
 
     @Test

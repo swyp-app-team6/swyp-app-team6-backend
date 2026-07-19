@@ -34,6 +34,7 @@ import org.swyp.com.backend.block.dto.BlockResponse;
 import org.swyp.com.backend.exchange.domain.ProfileExchange;
 import org.swyp.com.backend.exchange.domain.repository.ProfileExchangeRepository;
 import org.swyp.com.backend.global.exception.BusinessException;
+import org.swyp.com.backend.image.service.ImageUrlService;
 import org.swyp.com.backend.profile.domain.Profile;
 import org.swyp.com.backend.profile.domain.repository.ProfileRepository;
 import org.swyp.com.backend.support.ExchangeTestFixture;
@@ -59,7 +60,24 @@ class BlockServiceTest {
 
     @BeforeEach
     void setUp() {
-        blockService = new BlockService(blockRepository, profileExchangeRepository, profileRepository);
+        ImageUrlService imageUrlService = new ImageUrlService() {
+            @Override
+            public String toSignedUrl(String key) {
+                return key;
+            }
+
+            @Override
+            public String toSignedMainUrl(String imageKey) {
+                return imageKey;
+            }
+
+            @Override
+            public String toSignedThumbnailUrl(String imageKey) {
+                return imageKey;
+            }
+        };
+        blockService = new BlockService(blockRepository, profileExchangeRepository, profileRepository,
+                imageUrlService);
     }
 
     private User blockerUser() {
