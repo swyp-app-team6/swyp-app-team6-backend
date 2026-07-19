@@ -109,6 +109,8 @@ public class ExchangeService {
                 myProfile, exchange);
         profileExchangeRepository.save(myProfileExchange);
         profileExchangeRepository.save(targetProfileExchange);
+        myProfile.getUser().markProfileExchanged();
+        targetProfile.getUser().markProfileExchanged();
 
         ExchangeResult myExchangeResult = new ExchangeResult(myProfileExchange.getId(), exchange.getCreatedAt(),
                 isMatched,

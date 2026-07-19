@@ -1,5 +1,6 @@
 package org.swyp.com.backend.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.swyp.com.backend.global.enumeration.OAuthProvider;
 import org.swyp.com.backend.global.enumeration.UserRole;
@@ -14,9 +15,19 @@ public record UserMeResponse(
         @Schema(description = "권한")
         UserRole role,
         @Schema(description = "소셜 로그인 제공자")
-        OAuthProvider provider) {
+        OAuthProvider provider,
+        @JsonProperty("profile_registered")
+        @Schema(description = "프로필을 1번이라도 등록한 적 있는지 여부")
+        Boolean profileRegistered,
+        @JsonProperty("profile_exchanged")
+        @Schema(description = "프로필을 1번이라도 교환한 적 있는지 여부")
+        Boolean profileExchanged,
+        @JsonProperty("review_registered")
+        @Schema(description = "교환한 프로필에 후기를 1번이라도 등록한 적 있는지 여부")
+        Boolean reviewRegistered) {
 
     public static UserMeResponse from(User user) {
-        return new UserMeResponse(user.getId(), user.getEmail(), user.getRole(), user.getProvider());
+        return new UserMeResponse(user.getId(), user.getEmail(), user.getRole(), user.getProvider(),
+                user.getProfileRegistered(), user.getProfileExchanged(), user.getReviewRegistered());
     }
 }
