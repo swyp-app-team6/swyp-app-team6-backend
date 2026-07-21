@@ -37,7 +37,7 @@ public class CloudFrontImageUrlService implements ImageUrlService {
             return null;
         }
 
-        return sign(mainPackagePrefix + imageKey);
+        return sign(mainPackagePrefix + imageKey + ".webp");
     }
 
     @Override
@@ -46,7 +46,7 @@ public class CloudFrontImageUrlService implements ImageUrlService {
             return null;
         }
 
-        return sign(thumbnailPackagePrefix + imageKey);
+        return sign(thumbnailPackagePrefix + imageKey + ".webp");
     }
 
     private String sign(String key) {
