@@ -10,8 +10,9 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class CloudFrontProperties {
+
     private String domain;
     private String keyPairId;
     private String privateKey;
-    private int ttlSeconds = 600;
+    private int ttlSeconds = 86400;
 }
