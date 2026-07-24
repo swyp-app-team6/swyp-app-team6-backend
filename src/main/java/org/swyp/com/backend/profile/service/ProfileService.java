@@ -190,12 +190,14 @@ public class ProfileService {
         Cosmic cosmic =
                 profileForm.cosmicType() != null ? cosmicService.getCosmicByCosmicType(profileForm.cosmicType()) : null;
 
+        String previousImageKey = profile.getImageKey();
+
         profile.updateProfile(profileForm.nickname(), profileForm.imageKey(), profileForm.age(),
                 profileForm.region(),
                 profileForm.job(), profileForm.bio(), cosmic);
 
         if (profileForm.imageKey() != null) {
-            deletedImageRepository.save(DeletedImage.toDeleteSchedule(profile.getImageKey()));
+            deletedImageRepository.save(DeletedImage.toDeleteSchedule(previousImageKey));
         }
 
         if (profileForm.interests() != null) {
