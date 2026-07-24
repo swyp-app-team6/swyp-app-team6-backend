@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
@@ -20,6 +21,8 @@ public record ProfileRegisterRequest(
         String nickname,
         @JsonProperty("image_key")
         @NotBlank(message = "프로필 사진을 등록해주세요.")
+        @Size(max = 255, message = "이미지 키 형식이 올바르지 않습니다.")
+        @Pattern(regexp = "^(?!https?://).+$", message = "이미지 키 형식이 올바르지 않습니다. Presigned URL 발급 응답의 image_id 값을 사용해주세요.")
         @Schema(description = "Presigned URL 발급 시 받은 프로필 이미지 키")
         String imageKey,
         @NotNull(message = "성별을 입력해주세요.")
