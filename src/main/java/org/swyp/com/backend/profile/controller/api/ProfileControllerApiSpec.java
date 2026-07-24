@@ -39,6 +39,7 @@ public interface ProfileControllerApiSpec {
                                               "id": 1,
                                               "nickname": "홍길동",
                                               "image_key": "image-key",
+                                              "image_id": "image-key",
                                               "gender": "M",
                                               "age": 25,
                                               "region": {
@@ -145,6 +146,7 @@ public interface ProfileControllerApiSpec {
                                               "id": 1,
                                               "nickname": "홍길동",
                                               "image_key": "image-key",
+                                              "image_id": "image-key",
                                               "gender": "M",
                                               "age": 25,
                                               "region": {
@@ -323,6 +325,7 @@ public interface ProfileControllerApiSpec {
                                               "id": 1,
                                               "nickname": "홍길동",
                                               "image_key": "image-key",
+                                              "image_id": "image-key",
                                               "gender": "M",
                                               "age": 26,
                                               "region": {
@@ -706,6 +709,7 @@ public interface ProfileControllerApiSpec {
                                               "id": 1,
                                               "nickname": "홍길동",
                                               "image_key": "image-key",
+                                              "image_id": "image-key",
                                               "gender": "M",
                                               "age": 26,
                                               "region": {

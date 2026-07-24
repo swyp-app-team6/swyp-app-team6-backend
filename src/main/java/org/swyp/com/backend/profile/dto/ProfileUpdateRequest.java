@@ -2,6 +2,7 @@ package org.swyp.com.backend.profile.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.swyp.com.backend.global.enumeration.CosmicDatingType;
@@ -14,6 +15,8 @@ public record ProfileUpdateRequest(
         @Schema(description = "닉네임 (3~10자)")
         String nickname,
         @JsonProperty("image_key")
+        @Size(max = 255, message = "이미지 키 형식이 올바르지 않습니다.")
+        @Pattern(regexp = "^(?!https?://).+$", message = "이미지 키 형식이 올바르지 않습니다. Presigned URL 발급 응답의 image_id 값을 사용해주세요.")
         @Schema(description = "Presigned URL 발급 시 받은 프로필 이미지 키")
         String imageKey,
         @Schema(description = "나이")

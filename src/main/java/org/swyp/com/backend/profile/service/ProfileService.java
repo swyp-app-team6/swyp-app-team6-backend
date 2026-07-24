@@ -190,12 +190,14 @@ public class ProfileService {
         Cosmic cosmic =
                 profileForm.cosmicType() != null ? cosmicService.getCosmicByCosmicType(profileForm.cosmicType()) : null;
 
+        String previousImageKey = profile.getImageKey();
+
         profile.updateProfile(profileForm.nickname(), profileForm.imageKey(), profileForm.age(),
                 profileForm.region(),
                 profileForm.job(), profileForm.bio(), cosmic);
 
         if (profileForm.imageKey() != null) {
-            deletedImageRepository.save(DeletedImage.toDeleteSchedule(profile.getImageKey()));
+            deletedImageRepository.save(DeletedImage.toDeleteSchedule(previousImageKey));
         }
 
         if (profileForm.interests() != null) {
@@ -292,7 +294,8 @@ public class ProfileService {
         String detail = cosmic != null ? cosmic.getDetail() : null;
 
         return new ProfileResponse(profile.getId(), profile.getNickname(),
-                imageUrlService.toSignedMainUrl(profile.getImageKey()), profile.getGender(), profile.getAge(),
+                imageUrlService.toSignedMainUrl(profile.getImageKey()), profile.getImageKey(), profile.getGender(),
+                profile.getAge(),
                 new RegionLabel(profile.getRegionDetail().getRegionGroup().getLabel(), profile.getRegionDetail(),
                         profile.getRegionDetail().getLabel()),
                 profile.getJob(),

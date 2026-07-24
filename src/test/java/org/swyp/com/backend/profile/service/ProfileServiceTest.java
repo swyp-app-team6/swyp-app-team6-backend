@@ -41,6 +41,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
@@ -77,6 +78,7 @@ import org.swyp.com.backend.question.domain.repository.ShortAnswerQuestionReposi
 import org.swyp.com.backend.question.service.QuestionService;
 import org.swyp.com.backend.support.CosmicTestFixture;
 import org.swyp.com.backend.support.QuestionTestFixture;
+import org.swyp.com.backend.upload.domain.DeletedImage;
 import org.swyp.com.backend.upload.domain.repository.DeletedImageRepository;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.repository.UserRepository;
@@ -384,6 +386,31 @@ class ProfileServiceTest {
 
         // then
         Assertions.assertNotEquals(response.interests().size(), exInterestTypeList.size());
+    }
+
+    @Test
+    void updateProfileImage_schedulesPreviousImageKeyForDeletion() {
+        // given
+        final String newImageKey = TEST_IMAGE_KEY + "-new";
+
+        User user = createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
+        Profile profile = createProfile(TEST_PROFILE_ID, user, TEST_PROFILE_NICKNAME, TEST_IMAGE_KEY, TEST_GENDER,
+                TEST_AGE, TEST_REGION_DETAIL, TEST_JOB, TEST_BIO, TEST_COSMIC_TYPE);
+
+        ProfileUpdateRequest request = createUpdateProfileForm(null, newImageKey, null,
+                null, null, null, null, null, null, null);
+
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(profileRepository.findByUserAndDeletedFalse(user)).thenReturn(Optional.of(profile));
+
+        // when
+        profileService.updateProfile(user.getId(), request);
+
+        // then
+        ArgumentCaptor<DeletedImage> deletedImageCaptor = ArgumentCaptor.forClass(DeletedImage.class);
+        verify(deletedImageRepository).save(deletedImageCaptor.capture());
+        Assertions.assertEquals(TEST_IMAGE_KEY, deletedImageCaptor.getValue().getImageKey());
+        Assertions.assertEquals(newImageKey, profile.getImageKey());
     }
 
 }

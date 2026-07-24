@@ -256,8 +256,8 @@ class ExchangeArchiveServiceTest {
         when(matchedInterestRepository.findByExchange(row.getExchange())).thenReturn(List.of(matchedInterest));
 
         ProfileResponse fakeProfileResponse = new ProfileResponse(row.getProfile().getId(), TEST_PROFILE_NICKNAME,
-                TEST_IMAGE_KEY, TEST_GENDER, TEST_AGE, null, TEST_JOB, List.of(), "안녕하세요", null, null, null, List.of(),
-                List.of());
+                TEST_IMAGE_KEY, TEST_IMAGE_KEY, TEST_GENDER, TEST_AGE, null, TEST_JOB, List.of(), "안녕하세요", null, null,
+                null, List.of(), List.of());
         when(profileService.getProfileResponseById(row.getProfile().getId())).thenReturn(fakeProfileResponse);
 
         User myUser = createUser(TEST_USER_ID, TEST_USER_EMAIL, TEST_ROLE);
