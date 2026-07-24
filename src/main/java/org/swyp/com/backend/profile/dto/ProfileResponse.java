@@ -17,6 +17,9 @@ public record ProfileResponse(
         @JsonProperty("image_key")
         @Schema(description = "프로필 이미지 URL (CloudFront Signed URL, 필드명은 image_key 유지)")
         String imageKey,
+        @JsonProperty("image_id")
+        @Schema(description = "프로필 이미지 식별자 (prefix 없는 순수 id-uuid). 이미지를 변경하지 않고 프로필을 수정할 때, 이 값을 그대로 요청의 image_key로 사용")
+        String imageId,
         @Schema(description = "성별")
         Gender gender,
         @Schema(description = "나이")
