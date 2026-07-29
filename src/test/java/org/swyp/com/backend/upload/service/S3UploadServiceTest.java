@@ -2,6 +2,7 @@ package org.swyp.com.backend.upload.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.net.MalformedURLException;
@@ -9,6 +10,7 @@ import java.net.URL;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -52,6 +54,11 @@ class S3UploadServiceTest {
         // then
         assertThat(response.uploadUrl()).isEqualTo(fakeUrl.toString());
         assertThat(response.imageKey()).startsWith(filename + "-");
+
+        ArgumentCaptor<PutObjectPresignRequest> presignRequestCaptor =
+                ArgumentCaptor.forClass(PutObjectPresignRequest.class);
+        verify(s3Presigner).presignPutObject(presignRequestCaptor.capture());
+        assertThat(presignRequestCaptor.getValue().putObjectRequest().tagging()).isEqualTo("confirmed=false");
     }
 
     @Test

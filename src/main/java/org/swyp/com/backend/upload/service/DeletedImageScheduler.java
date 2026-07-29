@@ -1,7 +1,6 @@
 package org.swyp.com.backend.upload.service;
 
 import java.util.List;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,9 +50,10 @@ public class DeletedImageScheduler {
      */
     private Boolean delete(String imageKey) {
         try {
-            List<ObjectIdentifier> objectIds = Stream.of(originalPackagePrefix, mainPackagePrefix, thumbnailPackagePrefix)
-                    .map(prefix -> ObjectIdentifier.builder().key(prefix + imageKey).build())
-                    .toList();
+            List<ObjectIdentifier> objectIds = List.of(
+                    ObjectIdentifier.builder().key(originalPackagePrefix + imageKey).build(),
+                    ObjectIdentifier.builder().key(mainPackagePrefix + imageKey + ".webp").build(),
+                    ObjectIdentifier.builder().key(thumbnailPackagePrefix + imageKey + ".webp").build());
 
             s3Client.deleteObjects(DeleteObjectsRequest.builder()
                     .bucket(bucketName)

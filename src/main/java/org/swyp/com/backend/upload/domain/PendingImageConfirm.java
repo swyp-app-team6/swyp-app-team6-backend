@@ -1,0 +1,38 @@
+package org.swyp.com.backend.upload.domain;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import java.time.LocalDateTime;
+import lombok.Getter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+@Entity
+@Getter
+@EntityListeners(AuditingEntityListener.class)
+public class PendingImageConfirm {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false, name = "image_key")
+    private String imageKey;
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+    @Column(nullable = false)
+    private Boolean confirmed = false;
+
+    public static PendingImageConfirm toRetrySchedule(String imageKey) {
+        PendingImageConfirm pending = new PendingImageConfirm();
+        pending.imageKey = imageKey;
+        return pending;
+    }
+
+    public void completeConfirm() {
+        confirmed = true;
+    }
+}

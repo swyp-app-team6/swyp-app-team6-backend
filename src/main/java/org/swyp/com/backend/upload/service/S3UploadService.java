@@ -31,6 +31,7 @@ public class S3UploadService implements UploadService {
                 .bucket(bucketName)
                 .key(rawKey)
                 .contentType(contentType)
+                .tagging("confirmed=false")
                 .build();
 
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
