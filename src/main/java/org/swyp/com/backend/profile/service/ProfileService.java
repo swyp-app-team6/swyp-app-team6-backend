@@ -41,6 +41,7 @@ import org.swyp.com.backend.question.service.QuestionService;
 import org.swyp.com.backend.region.dto.RegionLabel;
 import org.swyp.com.backend.upload.domain.DeletedImage;
 import org.swyp.com.backend.upload.domain.repository.DeletedImageRepository;
+import org.swyp.com.backend.upload.service.S3ImageTagService;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.repository.UserRepository;
 
@@ -63,6 +64,7 @@ public class ProfileService {
 
     private final ProfileExchangeRepository profileExchangeRepository;
     private final DeletedImageRepository deletedImageRepository;
+    private final S3ImageTagService s3ImageTagService;
 
     private static final Long QR_TIMEOUT = Duration.ofMinutes(3).toMillis();
 
@@ -162,6 +164,8 @@ public class ProfileService {
         profileInterestRepository.saveAll(profileInterestList);
         user.markProfileRegistered();
 
+        s3ImageTagService.confirmUpload(profileForm.imageKey());
+
         List<ProfileChoice> profileChoiceList = new ArrayList<>();
         List<ProfileShort> profileShortList = new ArrayList<>();
 
@@ -198,6 +202,7 @@ public class ProfileService {
 
         if (profileForm.imageKey() != null) {
             deletedImageRepository.save(DeletedImage.toDeleteSchedule(previousImageKey));
+            s3ImageTagService.confirmUpload(profileForm.imageKey());
         }
 
         if (profileForm.interests() != null) {
