@@ -44,6 +44,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.swyp.com.backend.cosmic.domain.Cosmic;
 import org.swyp.com.backend.cosmic.domain.repository.CosmicRepository;
@@ -80,7 +81,7 @@ import org.swyp.com.backend.support.CosmicTestFixture;
 import org.swyp.com.backend.support.QuestionTestFixture;
 import org.swyp.com.backend.upload.domain.DeletedImage;
 import org.swyp.com.backend.upload.domain.repository.DeletedImageRepository;
-import org.swyp.com.backend.upload.service.S3ImageTagService;
+import org.swyp.com.backend.upload.event.ImageUploadConfirmedEvent;
 import org.swyp.com.backend.user.domain.User;
 import org.swyp.com.backend.user.domain.repository.UserRepository;
 
@@ -114,7 +115,7 @@ class ProfileServiceTest {
     @Mock
     DeletedImageRepository deletedImageRepository;
     @Mock
-    S3ImageTagService s3ImageTagService;
+    ApplicationEventPublisher eventPublisher;
 
     ProfileService profileService;
     QuestionService questionService;
@@ -146,7 +147,7 @@ class ProfileServiceTest {
         interestService = new InterestService(interestRepository);
         profileService = new ProfileService(questionService, cosmicService, interestService, imageUrlService,
                 userRepository, profileRepository, profileInterestRepository, profileChoiceRepository,
-                profileShortRepository, profileExchangeRepository, deletedImageRepository, s3ImageTagService);
+                profileShortRepository, profileExchangeRepository, deletedImageRepository, eventPublisher);
     }
 
     @Test
@@ -171,7 +172,7 @@ class ProfileServiceTest {
         Assertions.assertEquals(response.nickname(), request.nickname());
         verify(profileChoiceRepository, never()).saveAll(any(List.class));
         verify(profileShortRepository, never()).saveAll(any(List.class));
-        verify(s3ImageTagService).confirmUpload(TEST_IMAGE_KEY);
+        verify(eventPublisher).publishEvent(new ImageUploadConfirmedEvent(TEST_IMAGE_KEY));
     }
 
     @Test
@@ -415,7 +416,7 @@ class ProfileServiceTest {
         verify(deletedImageRepository).save(deletedImageCaptor.capture());
         Assertions.assertEquals(TEST_IMAGE_KEY, deletedImageCaptor.getValue().getImageKey());
         Assertions.assertEquals(newImageKey, profile.getImageKey());
-        verify(s3ImageTagService).confirmUpload(newImageKey);
+        verify(eventPublisher).publishEvent(new ImageUploadConfirmedEvent(newImageKey));
     }
 
     @Test
@@ -437,7 +438,7 @@ class ProfileServiceTest {
         profileService.updateProfile(user.getId(), request);
 
         // then
-        verify(s3ImageTagService, never()).confirmUpload(any());
+        verify(eventPublisher, never()).publishEvent(any());
         verify(deletedImageRepository, never()).save(any());
     }
 
